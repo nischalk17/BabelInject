@@ -2,6 +2,18 @@
 **Do Prompt-Injection Defenses for LLM Agents Hold Up Across Languages and Injection Channels?**
 Owner: Nischal Dhoj Kunwar · Plan dated Nov 22, 2026 · MVP due Nov 24 · Full version due Dec 5
 
+> **Changes since this plan was written (kept here so the plan stays honest; details in
+> [SCHEDULE.md](SCHEDULE.md) and [RESEARCH_LOG.md](RESEARCH_LOG.md)):**
+> - End date moved from Dec 5 to **Nov 26**.
+> - Primary model is `qwen2.5:7b`; `qwen2.5:3b` is the scale comparison; the hosted comparison is
+>   Groq `qwen/qwen3.8-27b` (kept, at the owner's request). `llama3.2:3b` was not used.
+> - Benchmark: 30 tasks (10 facts x email/file/web page), 3 attacks x 5 languages, 4 channels; the
+>   `tool_output` channel injects into the `list_emails` result (the first definition duplicated the
+>   email channel and was replaced).
+> - Translations were drafted with AI assistance and reviewed line by line by the author.
+> - Added: a language-capability control (planned) because non-English attacks may fail on the 7B
+>   model for capability reasons, which would not be robustness.
+
 ---
 
 ## 1. Why this project stands out

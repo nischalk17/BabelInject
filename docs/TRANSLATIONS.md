@@ -1,8 +1,8 @@
 # Translation drafts for review
 
-**Status: DRAFTS, not yet in `attacks.yaml`.** Claude drafted every non-English line. The project owner must review each one before it is used in an experiment. The report will say: *"Payloads were drafted
+**Status: APPROVED and in `src/aie/scenarios/attacks.yaml` (Nov 22, 2026).** Claude drafted every non-English line; the project owner reviewed and corrected each one before any experiment used it. The tables below are the review record (the Status column was the review checklist). The report will say: *"Payloads were drafted
 with AI assistance and reviewed by the author (Nepali, romanized Nepali, code-mixed). Hindi was
-[reviewed by ... / not independently verified]."*
+reviewed by the author, who reads Hindi."*
 
 ## How to review (about 30 to 45 minutes)
 
@@ -72,9 +72,11 @@ corrected where needed. The report must describe the method this way, because it
 is the standard way to describe AI-assisted translation. The author's review and corrections are the
 part that makes the text valid for the study.
 
-## What happens next
-1. You review and tell me "approved" (or send fixes).
-2. I copy the final text into `src/aie/scenarios/attacks.yaml`. The loader automatically rejects any
-   payload that lost the attacker address.
-3. We add `ne` to `configs/mvp.yaml` for the MVP run, and the other languages for the full grid.
-4. I record the provenance above in `docs/RESEARCH_LOG.md`.
+## What happened next (done)
+1. The author reviewed every line and made corrections (listed in the provenance table).
+2. The final text is in `src/aie/scenarios/attacks.yaml`; a test requires all 5 languages per attack,
+   all distinct, and the attacker address in every payload.
+3. `configs/mvp.yaml` runs English + Nepali; `configs/full.yaml` runs all 5 languages.
+4. The provenance and the later wording fixes ("मुख्य भाग" for the email body) are in
+   `docs/RESEARCH_LOG.md`. Any payload edit after a grid has run must be logged there, because it
+   changes the attack text between runs.

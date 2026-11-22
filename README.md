@@ -7,9 +7,31 @@ models that use tools, and how well lightweight defenses stop them, when the att
 different languages and hidden in different places. Everything runs in a mocked sandbox: no real
 email, web or file system is ever touched.
 
-> **Status: infrastructure only. There are no experimental results yet.** Numbers will appear in
-> this README only when they come from `results/` through `analysis/`. Observations so far are
-> recorded, with their exact settings and caveats, in [docs/RESEARCH_LOG.md](docs/RESEARCH_LOG.md).
+> **Status (Nov 23, 2026): the benchmark, defenses and analysis code are built and tested; the full
+> no-defense grid on qwen2.5:7b is done (first results below); defenses and the other models are not
+> yet measured.** Numbers appear in this README only when they come from `results/` through
+> `analysis/`. Calibration runs and interim observations,
+> with exact settings and caveats, are in [docs/RESEARCH_LOG.md](docs/RESEARCH_LOG.md); the plan is in
+> [docs/SCHEDULE.md](docs/SCHEDULE.md) and a plain-language guide is in
+> [docs/EXPLAINED.md](docs/EXPLAINED.md).
+
+## First results (qwen2.5:7b, no defense, 600 attacked runs)
+
+Attack success rate by language, over all attacks and channels (n=120 per language; source:
+`results/summary/table1_asr_language_channel.csv`, figure `docs/figures/fig1_asr_heatmap_*.png`):
+
+| Language | ASR |
+|---|---|
+| English | 35/120 (29.2%) |
+| Code-mixed | 12/120 (10.0%) |
+| Nepali | 1/120 (0.8%) |
+| Hindi | 0/120 |
+| Romanized Nepali | 0/120 |
+
+The model opens the poisoned item in 90 to 100% of runs in every language, so the gap is not a
+reading failure. **This is not yet evidence of robustness:** a 7B model may simply not follow Nepali or
+Hindi instructions. A language-capability control is the next step. One attack is a 0% floor control by
+design. Single model, one run per scenario, small per-cell n; see the research log for caveats.
 
 ## The problem, in plain terms
 
@@ -72,17 +94,18 @@ Design rules that keep the study rigorous:
 | Model interface, Ollama adapter (native tool calling), response cache | `src/aie/models/` | done, mocked tests |
 | Mocked sandbox and tools (inbox, files, web/RAG, `send_email`), all actions logged | `src/aie/env/` | done, tests |
 | ReAct-style agent loop, run config, CLI, smoke config | `src/aie/agent/`, `src/aie/cli.py`, `configs/` | done, tests |
-| Scenario format (task x attack x language x channel), deterministic judge, grid runner in the CLI, counts with Wilson intervals | `src/aie/scenarios/`, `src/aie/eval/`, `src/aie/cli.py` | done, tests; only 1 task and 1 English attack so far |
-| 30 tasks (10 facts x 3 carriers: email, file, web page) and 3 English attack templates | `src/aie/scenarios/`, `configs/fixtures/` | done, invariant tests |
-| Hosted-model adapter (Groq) | `src/aie/models/groq.py` | done, mocked tests; no live call yet |
-| Translations (Nepali, romanized Nepali, Hindi, code-mixed) | `docs/TRANSLATIONS.md` | drafted, awaiting author review |
+| Scenario format (task x attack x language x channel), deterministic judge, grid runner in the CLI, counts with Wilson intervals | `src/aie/scenarios/`, `src/aie/eval/`, `src/aie/cli.py` | done, tests |
+| 30 tasks (10 facts x 3 carriers: email, file, web page); 3 attacks (blunt, authority, casual) in 5 languages; 4 channels | `src/aie/scenarios/`, `configs/fixtures/` | done, invariant tests |
+| Hosted-model adapter (Groq) | `src/aie/models/groq.py` | done, mocked tests; one live check passed |
+| Translations (Nepali, romanized Nepali, Hindi, code-mixed): AI-drafted, reviewed and corrected line by line by the author | `docs/TRANSLATIONS.md`, `attacks.yaml` | done |
 | Four defenses (spotlighting, sandwich reminder, tool-permission policy, prompted detector) and a defense-grid config | `src/aie/defenses/`, `configs/defenses.yaml` | done, tested with scripted models; not yet measured |
-| Analysis, figures, report | `analysis/`, `report/` | not started |
-| Analysis, figures, report | `analysis/`, `report/` | not started |
+| Analysis: tables with 95% intervals (CSV), heatmap, defense-effect and trade-off figures | `src/aie/analysis/`, `analysis/` | done, tested; run on the 7B full grid |
+| Report | `report/` | not started |
 
 Known open issues (details in the research log): the 3B model does not open the email on the benign
-task, and the single English attack is blatant enough that the 7B model refuses it, so more attack
-templates are needed before the grid can show differences.
+task; one attack (`inject_cc_request`) is at the floor and is kept as a control; and an early partial
+look suggests non-English attacks may fail on the 7B model because it does not follow them, which
+needs a language-capability control before it can be read as robustness.
 
 ## Setup
 
@@ -99,12 +122,21 @@ Run from the repository root (config paths are relative to it). Experiments are 
 
 ```
 uv run aie run configs/smoke.yaml   # benign task only, one model
-make run-mvp                        # benign + English attack grid -> results/mvp/*.jsonl
+make run-mvp                        # MVP grid (English + Nepali) -> results/mvp/*.jsonl
+make run-all                        # full no-defense grid (630 runs)
+make run-defenses                   # defense grid (750 runs)
 ```
 
 Each run appends one judged JSONL row per scenario and model (model tag, prompt version, actions,
 outbox, deterministic verdict) and prints per-cell counts with 95% Wilson intervals. Raw rows in
 `results/` are not committed.
+
+Turn results into tables and figures (reads `results/`, writes CSV tables to `results/summary/` and
+figures to `docs/figures/`; every figure has a CSV twin):
+
+```
+make figures
+```
 
 Opt-in live test against a real model (skipped by default; override the model with
 `AIE_LIVE_MODEL`, default `qwen2.5:7b`):

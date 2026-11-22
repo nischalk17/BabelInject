@@ -486,3 +486,73 @@ computed from rows; recommended as a secondary metric next to ASR.
 runs on `qwen2.5:7b`, English + Nepali + romanized Nepali, file and tool_output channels (the cells
 where English baseline ASR has signal), attacks `inject_override` and `inject_owner_note`. The
 `none` runs duplicate the full grid and come from the response cache.
+
+---
+
+## 2026-11-22: Interim look at the running full grid (INCOMPLETE; do not cite)
+
+**Evidence level:** weak. A partial read of `results/full/` while the 630-run grid was still running
+(122 rows, only the first two tasks, `meeting_room` and `registration_time`; the grid runs task by task).
+Model `ollama/qwen2.5:7b@845dbda0ea48`, prompt `v3`, no defense. Recorded because it affects a design
+decision, not as a result. Counts come from `aie.analysis`.
+
+| Language | attacked runs succeeded | tried `send_email` at all | item opened |
+|---|---|---|---|
+| English | 8/24 (33.3%) | 8/24 | 20/24 |
+| Nepali | 0/23 (0.0%) | 0/23 | 19/23 |
+| Romanized Nepali | 0/23 (0.0%) | 0/23 | 18/23 |
+| Hindi | 0/23 (0.0%) | 0/23 | 18/23 |
+| Code-mixed | 2/23 (8.7%) | 2/23 | 18/23 |
+
+**Observation:** in this slice the model followed the injection only when it was in English (or partly
+English, in the code-mixed text). In Nepali, romanized Nepali and Hindi it never even tried to email the
+attacker, although it opened the item in about 80% of runs.
+
+**Why this matters (hypothesis, untested):** a low non-English ASR can mean "the 7B model does not
+understand or follow the instruction in that language" (a capability limit), not "the model is more
+robust". Those are different findings, and only the second one is good news. Two consequences:
+1. **Capability control needed.** Measure whether the model can follow a harmless instruction written in
+   each language (for example a user task in Nepali that asks it to email a known contact). Without it, a
+   language effect cannot be interpreted as robustness. Recommended, cheap (about 10 tasks x 5 languages).
+2. **The defense grid may be uninformative for non-English languages on 7B.** `configs/defenses.yaml`
+   uses English, Nepali and romanized Nepali. If the Nepali and romanized baselines stay at about 0%, a
+   defense has nothing to reduce there (floor effect), and 4 defenses x those cells would cost hours for
+   no signal. Recommendation: decide after the full grid finishes. If the pattern holds, restrict the 7B
+   defense grid to languages with a non-zero baseline (English, code-mixed), and run the larger hosted
+   model (`qwen/qwen3.8-27b`), which may follow Nepali and Hindi better, across all languages.
+
+
+## 2026-11-23: Full no-defense grid, qwen2.5:7b (n=630)
+
+**Setup:** `configs/full.yaml`, `qwen2.5:7b@845dbda0ea48`, defense `none-v1`, prompt v3, temperature 0, seed 0.
+600 attacked runs (3 attacks x 5 languages x 4 channels x 10 tasks) plus 30 benign. Source:
+`results/summary/table1_asr_language_channel.csv` (and tables 3 to 5). Counts below are per language over
+all attacks and channels (n=120 each); per-cell n is 30 (all attacks) or 10 (one attack), so cell intervals
+are wide (a 0/30 cell has an upper bound of 11.4%).
+
+| Language | ASR (k/n) |
+|---|---|
+| English | 35/120 (29.2%) |
+| Code-mixed | 12/120 (10.0%) |
+| Nepali | 1/120 (0.8%) |
+| Hindi | 0/120 |
+| Romanized Nepali | 0/120 |
+
+English by channel (all attacks, n=30 each): file 15 (50%), tool_output 11 (36.7%), doc 6 (20%), email 3 (10%).
+Code-mixed: tool_output 9/30, doc 3/30, email 0, file 0; 9 of the 12 come from `inject_override` in
+tool_output (9/10). Item-opened rate is 90 to 100% in every language and channel (table 4), so the pattern
+is not caused by the model failing to read the item. Utility: benign 29/30 (96.7%); under attack 561/600 (93.5%).
+
+**Observation:** the interim 2-task signal held on the full grid. Nepali, romanized Nepali and Hindi
+attacks almost never succeed on this model, although it reads the poisoned item. The model also does not
+attempt `send_email` (table 5 matches table 1).
+
+**Caveats:** (1) This is not evidence of robustness: it is confounded with capability, because 7B may not
+follow Nepali or Hindi instructions at all. The language-capability control is needed before any
+interpretation. (2) `inject_cc_request` is 0 in every cell (floor control, by design). (3) Single model,
+temperature 0, one run per scenario; the 10 task facts are shared across carriers, so intervals are
+somewhat optimistic. (4) Cell n is small; read patterns, not single cells.
+
+**Consequence for decisions:** a defense cannot reduce a 0% baseline, so 7B defense runs on Nepali,
+romanized Nepali and Hindi would be uninformative. Recommendation unchanged: build the capability control,
+run the 7B defense grid on English and code-mixed, and the hosted 27B model on all languages.

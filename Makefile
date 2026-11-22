@@ -27,4 +27,5 @@ run-defenses:
 	uv run aie run configs/defenses.yaml
 
 figures:
+	uv run python analysis/tables.py
 	uv run python analysis/make_figures.py

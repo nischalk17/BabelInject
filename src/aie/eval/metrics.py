@@ -21,7 +21,9 @@ def wilson(k: int, n: int, z: float = Z95) -> tuple[float, float]:
     denom = 1 + z * z / n
     centre = (p + z * z / (2 * n)) / denom
     half = z * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / denom
-    return max(0.0, centre - half), min(1.0, centre + half)
+    # Rounding can leave the bound a hair inside the point estimate (e.g. 0.9999999999999999 for
+    # k == n); the interval must always contain p, or error bars would get negative lengths.
+    return max(0.0, min(centre - half, p)), min(1.0, max(centre + half, p))
 
 
 class Rate(BaseModel):

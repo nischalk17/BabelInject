@@ -15,6 +15,13 @@ def test_wilson_matches_known_values() -> None:
     assert lo == pytest.approx(0.7225, abs=1e-3) and hi == pytest.approx(1.0)
 
 
+def test_wilson_always_contains_the_point_estimate() -> None:
+    for n in range(1, 60):
+        for k in range(n + 1):
+            lo, hi = wilson(k, n)
+            assert 0.0 <= lo <= k / n <= hi <= 1.0, (k, n, lo, hi)
+
+
 def test_wilson_rejects_bad_counts() -> None:
     for k, n in [(1, 0), (-1, 5), (6, 5)]:
         with pytest.raises(ValueError, match="need n"):

@@ -1,34 +1,49 @@
 # Schedule: finish Nov 26
 
-Set on Nov 22, 2026. The original plan ended Dec 5; the owner chose Nov 26 and to keep the hosted-model
-comparison. **There is no slack.** If an overnight run fails or a translation slips a day, the end
-moves to Nov 27.
+Set on Nov 22, 2026; updated the same evening. The original plan ended Dec 5; the owner chose **Nov 26**
+and to keep the hosted-model comparison. **There is no slack:** a failed overnight run or a late
+decision moves the end to Nov 27.
 
-Legend: **Claude** = code, drafts, analysis. **You** = review, decisions, git commits and tags.
+Legend: **Claude** = code, analysis, drafts. **You** = review, decisions, git commits and tags.
 
-| Day | Claude | You | Overnight run (laptop on power, sleep off) |
+## Done by the evening of Nov 22 (about a day ahead of the first schedule)
+- Infrastructure: models, cache, sandbox, agent loop, judge, grid runner, statistics.
+- Benchmark content: 30 tasks, 3 attacks x 5 languages (translations AI-drafted, author-reviewed),
+  4 channels. Two design flaws found and fixed (no send tool; duplicated tool-output channel).
+- English calibration on 7B (see `RESEARCH_LOG.md`).
+- Groq hosted adapter, tested live. Four defenses with tests. Analysis tables and figures with tests.
+- **Done Nov 23:** full no-defense grid on 7B (630 runs); tables and heatmap built and logged. Non-English
+  attacks are about 0% on 7B (capability confound), so decision 1 below now applies.
+
+## Revised plan
+
+| Day | Claude | You | Compute |
 |---|---|---|---|
-| **Nov 22 (Sun)** | Wrote `docs/EXPLAINED.md`, this schedule, the reading guide | Commit and push. Read EXPLAINED.md once | none |
-| **Nov 23 (Mon)** | 3 English attacks of different subtlety; grow to 10 tasks (body-only facts; some with file or web injection points); calibrate ASR on 7B (aim: not about 0% and not about 100% on English); draft ne, ne_rom, hi, mix payloads in `docs/TRANSLATIONS.md`; start the Groq adapter | Skim AgentDojo and InjecAgent (about 1 h each); create a free Groq account and API key; review the **Nepali** lines | MVP grid: English + Nepali, email + tool_output |
-| **Nov 24 (Tue), MVP** | Put reviewed Nepali into `attacks.yaml`; first ASR table in README from `results/` only | Review the other languages by tonight; commit; `git tag -a v0.1-mvp -m "MVP: first ASR table"`, then `git push origin v0.1-mvp` | Full no-defense grid on 7B: 10 tasks x 3 attacks x 5 languages x 4 channels = 600 runs |
-| **Nov 25 (Wed)** | Four defenses (spotlight, sandwich, tool policy, detector) with tests; `analysis/`; hosted-model run | Send professor emails with the repo link (after the MVP table is in the README) | Defense grid on 7B (4 x 3 languages x 2 channels x 20 = 480 runs) + 3B no-defense grid |
-| **Nov 26 (Thu), end** | Tables and figures from `results/`; 4-page report draft; clean-clone reproduction of one table | Edit the report in your own words; commit; tag `v1.0` | none |
+| **Nov 23 (Mon)** | Check the full grid finished; `uv sync`; `make figures`; log the real language x channel table. Decide the defense-grid languages. Build the **language-capability control**. Put the first real table in the README | Commit and push; translate about 8 short control sentences; skim AgentDojo and InjecAgent; tag `v0.1-mvp` after the README table is in | After the grid: capability control (small), then the defense grid on 7B (about 4 h) |
+| **Nov 24 (Tue)** | Hosted Groq run (`qwen/qwen3.8-27b`, all languages); 3B no-defense grid; figures for defenses; start the report | Send professor emails with the repo link once the README has the first table | 3B grid (about 2 h) and hosted run (rate-limited) overnight |
+| **Nov 25 (Wed)** | Final tables and figures from `results/`; 4-page report draft; clean-clone reproduction of one table | Edit the report in your own words (method, translations, limitations) | none, or reruns of any failed run |
+| **Nov 26 (Thu), end** | Polish docs; final numbers check against `results/` | Final read; commit; tag `v1.0` | none |
 
-## Compute estimates
-These are rough, from about 20 to 40 s per 7B run measured on a handful of runs. They will be
-re-measured on Nov 23.
+## Decisions still open
+1. **Defense-grid languages.** If the full grid confirms that Nepali, romanized Nepali and Hindi attacks
+   barely work on 7B (interim: 0 of 23 each), defenses have nothing to reduce there. Recommendation: run
+   the 7B defense grid on English and code-mixed, and the hosted 27B model on all languages.
+2. **Capability control.** Recommended; needed before any language effect is called robustness.
+
+## Compute estimates (measured, not guessed)
+About 20 to 35 s per uncached 7B run when nothing else is using the CPU; repeated requests are served from
+the response cache. My own test and figure runs slow a running grid, so nothing else should run during one.
 
 | Run | Runs | Est. time |
 |---|---|---|
-| MVP grid (7B) | about 40 | under 30 min |
-| No-defense grid (7B) | 600 | about 4 to 5 h |
-| Defense grid (7B) | 480 | about 4 h |
-| No-defense grid (3B) | 600 | about 2 h |
-| Hosted model | up to 600 | depends on rate limits |
+| Full no-defense grid, 7B | 630 | 4 to 5 h (running) |
+| Defense grid, 7B (5 defenses; the detector adds one call per tool result) | 750 (150 of them cached) | about 4 h |
+| No-defense grid, 3B | 630 | about 2 h |
+| Hosted Qwen 27B, no defense | up to 630 | depends on rate limits |
 
 ## If we fall behind, cut in this order
-1. Defenses on 2 languages instead of 3.
-2. Doc and file channels for English and Nepali only.
-3. Hosted run on the no-defense grid only.
+1. Defenses on fewer languages.
+2. Doc and file channels for English and Nepali only on the secondary models.
+3. Hosted run on a subset of cells.
 
 **Never cut:** the deterministic judge, per-run logging, and reporting n with confidence intervals.
