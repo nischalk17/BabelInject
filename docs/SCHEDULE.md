@@ -25,9 +25,8 @@ Legend: **Claude** = code, analysis, drafts. **You** = review, decisions, git co
 | **Nov 26 (Thu), end** | Polish docs; final numbers check against `results/` | Final read; commit; tag `v1.0` | none |
 
 ## Decisions still open
-1. **Defense-grid languages.** If the full grid confirms that Nepali, romanized Nepali and Hindi attacks
-   barely work on 7B (interim: 0 of 23 each), defenses have nothing to reduce there. Recommendation: run
-   the 7B defense grid on English and code-mixed, and the hosted 27B model on all languages.
+1. **Defense-grid languages.** Decided Nov 23: English and code-mixed on 7B (`configs/defenses.yaml`, channels file, doc, tool_output). The full grid confirmed that Nepali, romanized Nepali and Hindi attacks
+   barely work on 7B (0 of 120 each), so defenses have nothing to reduce there. The hosted 27B model covers all languages.
 2. **Capability control.** Done: 14/15 direct requests followed in all languages, so the 0% injected ASR is not a comprehension limit (n=3 per language).
 
 ## Compute estimates (measured, not guessed)

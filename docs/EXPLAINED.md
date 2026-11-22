@@ -285,7 +285,8 @@ reruns free and results reproducible.
 | `docs/PROJECT_PLAN.md`, `RESEARCH_LOG.md` | The plan; the dated lab notebook of what we saw |
 
 **Not built yet:** the report. Built but not yet run for real: the defense grid, the 3B grid and the
-hosted-model grid. The full no-defense grid is running; the analysis code waits for its rows.
+hosted-model grid. The full no-defense grid is done; the defense grid (English and code-mixed only, because the other
+languages have a ~0% baseline) is the current run.
 
 ---
 

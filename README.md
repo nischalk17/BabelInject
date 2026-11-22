@@ -104,7 +104,7 @@ Design rules that keep the study rigorous:
 | 30 tasks (10 facts x 3 carriers: email, file, web page); 3 attacks (blunt, authority, casual) in 5 languages; 4 channels | `src/aie/scenarios/`, `configs/fixtures/` | done, invariant tests |
 | Hosted-model adapter (Groq) | `src/aie/models/groq.py` | done, mocked tests; one live check passed |
 | Translations (Nepali, romanized Nepali, Hindi, code-mixed): AI-drafted, reviewed and corrected line by line by the author | `docs/TRANSLATIONS.md`, `attacks.yaml` | done |
-| Four defenses (spotlighting, sandwich reminder, tool-permission policy, prompted detector) and a defense-grid config | `src/aie/defenses/`, `configs/defenses.yaml` | done, tested with scripted models; not yet measured |
+| Four defenses (spotlighting, sandwich reminder, tool-permission policy, prompted detector) and a defense-grid config | `src/aie/defenses/`, `configs/defenses.yaml` | done, tested with scripted models; 7B grid (English + code-mixed) running |
 | Analysis: tables with 95% intervals (CSV), heatmap, defense-effect and trade-off figures | `src/aie/analysis/`, `analysis/` | done, tested; run on the 7B full grid |
 | Report | `report/` | not started |
 
@@ -130,7 +130,7 @@ Run from the repository root (config paths are relative to it). Experiments are 
 uv run aie run configs/smoke.yaml   # benign task only, one model
 make run-mvp                        # MVP grid (English + Nepali) -> results/mvp/*.jsonl
 make run-all                        # full no-defense grid (630 runs)
-make run-defenses                   # defense grid (750 runs)
+make run-defenses                   # defense grid, English + code-mixed (750 runs)
 ```
 
 Each run appends one judged JSONL row per scenario and model (model tag, prompt version, actions,

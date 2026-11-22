@@ -591,3 +591,16 @@ shows the model can act, not that it would act under every phrasing. To be repea
 **Decision:** the 7B defense grid can still be restricted to English and code-mixed (non-English baselines are
 ~0%, so a defense has nothing to reduce). The finding that non-English injections fail while direct requests
 succeed is now a result in its own right, to be reported with these caveats.
+
+
+## 2026-11-23: Decision, 7B defense grid scope
+
+**Decision (owner approved the recommendation):** `configs/defenses.yaml` now uses languages `en` and `mix`,
+channels `file`, `doc`, `tool_output`, attacks `inject_override` and `inject_owner_note`, 5 defenses
+(`none`, `spotlight`, `sandwich`, `tool_policy`, `detector`, all v1). Per defense: 30 benign + 2 attacks x 2
+languages x 30 tasks = 150 runs; 750 in total (the `none` rows come mostly from the response cache).
+**Why:** Nepali, romanized Nepali and Hindi baselines are 1/120, 0/120 and 0/120 on 7B, so a defense cannot
+show an effect there (floor); the capability control shows this is not a comprehension limit. `doc` was added
+because English `inject_override` reaches 6/10 there. **Caveat:** the 7B defense result says nothing about
+Nepali or Hindi; those need the hosted 27B model. Code-mixed has few successes outside `tool_output`, so
+its per-channel cells will be small.

@@ -105,4 +105,4 @@ def test_defense_grid_config_lists_all_five_defenses() -> None:
         "tool_policy",
         "detector",
     ]
-    assert cfg.languages == ["en", "ne", "ne_rom"] and cfg.channels == ["file", "tool_output"]
+    assert cfg.languages == ["en", "mix"] and cfg.channels == ["file", "doc", "tool_output"]

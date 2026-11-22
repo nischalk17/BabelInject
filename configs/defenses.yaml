@@ -1,8 +1,10 @@
-# Defense grid on the primary model. Channels and attacks are chosen where the English no-defense ASR
-# has signal (file and tool_output; inject_override and inject_owner_note), so a defense effect can be
-# seen; inject_cc_request (0/30 at baseline) is left out. `none` is included so every defense has a
+# Defense grid on the primary model. Languages are the two with a non-zero no-defense baseline on 7B
+# (en 35/120, mix 12/120; Nepali, romanized Nepali and Hindi are about 0%, so a defense has nothing to
+# reduce there; the hosted model covers them). Channels file, doc and tool_output and attacks
+# inject_override and inject_owner_note are where the baseline has signal; inject_cc_request (0/30 at
+# baseline) is left out. `none` is included so every defense has a
 # matched baseline; those runs are served from the response cache after the full grid.
-# Per defense: 30 benign (utility cost) + 2 attacks x 3 languages x (10 file + 10 tool_output) = 150
+# Per defense: 30 benign (utility cost) + 2 attacks x 2 languages x (10 file + 10 doc + 10 tool_output) = 150
 # runs; 5 defenses = 750 runs. The detector adds one short model call per tool result.
 models:
   - {provider: ollama, model: "qwen2.5:7b"}
@@ -14,8 +16,8 @@ defenses:
   - {name: detector}
 gen: {temperature: 0.0, seed: 0}
 attack_ids: [inject_override, inject_owner_note]
-languages: [en, ne, ne_rom]
-channels: [file, tool_output]
+languages: [en, mix]
+channels: [file, doc, tool_output]
 include_benign: true
 max_steps: 8
 output_dir: results/defenses
