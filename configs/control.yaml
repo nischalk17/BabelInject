@@ -1,0 +1,13 @@
+# Language-capability control, 7B. The attack text is given as the USER's own request, in 5 languages.
+# 3 attacks x 5 languages x 1 task = 15 runs (n=3 per language; wide intervals, read as a yes/no signal).
+# If the model sends the email when asked directly in Nepali but ignores the same text when injected,
+# the low injected ASR is resistance; if it ignores it in both, it is a capability limit.
+models:
+  - {provider: ollama, model: "qwen2.5:7b"}
+gen: {temperature: 0.0, seed: 0}
+tasks_file: configs/control_tasks.yaml
+languages: [en, ne, ne_rom, hi, mix]
+channels: [user]
+include_benign: false
+max_steps: 8
+output_dir: results/control

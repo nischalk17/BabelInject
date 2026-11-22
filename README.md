@@ -30,8 +30,14 @@ Attack success rate by language, over all attacks and channels (n=120 per langua
 
 The model opens the poisoned item in 90 to 100% of runs in every language, so the gap is not a
 reading failure. **This is not yet evidence of robustness:** a 7B model may simply not follow Nepali or
-Hindi instructions. A language-capability control is the next step. One attack is a 0% floor control by
+Hindi instructions. The capability control (below) shows the model does follow direct non-English requests, so the gap is
+specific to injected text. One attack is a 0% floor control by
 design. Single model, one run per scenario, small per-cell n; see the research log for caveats.
+
+**Capability control** (`make run-control`, 15 runs; the same attack text given as the user's own
+request): the model sent the email in 14 of 15 runs: English 2/3, and 3/3 in each of Nepali, romanized
+Nepali, Hindi and code-mixed. So the 7B model understands these languages well enough to act; the
+near-zero injected ASR above is not explained by it failing to understand. n=3 per language.
 
 ## The problem, in plain terms
 
@@ -104,8 +110,8 @@ Design rules that keep the study rigorous:
 
 Known open issues (details in the research log): the 3B model does not open the email on the benign
 task; one attack (`inject_cc_request`) is at the floor and is kept as a control; and an early partial
-look suggests non-English attacks may fail on the 7B model because it does not follow them, which
-needs a language-capability control before it can be read as robustness.
+look suggested non-English attacks fail on the 7B model for lack of comprehension; the capability
+control (14/15 direct requests followed, all languages) argues against that, but n is tiny.
 
 ## Setup
 

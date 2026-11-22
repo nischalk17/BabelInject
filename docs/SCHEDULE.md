@@ -13,13 +13,13 @@ Legend: **Claude** = code, analysis, drafts. **You** = review, decisions, git co
 - English calibration on 7B (see `RESEARCH_LOG.md`).
 - Groq hosted adapter, tested live. Four defenses with tests. Analysis tables and figures with tests.
 - **Done Nov 23:** full no-defense grid on 7B (630 runs); tables and heatmap built and logged. Non-English
-  attacks are about 0% on 7B (capability confound), so decision 1 below now applies.
+  attacks are about 0% on 7B; the capability control (done) shows it is not a comprehension limit.
 
 ## Revised plan
 
 | Day | Claude | You | Compute |
 |---|---|---|---|
-| **Nov 23 (Mon)** | Check the full grid finished; `uv sync`; `make figures`; log the real language x channel table. Decide the defense-grid languages. Build the **language-capability control**. Put the first real table in the README | Commit and push; translate about 8 short control sentences; skim AgentDojo and InjecAgent; tag `v0.1-mvp` after the README table is in | After the grid: capability control (small), then the defense grid on 7B (about 4 h) |
+| **Nov 23 (Mon)** | Check the full grid finished; `uv sync`; `make figures`; log the real language x channel table. Decide the defense-grid languages. Build the **language-capability control** (done). Put the first real table in the README | Commit and push; (control needed no new translations); skim AgentDojo and InjecAgent; tag `v0.1-mvp` after the README table is in | After the grid: capability control (small), then the defense grid on 7B (about 4 h) |
 | **Nov 24 (Tue)** | Hosted Groq run (`qwen/qwen3.8-27b`, all languages); 3B no-defense grid; figures for defenses; start the report | Send professor emails with the repo link once the README has the first table | 3B grid (about 2 h) and hosted run (rate-limited) overnight |
 | **Nov 25 (Wed)** | Final tables and figures from `results/`; 4-page report draft; clean-clone reproduction of one table | Edit the report in your own words (method, translations, limitations) | none, or reruns of any failed run |
 | **Nov 26 (Thu), end** | Polish docs; final numbers check against `results/` | Final read; commit; tag `v1.0` | none |
@@ -28,7 +28,7 @@ Legend: **Claude** = code, analysis, drafts. **You** = review, decisions, git co
 1. **Defense-grid languages.** If the full grid confirms that Nepali, romanized Nepali and Hindi attacks
    barely work on 7B (interim: 0 of 23 each), defenses have nothing to reduce there. Recommendation: run
    the 7B defense grid on English and code-mixed, and the hosted 27B model on all languages.
-2. **Capability control.** Recommended; needed before any language effect is called robustness.
+2. **Capability control.** Done: 14/15 direct requests followed in all languages, so the 0% injected ASR is not a comprehension limit (n=3 per language).
 
 ## Compute estimates (measured, not guessed)
 About 20 to 35 s per uncached 7B run when nothing else is using the CPU; repeated requests are served from

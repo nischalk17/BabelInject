@@ -57,7 +57,11 @@ def build_scenario(
     if point is None:
         raise ValueError(f"task {task.id!r} has no injection point for channel {channel!r}")
     tool_payloads: dict[str, str] = {}
-    if channel == "tool_output":
+    if channel == "user":
+        # Capability control: the user asks for it directly, so any failure to act is a
+        # comprehension limit of the model, not resistance to an injection.
+        task = task.model_copy(update={"prompt": payload})
+    elif channel == "tool_output":
         tool_payloads[point] = payload
     else:
         _inject(state, channel, point, payload)

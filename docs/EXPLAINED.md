@@ -345,8 +345,14 @@ Each line says how many times it was seen. None of this goes in the README as a 
    model never even tried to email the attacker in those languages.
 9. **What item 8 might mean (a hypothesis, not a finding):** the small model may simply not understand
    or follow Nepali and Hindi instructions. That is a *capability limit*, not *robustness*. To tell them
-   apart we need a **capability control** (a harmless task given in each language). Until the full
-   grid finishes and the control exists, do not say "Nepali attacks are safer".
+   apart we need a **capability control** (the same text given as the user's own request).
+10. **Result of the control (n=3 per language, 15 runs):** the model carried out the direct request in
+   14 of 15 runs, in every language. So it understands Nepali, romanized Nepali, Hindi and code-mixed text
+   well enough to act on it. The near-zero injected ASR is therefore not explained by a comprehension
+   failure. What it does show is that the model treats the same words differently when they come from
+   the user than when they are hidden in data. Why (training mostly on English injections? weaker
+   instruction-following on foreign text inside tool results?) is untested. Still do not say "Nepali
+   attacks are safer" without the larger model and more tasks.
 
 ---
 

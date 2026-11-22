@@ -133,3 +133,22 @@ def test_shipped_yaml_loads_and_builds_every_channel(monkeypatch: pytest.MonkeyP
         for attack in attacks:
             for channel in task.injection_points:
                 build_scenario(task, attack, "en", channel)
+
+
+def test_user_channel_makes_the_payload_the_user_prompt(tmp_path: Path) -> None:
+    task = make_task(tmp_path).model_copy(update={"injection_points": {"user": "prompt"}})
+    sc = build_scenario(task, make_attack(), "en", "user")
+    assert sc.task.prompt == PAYLOAD
+    assert sc.state.inbox[0].body == "hello" and sc.tool_output_payloads == {}
+    assert sc.id == "t|a|en|user"
+
+
+def test_control_config_builds_15_runs() -> None:
+    from aie.config import load_config
+    from aie.scenarios.grid import build_grid
+
+    cfg = load_config(REPO / "configs" / "control.yaml")
+    tasks = load_tasks(REPO / cfg.tasks_file)
+    scenarios, skipped = build_grid(cfg, tasks, load_attacks(REPO / cfg.attacks_file))
+    assert len(scenarios) == 15 and not skipped
+    assert all(s.channel == "user" and s.task.prompt != "placeholder" for s in scenarios)

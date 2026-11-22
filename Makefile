@@ -1,5 +1,5 @@
 # Every recipe is a plain `uv run ...` call so it behaves the same under cmd.exe, Git Bash and Linux.
-.PHONY: setup test lint format run-mvp run-all run-defenses figures
+.PHONY: setup test lint format run-mvp run-all run-control run-defenses figures
 
 setup:
 	uv sync
@@ -22,6 +22,9 @@ run-mvp:
 
 run-all:
 	uv run aie run configs/full.yaml
+
+run-control:
+	uv run aie run configs/control.yaml
 
 run-defenses:
 	uv run aie run configs/defenses.yaml

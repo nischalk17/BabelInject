@@ -17,7 +17,8 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 from aie.env.sandbox import SandboxState
 
 Language = Literal["en", "ne", "ne_rom", "hi", "mix"]
-Channel = Literal["email", "doc", "tool_output", "file"]
+# "user" is the capability-control channel: the attack text IS the user's own request.
+Channel = Literal["email", "doc", "tool_output", "file", "user"]
 
 
 def normalize(text: str) -> str:
