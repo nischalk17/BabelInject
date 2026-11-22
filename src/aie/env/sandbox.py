@@ -88,6 +88,14 @@ class Sandbox:
             return self._record(call, False, f"Error: {exc}")
         return self._record(call, True, result)
 
+    def reject(self, call: ToolCall, reason: str) -> str:
+        """Log a call that was NOT executed (unavailable tool or blocked by a defense).
+
+        The attempt stays visible in the log as ``ok=False`` and nothing reaches the outbox, so the
+        judge never counts it as an executed attacker goal.
+        """
+        return self._record(call, False, reason)
+
     def _record(self, call: ToolCall, ok: bool, result: str) -> str:
         self.log.append(
             Action(

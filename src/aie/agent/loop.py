@@ -10,7 +10,7 @@ from pydantic import BaseModel
 from aie.agent.prompts import PROMPT_VERSION, SYSTEM_PROMPT
 from aie.env.sandbox import Action, Sandbox
 from aie.env.tools import tool_specs
-from aie.models.base import GenConfig, Message, ModelAdapter
+from aie.models.base import GenConfig, Message, ModelAdapter, ToolCall
 
 
 class AgentResult(BaseModel):
@@ -39,17 +39,27 @@ def run_agent(
     cfg: GenConfig | None = None,
     max_steps: int = 8,
     wrap_tool_output: Callable[[str, str], str] = identity,
+    system_prompt: str = SYSTEM_PROMPT,
+    authorize: Callable[[ToolCall], str | None] | None = None,
 ) -> AgentResult:
     """Run the agent on ``task`` until it answers without tool calls or hits ``max_steps``.
 
-    ``wrap_tool_output(tool_name, output)`` is applied to every observation before the model
-    sees it; this is where output-side defenses (e.g. spotlighting) plug in. The sandbox log
-    keeps the raw, unwrapped result.
+    Hooks used by defenses (all optional, all default to "no defense"):
+
+    - ``wrap_tool_output(tool_name, output)`` is applied to every observation before the model sees
+      it. The sandbox log keeps the raw, unwrapped result.
+    - ``system_prompt`` replaces the system prompt. ``PROMPT_VERSION`` describes the default text,
+      so a changed prompt is identified by the defense name and version instead.
+    - ``authorize(call)`` returns None to allow a call, or a reason string to block it. A blocked
+      call is logged as a failed action and the reason is shown to the model.
+
+    A call to a tool that was not offered to the model is always rejected, never executed.
     """
     cfg = cfg or GenConfig()
     specs = tool_specs(tools)
+    offered = {s.name for s in specs}
     messages = [
-        Message(role="system", content=SYSTEM_PROMPT),
+        Message(role="system", content=system_prompt),
         Message(role="user", content=task),
     ]
     tag = ""
@@ -64,7 +74,13 @@ def run_agent(
             final, reason = resp.message.content, "final"
             break
         for call in resp.message.tool_calls:
-            out = sandbox.execute(call)
+            blocked = None if authorize is None else authorize(call)
+            if call.name not in offered:
+                out = sandbox.reject(call, f"Error: tool {call.name!r} is not available")
+            elif blocked is not None:
+                out = sandbox.reject(call, blocked)
+            else:
+                out = sandbox.execute(call)
             messages.append(
                 Message(
                     role="tool",

@@ -1,0 +1,21 @@
+# Defense grid on the primary model. Channels and attacks are chosen where the English no-defense ASR
+# has signal (file and tool_output; inject_override and inject_owner_note), so a defense effect can be
+# seen; inject_cc_request (0/30 at baseline) is left out. `none` is included so every defense has a
+# matched baseline; those runs are served from the response cache after the full grid.
+# Per defense: 30 benign (utility cost) + 2 attacks x 3 languages x (10 file + 10 tool_output) = 150
+# runs; 5 defenses = 750 runs. The detector adds one short model call per tool result.
+models:
+  - {provider: ollama, model: "qwen2.5:7b"}
+defenses:
+  - {name: none}
+  - {name: spotlight}
+  - {name: sandwich}
+  - {name: tool_policy}
+  - {name: detector}
+gen: {temperature: 0.0, seed: 0}
+attack_ids: [inject_override, inject_owner_note]
+languages: [en, ne, ne_rom]
+channels: [file, tool_output]
+include_benign: true
+max_steps: 8
+output_dir: results/defenses

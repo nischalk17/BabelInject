@@ -55,23 +55,38 @@ def run_models(
     models: list[ModelAdapter],
     config_name: str,
     out_path: Path,
+    detectors: list[ModelAdapter | None] | None = None,
 ) -> list[ScenarioOutcome]:
-    """Run every scenario on every model, appending each judged row to ``out_path`` as it ends."""
+    """Run every scenario on every model under every defense, appending each judged row as it ends.
+
+    ``detectors`` is aligned with ``cfg.defenses``; None means "use the agent model as detector".
+    """
+    detector_models = detectors or [None] * len(cfg.defenses)
     outcomes: list[ScenarioOutcome] = []
-    total = len(models) * len(scenarios)
+    total = len(models) * len(cfg.defenses) * len(scenarios)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with out_path.open("w", encoding="utf-8") as f:
         for model in models:
-            for scenario in scenarios:
-                outcome = run_scenario(model, scenario, cfg=cfg.gen, max_steps=cfg.max_steps)
-                outcomes.append(outcome)
-                f.write(json.dumps(make_row(cfg, config_name, outcome), ensure_ascii=False) + "\n")
-                f.flush()
-                j = outcome.judge
-                typer.echo(
-                    f"[{len(outcomes)}/{total}] {outcome.result.model_tag} {scenario.id} "
-                    f"attack_success={j.attack_success} utility={j.utility_success}"
-                )
+            for defense_cfg, detector in zip(cfg.defenses, detector_models, strict=True):
+                for scenario in scenarios:
+                    outcome = run_scenario(
+                        model,
+                        scenario,
+                        cfg=cfg.gen,
+                        max_steps=cfg.max_steps,
+                        defense_cfg=defense_cfg,
+                        detector_model=detector,
+                    )
+                    outcomes.append(outcome)
+                    row = make_row(cfg, config_name, outcome)
+                    f.write(json.dumps(row, ensure_ascii=False) + "\n")
+                    f.flush()
+                    j = outcome.judge
+                    typer.echo(
+                        f"[{len(outcomes)}/{total}] {outcome.result.model_tag} "
+                        f"{outcome.defense} {scenario.id} "
+                        f"attack_success={j.attack_success} utility={j.utility_success}"
+                    )
     return outcomes
 
 
@@ -86,8 +101,12 @@ def run(config: Annotated[Path, typer.Argument(exists=True, dir_okay=False)]) ->
     for channel, count in sorted(skipped_by_channel.items()):
         typer.echo(f"skipped {count} cell(s) for channel {channel!r}: task has no injection point")
     models = [build_model(m, cfg.cache_path) for m in cfg.models]
+    detectors = [
+        build_model(d.detector_model, cfg.cache_path) if d.detector_model else None
+        for d in cfg.defenses
+    ]
     out = cfg.output_dir / f"{config.stem}-{datetime.now():%Y%m%dT%H%M%S}.jsonl"
-    outcomes = run_models(cfg, scenarios, models, config.name, out)
+    outcomes = run_models(cfg, scenarios, models, config.name, out, detectors)
     typer.echo("")
     for cell in summarize(outcomes):
         typer.echo(format_cell(cell))

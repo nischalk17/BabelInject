@@ -82,6 +82,7 @@ def test_shipped_configs_expand_to_scenarios() -> None:
         "calibrate.yaml": (150, 240),
         "calibrate_tool_output.yaml": (30, 60),  # 20 file/doc tasks x 3 attacks have no such point
         "full.yaml": (630, 1200),  # skipped: 240 per language x 5 languages
+        "defenses.yaml": (150, 240),  # per defense; the 5 defenses multiply runs, not scenarios
     }
     for name, (n_scenarios, n_skipped) in expected.items():
         cfg = load_config(REPO / "configs" / name)
@@ -91,3 +92,17 @@ def test_shipped_configs_expand_to_scenarios() -> None:
         assert (len(scenarios), len(skipped)) == (n_scenarios, n_skipped), name
         assert cfg.gen.temperature == 0.0
         assert cfg.models[0].model == "qwen2.5:7b"
+
+
+def test_defense_grid_config_lists_all_five_defenses() -> None:
+    from aie.config import load_config
+
+    cfg = load_config(REPO / "configs" / "defenses.yaml")
+    assert [d.name for d in cfg.defenses] == [
+        "none",
+        "spotlight",
+        "sandwich",
+        "tool_policy",
+        "detector",
+    ]
+    assert cfg.languages == ["en", "ne", "ne_rom"] and cfg.channels == ["file", "tool_output"]

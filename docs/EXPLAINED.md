@@ -187,7 +187,7 @@ subtlety.
 
 ---
 
-## 5. Our defenses (not built yet, planned)
+## 5. Our defenses (built and tested; not yet measured)
 
 Analogy for all four: protecting the helper from sticky notes.
 
@@ -263,9 +263,9 @@ reruns free and results reproducible.
 | `tests/` | Automatic checks that the code behaves |
 | `docs/PROJECT_PLAN.md`, `RESEARCH_LOG.md` | The plan; the dated lab notebook of what we saw |
 
-**Not built yet:** the four defenses, the analysis and figures, and the
-report. The Groq (hosted model) adapter is written and tested with fake network replies, but has not
-yet been tried with a real key.
+**Not built yet:** the analysis and figures, and the
+report. The Groq (hosted model) adapter works with a real key (one live test); the hosted comparison run
+has not been done yet.
 
 ---
 

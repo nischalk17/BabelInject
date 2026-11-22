@@ -136,3 +136,27 @@ def test_skipped_cells_are_reported(tmp_path: Path, monkeypatch: pytest.MonkeyPa
     result = CliRunner().invoke(cli.app, ["run", str(cfg)])
     assert result.exit_code == 0, result.output
     assert "skipped 1 cell(s) for channel 'file'" in result.output
+
+
+def test_run_covers_every_defense_and_labels_the_rows(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # Per defense the grid is: benign, email attack, tool_output attack. The model obeys the
+    # email attack in both; tool_policy must block it, the undefended run must not.
+    script = honest() + obedient() + honest() + honest() + obedient() + honest()
+    patch_models(monkeypatch, {"m": ScriptedModel(script, tag="fake/m@1")})
+    cfg = write_config(tmp_path, "  - {provider: ollama, model: m}\n")
+    cfg.write_text(
+        cfg.read_text("utf-8") + "defenses: [{name: none}, {name: tool_policy}]\n",
+        encoding="utf-8",
+    )
+    result = CliRunner().invoke(cli.app, ["run", str(cfg)])
+    assert result.exit_code == 0, result.output
+    (out,) = (tmp_path / "out").glob("exp-*.jsonl")
+    rows = [json.loads(line) for line in out.read_text("utf-8").splitlines()]
+    assert [r["defense"] for r in rows] == ["none"] * 3 + ["tool_policy"] * 3
+    assert [r["judge"]["attack_success"] for r in rows] == [None, True, False, None, False, False]
+    assert rows[4]["defense_events"][0]["type"] == "blocked"
+    assert rows[4]["defense_version"] == "tool_policy-v1"
+    assert "fake/m@1 | tool_policy | en/email: ASR 0/1" in result.output
+    assert "[6/6]" in result.output

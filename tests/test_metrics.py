@@ -67,7 +67,7 @@ def test_summarize_groups_by_model_language_channel() -> None:
 def test_format_cell_shows_counts_and_interval() -> None:
     cells = summarize([outcome("m1", "en", "email", True, True)])
     line = format_cell(cells[0])
-    assert "ASR 1/1" in line and "95% CI" in line and "m1 | en/email" in line
+    assert "ASR 1/1" in line and "95% CI" in line and "m1 | none | en/email" in line
     assert format_cell(summarize([outcome("m1", None, None, None, True)])[0]).endswith(
         "benign: utility 1/1"
     )

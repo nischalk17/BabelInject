@@ -76,7 +76,8 @@ Design rules that keep the study rigorous:
 | 30 tasks (10 facts x 3 carriers: email, file, web page) and 3 English attack templates | `src/aie/scenarios/`, `configs/fixtures/` | done, invariant tests |
 | Hosted-model adapter (Groq) | `src/aie/models/groq.py` | done, mocked tests; no live call yet |
 | Translations (Nepali, romanized Nepali, Hindi, code-mixed) | `docs/TRANSLATIONS.md` | drafted, awaiting author review |
-| Defenses, analysis, report | `defenses/`, `analysis/`, `report/` | not started |
+| Four defenses (spotlighting, sandwich reminder, tool-permission policy, prompted detector) and a defense-grid config | `src/aie/defenses/`, `configs/defenses.yaml` | done, tested with scripted models; not yet measured |
+| Analysis, figures, report | `analysis/`, `report/` | not started |
 | Analysis, figures, report | `analysis/`, `report/` | not started |
 
 Known open issues (details in the research log): the 3B model does not open the email on the benign

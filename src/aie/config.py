@@ -7,6 +7,7 @@ from pathlib import Path
 import yaml
 from pydantic import BaseModel, ConfigDict, Field
 
+from aie.defenses.base import DefenseConfig
 from aie.models.base import GenConfig, ModelConfig
 from aie.scenarios.schema import Channel, Language
 
@@ -29,6 +30,7 @@ class ExperimentConfig(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     models: list[ModelConfig] = Field(min_length=1)
+    defenses: list[DefenseConfig] = Field(default_factory=lambda: [DefenseConfig()], min_length=1)
     gen: GenConfig = Field(default_factory=GenConfig)
     tasks_file: Path = Path("src/aie/scenarios/tasks.yaml")
     attacks_file: Path = Path("src/aie/scenarios/attacks.yaml")
