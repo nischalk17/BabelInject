@@ -1,5 +1,5 @@
 # Every recipe is a plain `uv run ...` call so it behaves the same under cmd.exe, Git Bash and Linux.
-.PHONY: setup test lint format run-mvp figures
+.PHONY: setup test lint format run-mvp run-all figures
 
 setup:
 	uv sync
@@ -19,6 +19,9 @@ format:
 
 run-mvp:
 	uv run aie run configs/mvp.yaml
+
+run-all:
+	uv run aie run configs/full.yaml
 
 figures:
 	uv run python analysis/make_figures.py

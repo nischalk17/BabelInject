@@ -76,7 +76,13 @@ def test_shipped_configs_expand_to_scenarios() -> None:
 
     # name -> (scenarios, skipped). calibrate: 30 benign + 3 attacks x 10 tasks x 4 channels = 150;
     # skipped = tasks without an injection point for a channel (email 6, file 9, doc 9 per task).
-    expected = {"smoke.yaml": (1, 0), "mvp.yaml": (130, 0), "calibrate.yaml": (150, 240)}
+    expected = {
+        "smoke.yaml": (1, 0),
+        "mvp.yaml": (130, 0),
+        "calibrate.yaml": (150, 240),
+        "calibrate_tool_output.yaml": (30, 60),  # 20 file/doc tasks x 3 attacks have no such point
+        "full.yaml": (630, 1200),  # skipped: 240 per language x 5 languages
+    }
     for name, (n_scenarios, n_skipped) in expected.items():
         cfg = load_config(REPO / "configs" / name)
         scenarios, skipped = build_grid(
