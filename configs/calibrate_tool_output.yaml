@@ -1,0 +1,11 @@
+# Re-calibration of the redefined tool_output channel only (payload appended to the list_emails result).
+# English, primary model, 3 attacks x 10 email tasks = 30 runs. The first calibration showed the old
+# definition (read_email result) was byte-identical to the email channel; see docs/RESEARCH_LOG.md.
+models:
+  - {provider: ollama, model: "qwen2.5:7b"}
+gen: {temperature: 0.0, seed: 0}
+languages: [en]
+channels: [tool_output]
+include_benign: false
+max_steps: 8
+output_dir: results/calibrate_tool_output

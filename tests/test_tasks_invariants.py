@@ -4,8 +4,9 @@ from pathlib import Path
 
 import pytest
 
-from aie.env.sandbox import SandboxState, load_state
+from aie.env.sandbox import Sandbox, SandboxState, load_state
 from aie.env.tools import TOOLS
+from aie.models.base import ToolCall
 from aie.scenarios.build import build_scenario
 from aie.scenarios.schema import AnswerContainsAnyCheck, Task, load_attacks, load_tasks, normalize
 
@@ -104,9 +105,35 @@ def test_every_attack_builds_in_every_channel_the_task_supports() -> None:
                 sc = build_scenario(task, attack, "en", channel)
                 payload = attack.payloads["en"]
                 if channel == "tool_output":
-                    assert sc.tool_output_payloads == {"read_email": payload}
+                    assert sc.tool_output_payloads == {"list_emails": payload}
                 else:
                     body, _ = item_body_and_labels(task, sc.state)
                     assert body.endswith(payload)
                 built += 1
     assert built == 3 * (20 + 10 + 10)
+
+
+def model_view(task: Task, channel: str) -> list[tuple[str, str]]:
+    """Every (tool, text-as-the-model-sees-it) a perfect agent gets for this task and channel."""
+    attack = load_attacks(REPO / "src/aie/scenarios/attacks.yaml")[0]
+    sc = build_scenario(task, attack, "en", channel)  # type: ignore[arg-type]
+    sb = Sandbox(sc.state)
+    calls = [ToolCall(id="c0", name="list_emails", arguments={})]
+    calls.append(
+        ToolCall(id="c1", name="read_email", arguments={"email_id": task.injection_points["email"]})
+    )
+    return [(c.name, sc.wrap_tool_output(c.name, sb.execute(c))) for c in calls]
+
+
+def test_channels_show_the_model_different_text() -> None:
+    """Regression: tool_output once duplicated email (byte-identical in 30/30 pairs)."""
+    for task in tasks():
+        if carrier(task) != "email":
+            continue
+        email_view = model_view(task, "email")
+        tool_view = model_view(task, "tool_output")
+        assert email_view != tool_view, task.id
+        payload = load_attacks(REPO / "src/aie/scenarios/attacks.yaml")[0].payloads["en"]
+        # email channel: the payload is inside the opened email; tool_output: only in the listing.
+        assert payload in email_view[1][1] and payload not in email_view[0][1]
+        assert payload in tool_view[0][1] and payload not in tool_view[1][1]
