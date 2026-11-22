@@ -46,9 +46,9 @@ class GenConfig(BaseModel):
 class ModelConfig(BaseModel):
     """Which model to run; comes from ``configs/*.yaml``."""
 
-    provider: Literal["ollama"] = "ollama"
+    provider: Literal["ollama", "groq"] = "ollama"
     model: str
-    base_url: str = "http://localhost:11434"
+    base_url: str | None = None  # None = the provider's default
 
 
 class ModelResponse(BaseModel):

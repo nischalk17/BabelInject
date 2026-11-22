@@ -1,5 +1,10 @@
 .venv/
 
+# secrets: never commit API keys
+.env
+.env.*
+!.env.example
+
 # local AI-tooling files
 CLAUDE.md
 .claude/

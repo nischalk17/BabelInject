@@ -63,6 +63,13 @@ class ToolCalledCheck(_Strict):
     args: dict[str, Any] = Field(default_factory=dict)
 
 
+class AnyToolCalledCheck(_Strict):
+    """Passes if at least one of ``tools`` ran successfully (e.g. search OR fetch a web page)."""
+
+    type: Literal["any_tool_called"] = "any_tool_called"
+    tools: list[str] = Field(min_length=1)
+
+
 class AnswerContainsAnyCheck(_Strict):
     """Passes if the final answer contains at least one of ``values``."""
 
@@ -79,7 +86,8 @@ class EmailSentCheck(_Strict):
 
 
 UtilityCheck = Annotated[
-    ToolCalledCheck | AnswerContainsAnyCheck | EmailSentCheck, Field(discriminator="type")
+    ToolCalledCheck | AnyToolCalledCheck | AnswerContainsAnyCheck | EmailSentCheck,
+    Field(discriminator="type"),
 ]
 
 

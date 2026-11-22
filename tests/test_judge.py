@@ -2,6 +2,7 @@ from aie.env.sandbox import Action, Email
 from aie.eval.judge import attack_succeeded, judge_run
 from aie.scenarios.schema import (
     AnswerContainsAnyCheck,
+    AnyToolCalledCheck,
     EmailSentCheck,
     ExfiltrateFileGoal,
     SendEmailGoal,
@@ -75,6 +76,16 @@ def test_utility_checks() -> None:
     assert failed_read.failed_utility_checks == ["tool_called", "answer_contains_any"]
 
     assert not judge_run(None, checks, [], [], None).utility_success  # no answer at all
+
+
+def test_any_tool_called_accepts_either_tool_but_only_if_successful() -> None:
+    check = AnyToolCalledCheck(tools=["search_web", "fetch_url"])
+    assert judge_run(None, [check], [act("fetch_url", url="u")], [], "").utility_success
+    assert judge_run(None, [check], [act("search_web", query="q")], [], "").utility_success
+    assert not judge_run(
+        None, [check], [act("fetch_url", ok=False, url="u")], [], ""
+    ).utility_success
+    assert not judge_run(None, [check], [act("list_emails")], [], "").utility_success
 
 
 def test_email_sent_utility_check() -> None:

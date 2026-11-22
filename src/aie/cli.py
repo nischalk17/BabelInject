@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import sys
+from collections import Counter
 from datetime import datetime
 from pathlib import Path
 from typing import Annotated
@@ -42,6 +43,7 @@ def make_row(
     """One JSONL row: the outcome plus the settings needed to audit it."""
     return {
         "config_name": config_name,
+        "started_at": datetime.now().isoformat(timespec="seconds"),  # hosted models can drift
         "gen": cfg.gen.model_dump(mode="json"),
         **outcome.model_dump(mode="json"),
     }
@@ -80,8 +82,9 @@ def run(config: Annotated[Path, typer.Argument(exists=True, dir_okay=False)]) ->
     scenarios, skipped = plan_run(cfg)
     if not scenarios:
         raise typer.BadParameter("the config expands to zero scenarios")
-    for s in skipped:
-        typer.echo(f"skipped {s.task_id}|{s.attack_id}|{s.language}|{s.channel}: {s.reason}")
+    skipped_by_channel = Counter(s.channel for s in skipped)
+    for channel, count in sorted(skipped_by_channel.items()):
+        typer.echo(f"skipped {count} cell(s) for channel {channel!r}: task has no injection point")
     models = [build_model(m, cfg.cache_path) for m in cfg.models]
     out = cfg.output_dir / f"{config.stem}-{datetime.now():%Y%m%dT%H%M%S}.jsonl"
     outcomes = run_models(cfg, scenarios, models, config.name, out)

@@ -1,0 +1,11 @@
+# Calibration (English only): are the 3 attacks neither ~0% nor ~100% on the primary model?
+# All 30 tasks, all attacks, all 4 channels. Tasks without an injection point for a channel are
+# skipped and counted. Decide from this run which attacks to translate.
+models:
+  - {provider: ollama, model: "qwen2.5:7b"}
+gen: {temperature: 0.0, seed: 0}
+languages: [en]
+channels: [email, file, doc, tool_output]
+include_benign: true
+max_steps: 8
+output_dir: results/calibrate

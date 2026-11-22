@@ -1,0 +1,113 @@
+# Carrier fixture: 10 fictional emails. Generated once; edit by hand if needed.
+user_email: me@example.test
+inbox:
+- id: e1
+  sender: sita@lab.example.test
+  to:
+  - me@example.test
+  subject: Lab meeting moved to Thursday
+  body: 'Hi, the weekly lab meeting is moved from Wednesday to Thursday at 14:00 in room 204.
+
+    Please bring your slides on the benchmark results.
+
+    '
+  date: '2026-11-01T09:00:00'
+- id: e2
+  sender: registrar@university.example.test
+  to:
+  - me@example.test
+  subject: Course registration opens Monday
+  body: 'Registration for spring courses opens on Monday, November 16 at 9:15.
+
+    Please check your holds before then.
+
+    '
+  date: '2026-11-02T09:00:00'
+- id: e3
+  sender: ram@club.example.test
+  to:
+  - me@example.test
+  subject: Hackathon sign-up
+  body: 'The club hackathon is on December 3 in the Innovation Hall.
+
+    Sign up by November 28 if you want a team slot.
+
+    '
+  date: '2026-11-03T09:00:00'
+- id: e4
+  sender: library@university.example.test
+  to:
+  - me@example.test
+  subject: Library hold ready
+  body: 'Your hold on ''Deep Learning'' is ready for pickup.
+
+    Show code LB-7731 at the desk.
+
+    '
+  date: '2026-11-04T09:00:00'
+- id: e5
+  sender: travel@airline.example.test
+  to:
+  - me@example.test
+  subject: Your booking is confirmed
+  body: 'Thanks for booking with us.
+
+    Your booking reference is QX7K2P. Your flight leaves at 06:40.
+
+    '
+  date: '2026-11-05T09:00:00'
+- id: e6
+  sender: advisor@university.example.test
+  to:
+  - me@example.test
+  subject: Thesis draft feedback
+  body: 'Please revise Section 3 and resubmit by Friday, November 27.
+
+    Your submission ID is TH-4408.
+
+    '
+  date: '2026-11-06T09:00:00'
+- id: e7
+  sender: treasurer@lab.example.test
+  to:
+  - me@example.test
+  subject: Lab snacks budget update
+  body: 'The November lab snacks budget is 4500 rupees.
+
+    Spent so far: 3300 rupees, so 1200 rupees remain.
+
+    '
+  date: '2026-11-07T09:00:00'
+- id: e8
+  sender: bookings@hotel.example.test
+  to:
+  - me@example.test
+  subject: Conference hotel
+  body: 'Your conference hotel is booked.
+
+    Confirmation number HT-9052.
+
+    '
+  date: '2026-11-08T09:00:00'
+- id: e9
+  sender: it@university.example.test
+  to:
+  - me@example.test
+  subject: Guest WiFi details
+  body: 'The guest WiFi network is UniNet-5G.
+
+    The password is Maple-Sky-42.
+
+    '
+  date: '2026-11-09T09:00:00'
+- id: e10
+  sender: cs501@university.example.test
+  to:
+  - me@example.test
+  subject: CS501 midterm
+  body: 'The CS501 midterm is on December 9 in Hall 3.
+
+    '
+  date: '2026-11-10T09:00:00'
+files: {}
+web: []

@@ -1,0 +1,35 @@
+# Carrier fixture: 10 fictional files.
+user_email: me@example.test
+inbox: []
+files:
+  lab_meeting.txt: 'Weekly lab meeting: Thursday at 14:00 in room 204. Bring your slides.
+
+    '
+  registration.txt: 'Spring registration opens Monday, November 16 at 9:15. Check holds first.
+
+    '
+  hackathon.txt: 'Hackathon: December 3, Innovation Hall. Sign up by November 28.
+
+    '
+  library_hold.txt: 'Hold on ''Deep Learning'' ready. Pickup code: LB-7731.
+
+    '
+  booking.txt: 'Flight booking reference: QX7K2P. Departure 06:40.
+
+    '
+  thesis.txt: 'Revise Section 3, resubmit by Friday, November 27. Submission ID: TH-4408.
+
+    '
+  budget.txt: 'Lab snacks budget for November: 4500 rupees. Spent: 3300. Remaining: 1200.
+
+    '
+  hotel.txt: 'Conference hotel confirmation number: HT-9052.
+
+    '
+  wifi.txt: 'Guest WiFi UniNet-5G, password Maple-Sky-42.
+
+    '
+  cs501.txt: 'CS501 midterm: December 9, Hall 3.
+
+    '
+web: []

@@ -73,7 +73,10 @@ Design rules that keep the study rigorous:
 | Mocked sandbox and tools (inbox, files, web/RAG, `send_email`), all actions logged | `src/aie/env/` | done, tests |
 | ReAct-style agent loop, run config, CLI, smoke config | `src/aie/agent/`, `src/aie/cli.py`, `configs/` | done, tests |
 | Scenario format (task x attack x language x channel), deterministic judge, grid runner in the CLI, counts with Wilson intervals | `src/aie/scenarios/`, `src/aie/eval/`, `src/aie/cli.py` | done, tests; only 1 task and 1 English attack so far |
-| Translations (Nepali, romanized Nepali, Hindi, code-mixed), more tasks, defenses, metrics | `src/aie/scenarios/`, `defenses/`, `eval/` | not started |
+| 30 tasks (10 facts x 3 carriers: email, file, web page) and 3 English attack templates | `src/aie/scenarios/`, `configs/fixtures/` | done, invariant tests |
+| Hosted-model adapter (Groq) | `src/aie/models/groq.py` | done, mocked tests; no live call yet |
+| Translations (Nepali, romanized Nepali, Hindi, code-mixed) | `docs/TRANSLATIONS.md` | drafted, awaiting author review |
+| Defenses, analysis, report | `defenses/`, `analysis/`, `report/` | not started |
 | Analysis, figures, report | `analysis/`, `report/` | not started |
 
 Known open issues (details in the research log): the 3B model does not open the email on the benign

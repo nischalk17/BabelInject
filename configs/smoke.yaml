@@ -1,8 +1,8 @@
-# Smoke test: the benign task only, no attacks, on the primary model.
+# Smoke test: one benign task only, no attacks, on the primary model.
 models:
   - {provider: ollama, model: "qwen2.5:7b"}
 gen: {temperature: 0.0, seed: 0}
-task_ids: [latest_email_meeting_room]
+task_ids: [meeting_room__email]
 attack_ids: []
 include_benign: true
 max_steps: 8

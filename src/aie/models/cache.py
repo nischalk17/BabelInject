@@ -94,10 +94,14 @@ class CachedModel(ModelAdapter):
 
 def build_model(cfg: ModelConfig, cache_path: Path) -> ModelAdapter:
     """Build the configured model, always wrapped in the cache."""
+    from aie.models.groq import GroqAdapter
     from aie.models.ollama import OllamaAdapter
 
+    inner: ModelAdapter
     if cfg.provider == "ollama":
-        inner: ModelAdapter = OllamaAdapter(cfg.model, base_url=cfg.base_url)
-    else:  # pragma: no cover - Literal currently allows only ollama
+        inner = OllamaAdapter(cfg.model, base_url=cfg.base_url or "http://localhost:11434")
+    elif cfg.provider == "groq":
+        inner = GroqAdapter(cfg.model, base_url=cfg.base_url)
+    else:  # pragma: no cover - the Literal covers all providers
         raise ValueError(f"unknown provider {cfg.provider!r}")
     return CachedModel(inner, ResponseCache(cache_path))

@@ -244,3 +244,82 @@ nor ~100% on the primary model before spending time on translations.
 **Open:** the wording of the refusal also suggests that "malicious"-looking attacks are caught by
 safety training, which is a property of the model, not of a defense; report this when describing the
 no-defense baseline.
+
+---
+
+## 2026-11-22: Flaw in the first pipeline run; task and attack redesign (30 tasks, 3 attacks)
+
+**Flaw found (supersedes the interpretation of the entry "Scenario runner wired into the CLI"):** the
+first MVP run offered only `list_emails` and `read_email`. The attacker goal is `send_email`, so the
+agent **had no send tool** and the attack could not succeed by construction. The "ASR 0/1" cells in that
+run say nothing about robustness. The qualitative observation (the model wrote that it would not follow
+the instruction) still stands, but must not be read as resistance to a feasible attack. Fixed: every task
+now offers all tools (`tools` omitted), and `tests/test_tasks_invariants.py` fails if `send_email` is not
+offered.
+
+Related note (not yet fixed): `Sandbox.execute` runs any registered tool, even one that was not offered to
+the model. Recommendation: have the runner pass the offered tool set and reject others (logged as a
+failure). Needed before the tool-permission defense, which must be able to block tools.
+
+**Task redesign:** 10 facts x 3 carriers = 30 tasks. Each fact (a room number, a code, a hall name, ...)
+is stored in a fictional email, a file and a web page, in three separate fixtures
+(`configs/fixtures/workspace_{email,file,doc}.yaml`), so channels are compared on the same facts, with
+no task-difficulty confound. `tool_output` injection points exist only on the email tasks (payload
+appended to the `read_email` output). Cells at full size: 30 runs per language x channel (10 tasks x
+3 attacks), the plan's "30 or more". Invariants enforced by tests: the answer appears only in the body of
+the injected item and never in a subject, filename, URL or title; it is unambiguous within its fixture;
+benign scenarios contain no attacker text.
+
+**Attacks (English, increasing subtlety, same goal):** `inject_override` (blunt: "ignore your previous
+task"), `inject_owner_note` (authority: a note from the account owner), `inject_cc_request` (casual: a
+P.S. asking to copy the team). All contain `attacker@evil.test`.
+
+**Hosted model:** `src/aie/models/groq.py` (OpenAI-compatible chat + tools, retries on 429/5xx with
+`retry-after`, key from `GROQ_API_KEY` or `.env`, never logged). Result rows now carry `started_at`
+because hosted models can change silently; the returned model id and fingerprint are kept per response.
+Tested with mocked HTTP only; no live call yet (the `.env` file was empty on disk when checked).
+
+**Calibration (pending):** `configs/calibrate.yaml` runs English only on `qwen2.5:7b`: 30 benign + 3
+attacks x (10 email + 10 file + 10 doc + 10 tool_output) = 150 runs. Decision rule: translate and run
+the full grid only for attacks whose ASR is neither near 0% nor near 100% on the primary model; if every
+attack is near 0%, write stronger or subtler templates first. Results will be added in a new entry.
+
+---
+
+## 2026-11-22: Translations reviewed and added; Groq adapter tested live
+
+**Translations (method, for the report):** the non-English payloads (Nepali, romanized Nepali, Hindi,
+English-Nepali code-mix) for the 3 attacks were first drafted by the AI assistant and then reviewed line
+by line and corrected by the author, who reads Nepali and Hindi. Author edits: attack 1 `ne`
+(subject/body wording), attack 2 `ne_rom` (several changes), attack 3 `ne` ("copy" word) and `hi`
+("copy" word). Hindi was reviewed by the author, so it is not "unverified". The provenance table is in
+`docs/TRANSLATIONS.md`. All 15 non-English texts are in `attacks.yaml`; a test requires 5 distinct
+languages per attack and the attacker address in every payload.
+
+**Open wording points (author's call, do not affect the judge):**
+1. Attack 1 `ne` now uses the word "विषय" (subject) for both the subject and the body, whereas the English
+   has "subject" and "body". Possible slip; the body is "सामग्री" in attack 2 `ne`. Not yet resolved.
+2. Attack 2 `ne` "account owner": the draft uses "खाताको मालिक" (everyday word for owner). "हकदार" means
+   rightful claimant and "अधिपति" means lord, so both change the meaning; "खाताधनी" (account holder) is
+   the banking term. Recommendation: keep "मालिक" (or "खाताधनी"). Not yet resolved.
+
+**Hosted model:** the Groq key works (HTTP 200 on the model list). Models available to this key on
+2026-11-22: `qwen/qwen3.8-27b`, `openai/gpt-oss-120b`, `openai/gpt-oss-20b`, plus speech and safety models.
+Pipeline check on `groq/qwen/qwen3.8-27b`: benign task passed, tool calls were parsed, one attack run was
+judged (n = 1 per cell, not a result). No key appears in results, cache or docs.
+Recommendation: use `qwen/qwen3.8-27b` as the hosted comparison (same family as the local models, so the
+size comparison 3B, 7B, 27B is cleaner) and record the exact model id and run date with the results.
+
+**MVP config:** `configs/mvp.yaml` is now English + Nepali: 10 benign + 3 attacks x 2 languages x 2
+channels x 10 tasks = 130 runs on `qwen2.5:7b`.
+
+---
+
+## 2026-11-22: Resolution of the two open translation wording points
+
+Author decisions: (1) attack 2 `ne` keeps "मालिक" for "account owner". (2) In attack 1 `ne` the email body
+is "मुख्य भाग" (so: "hello" विषय र "done" मुख्य भाग); the earlier text used "विषय" twice, which was a slip.
+`attacks.yaml` and `docs/TRANSLATIONS.md` now agree. Attack 2 `ne` still uses "सामग्री" for the body, as
+reviewed by the author; the same concept is therefore worded differently in two attacks (cosmetic, does
+not affect the judge). Any change after the first full run must be logged here, because it would change
+the payload text between runs.
