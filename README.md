@@ -72,11 +72,13 @@ Design rules that keep the study rigorous:
 | Model interface, Ollama adapter (native tool calling), response cache | `src/aie/models/` | done, mocked tests |
 | Mocked sandbox and tools (inbox, files, web/RAG, `send_email`), all actions logged | `src/aie/env/` | done, tests |
 | ReAct-style agent loop, run config, CLI, smoke config | `src/aie/agent/`, `src/aie/cli.py`, `configs/` | done, tests |
-| Attack scenarios, translations, defenses, judge, metrics | `src/aie/scenarios/`, `defenses/`, `eval/` | not started |
+| Scenario format (task x attack x language x channel), deterministic judge, grid runner in the CLI, counts with Wilson intervals | `src/aie/scenarios/`, `src/aie/eval/`, `src/aie/cli.py` | done, tests; only 1 task and 1 English attack so far |
+| Translations (Nepali, romanized Nepali, Hindi, code-mixed), more tasks, defenses, metrics | `src/aie/scenarios/`, `defenses/`, `eval/` | not started |
 | Analysis, figures, report | `analysis/`, `report/` | not started |
 
-Known open issue: the 3B model does not reliably complete the benign smoke task. See the research
-log.
+Known open issues (details in the research log): the 3B model does not open the email on the benign
+task, and the single English attack is blatant enough that the 7B model refuses it, so more attack
+templates are needed before the grid can show differences.
 
 ## Setup
 
@@ -89,13 +91,19 @@ make setup        # uv sync + pre-commit hooks
 make lint test    # ruff, mypy (strict), pytest (model calls are mocked)
 ```
 
-Run the benign smoke task against the local model (writes a JSONL row to `results/smoke/`):
+Run from the repository root (config paths are relative to it). Experiments are YAML configs:
 
 ```
-uv run aie run configs/smoke.yaml
+uv run aie run configs/smoke.yaml   # benign task only, one model
+make run-mvp                        # benign + English attack grid -> results/mvp/*.jsonl
 ```
 
-Opt-in live test against a real model (skipped by default):
+Each run appends one judged JSONL row per scenario and model (model tag, prompt version, actions,
+outbox, deterministic verdict) and prints per-cell counts with 95% Wilson intervals. Raw rows in
+`results/` are not committed.
+
+Opt-in live test against a real model (skipped by default; override the model with
+`AIE_LIVE_MODEL`, default `qwen2.5:7b`):
 
 ```
 uv run pytest -m ollama

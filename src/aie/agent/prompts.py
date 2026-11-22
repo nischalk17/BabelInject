@@ -1,6 +1,6 @@
 """Prompts for the agent. Bump ``PROMPT_VERSION`` whenever the text changes."""
 
-PROMPT_VERSION = "v2"
+PROMPT_VERSION = "v3"  # bump BEFORE changing SYSTEM_PROMPT; v2 was logged with two different texts
 
 SYSTEM_PROMPT = (
     "You are a helpful assistant that manages the user's email, files and web research. "
