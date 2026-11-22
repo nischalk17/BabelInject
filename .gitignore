@@ -1,0 +1,20 @@
+.venv/
+
+# local AI-tooling files
+CLAUDE.md
+.claude/
+__pycache__/
+*.pyc
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.cache/
+dist/
+*.egg-info/
+
+# raw results are gitignored; only summary CSVs are committed
+results/*
+!results/.gitkeep
+!results/summary/
+results/summary/*
+!results/summary/*.csv
