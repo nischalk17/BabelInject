@@ -1,0 +1,11 @@
+# MVP grid (Nov 24): benign baseline + English attack in two channels, no defense, primary model.
+# Add languages here (ne, ne_rom, hi, mix) only after the payloads exist in attacks.yaml; a
+# requested language with no payload is an error, never a silent skip.
+models:
+  - {provider: ollama, model: "qwen2.5:7b"}
+gen: {temperature: 0.0, seed: 0}
+languages: [en]
+channels: [email, tool_output]
+include_benign: true
+max_steps: 8
+output_dir: results/mvp

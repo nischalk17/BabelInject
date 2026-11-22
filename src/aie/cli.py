@@ -1,4 +1,4 @@
-"""Command line entry point: ``aie run configs/smoke.yaml``."""
+"""Command line entry point: ``aie run configs/mvp.yaml``."""
 
 from __future__ import annotations
 
@@ -6,15 +6,17 @@ import json
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Annotated, Any
+from typing import Annotated
 
 import typer
 
-from aie.agent.loop import run_agent
-from aie.config import RunConfig, load_config
-from aie.env.sandbox import Sandbox
+from aie.config import ExperimentConfig, load_config
+from aie.eval.metrics import format_cell, summarize
+from aie.eval.runner import ScenarioOutcome, run_scenario
 from aie.models.base import ModelAdapter
 from aie.models.cache import build_model
+from aie.scenarios.grid import SkippedCell, build_grid
+from aie.scenarios.schema import Scenario, load_attacks, load_tasks
 
 app = typer.Typer(help="Prompt-injection evaluation for tool-using LLM agents.")
 
@@ -27,44 +29,63 @@ def _main() -> None:
         reconfigure(encoding="utf-8")
 
 
-def execute(cfg: RunConfig, model: ModelAdapter, config_name: str) -> dict[str, Any]:
-    """Run the configured task once and return one result row (JSON-serializable)."""
-    sandbox = Sandbox.from_yaml(cfg.sandbox)
-    result = run_agent(
-        model,
-        sandbox,
-        cfg.task,
-        tools=cfg.tools,
-        cfg=cfg.gen,
-        max_steps=cfg.max_steps,
-    )
+def plan_run(cfg: ExperimentConfig) -> tuple[list[Scenario], list[SkippedCell]]:
+    """Load the task and attack libraries and expand the config into scenarios."""
+    tasks = load_tasks(cfg.tasks_file)
+    attacks = load_attacks(cfg.attacks_file)
+    return build_grid(cfg, tasks, attacks)
+
+
+def make_row(
+    cfg: ExperimentConfig, config_name: str, outcome: ScenarioOutcome
+) -> dict[str, object]:
+    """One JSONL row: the outcome plus the settings needed to audit it."""
     return {
         "config_name": config_name,
-        "config": cfg.model_dump(mode="json"),
-        "task": cfg.task,
-        **result.model_dump(mode="json"),
-        "outbox": [e.model_dump() for e in sandbox.outbox],
+        "gen": cfg.gen.model_dump(mode="json"),
+        **outcome.model_dump(mode="json"),
     }
 
 
-def write_row(row: dict[str, Any], output_dir: Path, stem: str) -> Path:
-    """Append the row as one JSONL line to a new timestamped file and return its path."""
-    output_dir.mkdir(parents=True, exist_ok=True)
-    path = output_dir / f"{stem}-{datetime.now():%Y%m%dT%H%M%S}.jsonl"
-    with path.open("w", encoding="utf-8") as f:
-        f.write(json.dumps(row, ensure_ascii=False) + "\n")
-    return path
+def run_models(
+    cfg: ExperimentConfig,
+    scenarios: list[Scenario],
+    models: list[ModelAdapter],
+    config_name: str,
+    out_path: Path,
+) -> list[ScenarioOutcome]:
+    """Run every scenario on every model, appending each judged row to ``out_path`` as it ends."""
+    outcomes: list[ScenarioOutcome] = []
+    total = len(models) * len(scenarios)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    with out_path.open("w", encoding="utf-8") as f:
+        for model in models:
+            for scenario in scenarios:
+                outcome = run_scenario(model, scenario, cfg=cfg.gen, max_steps=cfg.max_steps)
+                outcomes.append(outcome)
+                f.write(json.dumps(make_row(cfg, config_name, outcome), ensure_ascii=False) + "\n")
+                f.flush()
+                j = outcome.judge
+                typer.echo(
+                    f"[{len(outcomes)}/{total}] {outcome.result.model_tag} {scenario.id} "
+                    f"attack_success={j.attack_success} utility={j.utility_success}"
+                )
+    return outcomes
 
 
 @app.command()
 def run(config: Annotated[Path, typer.Argument(exists=True, dir_okay=False)]) -> None:
-    """Run the experiment described by CONFIG and write a JSONL result row."""
+    """Run the experiment described by CONFIG and write judged JSONL rows to results/."""
     cfg = load_config(config)
-    model = build_model(cfg.model, cfg.cache_path)
-    row = execute(cfg, model, config.name)
-    path = write_row(row, cfg.output_dir, config.stem)
-    typer.echo(f"model: {row['model_tag']}  stop: {row['stop_reason']}  steps: {row['steps']}")
-    for a in row["actions"]:
-        typer.echo(f"  [{a['step']}] {a['tool']}({a['args']}) ok={a['ok']}")
-    typer.echo(f"answer: {row['final_answer']}")
-    typer.echo(f"wrote {path}")
+    scenarios, skipped = plan_run(cfg)
+    if not scenarios:
+        raise typer.BadParameter("the config expands to zero scenarios")
+    for s in skipped:
+        typer.echo(f"skipped {s.task_id}|{s.attack_id}|{s.language}|{s.channel}: {s.reason}")
+    models = [build_model(m, cfg.cache_path) for m in cfg.models]
+    out = cfg.output_dir / f"{config.stem}-{datetime.now():%Y%m%dT%H%M%S}.jsonl"
+    outcomes = run_models(cfg, scenarios, models, config.name, out)
+    typer.echo("")
+    for cell in summarize(outcomes):
+        typer.echo(format_cell(cell))
+    typer.echo(f"wrote {out}")

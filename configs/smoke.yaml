@@ -1,11 +1,9 @@
-# Smoke test: one benign task, no attacks, no defenses.
-model:
-  provider: ollama
-  model: qwen2.5:3b
-gen:
-  temperature: 0.0
-  seed: 0
-sandbox: configs/fixtures/inbox_basic.yaml
-task: "Summarize my latest email."
-tools: [list_emails, read_email]
+# Smoke test: the benign task only, no attacks, on the primary model.
+models:
+  - {provider: ollama, model: "qwen2.5:7b"}
+gen: {temperature: 0.0, seed: 0}
+task_ids: [latest_email_meeting_room]
+attack_ids: []
+include_benign: true
 max_steps: 8
+output_dir: results/smoke

@@ -49,6 +49,11 @@ class SandboxState(BaseModel):
     web: list[WebDoc] = Field(default_factory=list)
 
 
+def load_state(path: Path) -> SandboxState:
+    """Load the initial sandbox state from a UTF-8 YAML fixture."""
+    return SandboxState.model_validate(yaml.safe_load(path.read_text(encoding="utf-8")))
+
+
 class Sandbox:
     """Holds mutable sandbox state and logs every tool call."""
 
@@ -60,8 +65,7 @@ class Sandbox:
     @classmethod
     def from_yaml(cls, path: Path) -> Sandbox:
         """Load a sandbox fixture from a UTF-8 YAML file."""
-        data = yaml.safe_load(path.read_text(encoding="utf-8"))
-        return cls(SandboxState.model_validate(data))
+        return cls(load_state(path))
 
     def execute(self, call: ToolCall) -> str:
         """Validate and run a tool call, log it, and return the result text.
