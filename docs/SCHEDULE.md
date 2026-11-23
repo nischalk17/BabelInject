@@ -20,7 +20,7 @@ Legend: **Claude** = code, analysis, drafts. **You** = review, decisions, git co
 | Day | Claude | You | Compute |
 |---|---|---|---|
 | **Nov 23 (Mon)** | Done: full 7B grid, tables, capability control, 7B defense grid, hosted pilot (quota stop), 3B config | Commit and push; start `make run-3b` before sleeping; skim AgentDojo and InjecAgent; tag `v0.1-mvp` | 3B grid overnight (about 2 h) |
-| **Nov 24 (Tue)** | Read and log the 3B grid; `make figures`; draft the 4-page report (method, results, limitations) from `results/` | Send professor emails with the repo link (README already has results); review the report draft | Optional: resume the hosted run when the daily token window reopens (about 87 runs per day) |
+| **Nov 24 (Tue)** | Run `make run-quiet` (7B, about 1 h, after the 3B grid) and, after about 09:30, `make run-hosted-quiet` (about one day of free quota); read and log the 3B grid; `make figures`; draft the 4-page report (method, results, limitations) from `results/` | Send professor emails with the repo link (README already has results); review the report draft | Optional: resume the hosted run when the daily token window reopens (about 87 runs per day; the quota refills continuously, about 8,300 tokens an hour) |
 | **Nov 25 (Wed)** | Final tables and figures; finish the report; clean-clone reproduction of one table; doc audit | Edit the report in your own words (method, translations, limitations) | none, or reruns of failures |
 | **Nov 26 (Thu), end** | Final numbers check against `results/` | Final read; commit; tag `v1.0` | none |
 

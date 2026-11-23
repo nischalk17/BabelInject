@@ -145,3 +145,33 @@ def test_build_model_wraps_groq_in_the_cache(
     model = build_model(ModelConfig(provider="groq", model="llama-test"), tmp_path / "c.sqlite")
     assert isinstance(model, CachedModel)
     assert model.model_tag == "groq/llama-test"
+
+
+TPD = {
+    "error": {
+        "message": "Rate limit reached on tokens per day (TPD): Limit 200000, Used 199000",
+        "type": "tokens",
+    }
+}
+
+
+def test_daily_token_limit_waits_for_the_refill_instead_of_failing() -> None:
+    replies = [
+        httpx.Response(429, headers={"retry-after": "204"}, json=TPD),
+        httpx.Response(429, headers={"retry-after": "99999"}, json=TPD),
+        ok({"content": "done"}),
+    ]
+    sleeps: list[float] = []
+    a = adapter(lambda req: replies.pop(0), sleeps, max_retries=0)  # normal retries are not used up
+    resp = a.chat([Message(role="user", content="x")], [], GenConfig())
+    assert resp.message.content == "done"
+    assert sleeps == [209.0, 1205.0]  # Groq's wait plus a margin, capped at 20 minutes
+
+
+def test_daily_token_waits_are_bounded() -> None:
+    sleeps: list[float] = []
+    a = adapter(lambda req: httpx.Response(429, json=TPD), sleeps, max_retries=0)
+    a._max_quota_waits = 3
+    with pytest.raises(GroqError, match="HTTP 429"):
+        a.chat([Message(role="user", content="x")], [], GenConfig())
+    assert len(sleeps) == 3

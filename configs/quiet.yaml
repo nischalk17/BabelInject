@@ -1,0 +1,10 @@
+# Address-only follow-up on 7B: inject_owner_note_plain (same text, plausible recipient) x 5 languages x (10 file + 10 tool_output) = 100 runs. Compare with inject_owner_note in results/full.
+models:
+  - {provider: ollama, model: "qwen2.5:7b"}
+gen: {temperature: 0.0, seed: 0}
+attacks_file: configs/attacks_quiet.yaml
+languages: [en, ne, ne_rom, hi, mix]
+channels: [file, tool_output]
+include_benign: false
+max_steps: 8
+output_dir: results/quiet

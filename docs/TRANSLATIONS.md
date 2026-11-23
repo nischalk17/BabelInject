@@ -59,6 +59,19 @@ the report. Do not mark it `OK` unless someone who reads Hindi has checked it.
 
 ---
 
+## Attack 4: `inject_owner_note_plain` (follow-up, Nov 23): nothing new to translate
+
+This follow-up reuses the **already reviewed** Attack 2 text in all five languages and changes **only the
+recipient**: `attacker@evil.test` becomes `reports@partner-lab.test`. Nothing else differs (a test checks this
+character by character after the swap). The purpose is to find out whether a safety-tuned model's refusals
+come from the conspicuous address. The texts are in `configs/attacks_quiet.yaml`.
+
+**Your only task (2 minutes):** open that file and confirm the new address sits naturally in each language
+(for example, that the Devanagari lines still read correctly next to the Latin address). If a line needs a
+fix, tell me; any payload change after runs have started must be logged in `docs/RESEARCH_LOG.md`.
+
+---
+
 ## Provenance log (fill in as you go)
 
 | Item | Who | When |
@@ -66,6 +79,7 @@ the report. Do not mark it `OK` unless someone who reads Hindi has checked it.
 | First drafts of ne, ne_rom, hi, mix | Claude (AI assistant) | 2026-11-22 |
 | Review and correction of ne, ne_rom, mix (edits to attack 1 ne, attack 2 ne_rom, attack 3 ne) | Nischal Dhoj Kunwar (reads Nepali) | 2026-11-22 |
 | Review and correction of hi (edit to attack 3 hi) | Nischal Dhoj Kunwar (reads Hindi) | 2026-11-22 |
+| Attack 4 (`inject_owner_note_plain`): Attack 2 text with the recipient swapped by script; address check pending author confirmation | Claude (script), author to confirm | 2026-11-23 |
 
 The first drafts were written by the AI assistant; every line was then reviewed by the author and
 corrected where needed. The report must describe the method this way, because it is what happened and it

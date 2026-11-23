@@ -710,3 +710,44 @@ field except the model. Purpose: the model-size comparison (3B vs 7B; the 27B ho
 pilot). **Caveat:** the calibration showed the 3B model sometimes does not open the email on the benign
 task, so any lower 3B attack success may be a failure to reach the injected text; read it with the
 item-opened table (table4). The 3B grid is no-defense only; no defenses are planned on it.
+
+
+## 2026-11-23: Design, address-only follow-up attack (`inject_owner_note_plain`)
+
+**Question:** is the hosted 27B model's refusal (0/76 injected, 1/15 direct requests) caused by the obviously
+malicious recipient `attacker@evil.test`? **Design:** one variable. `inject_owner_note_plain` has the same
+text as `inject_owner_note` in all 5 languages (the author-reviewed translations are reused unchanged);
+only the recipient becomes `reports@partner-lab.test`. A test checks the texts are identical after the
+swap. It lives in `configs/attacks_quiet.yaml` (not `attacks.yaml`) so configs using all attacks stay at
+630 runs, and its results go to their own folders and `results/summary_quiet/` (`make tables-quiet`), so
+they cannot be pooled into the main tables. Runs: control (5, the text as the user's own request) and grid
+(100: 5 languages x (10 file + 10 tool_output)) on 7B (`make run-quiet`) and on hosted 27B
+(`make run-hosted-quiet`, about one day of free quota; this takes priority over finishing the old hosted grid).
+**Predictions, written before the runs:** on 7B the attack should behave like `inject_owner_note` (file
+9/10 and tool_output 10/10 in English; about 0 elsewhere), because the 7B model did not refuse on the
+address. On the 27B, if the address was the cause, direct requests and English injections should now succeed
+at a clearly higher rate than 0%; if it stays at 0% the cause is deeper (refusing to email outsiders on the
+user's behalf at all, or the "from the account owner" framing). **Caveat:** this changes the address only, not
+the wording; it cannot say anything about attack wording.
+
+
+## 2026-11-23: Correction, Groq daily token quota refills continuously
+
+The earlier entries described a "rolling" 200,000 tokens-per-day window. More precisely, the error text implies
+a continuous refill: a request of 3,020 tokens with 197,760 used needed 5m37s, i.e. about 780 tokens freed in
+337 s (about 2.3 tokens per second, about 8,300 per hour). So after a quota stop the key regains only about 4
+runs per hour, and a near-full bucket is only available about a day later. The adapter waits at most 60 s per
+retry and stops with an error, so a run started with an empty bucket fails quickly; re-run it later (it resumes
+from the cache). Plan: run `make run-hosted-quiet` after about 10:00 on 2026-11-24, and re-run it a few hours
+later to finish.
+
+
+## 2026-11-23: Change, Groq adapter now waits out the daily token quota
+
+`src/aie/models/groq.py`: on a 429 whose message says "tokens per day", the adapter waits the `retry-after`
+that Groq gives (plus 5 s, capped at 20 minutes per wait, at most 100 waits) and retries, without using up the
+normal retries. Other 429s and 5xx keep the old bounded retry. Reason: the free quota refills continuously
+(about 8,300 tokens an hour), so a run left going now uses the refill as it arrives (about 100 runs a day)
+instead of stopping with an error. This does not change any request body or result, only waiting, so existing
+cached rows stay valid. Caveat: the terminal can look frozen for up to 20 minutes between runs. Tests
+(`tests/test_groq.py`) cover the wait, the cap and the bound.

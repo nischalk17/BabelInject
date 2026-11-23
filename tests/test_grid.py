@@ -138,3 +138,24 @@ def test_3b_config_matches_the_7b_grid_except_the_model() -> None:
         assert getattr(small, field) == getattr(big, field), field
     scenarios, _ = build_grid(small, load_tasks(small.tasks_file), load_attacks(small.attacks_file))
     assert len(scenarios) == 630
+
+
+def test_quiet_attack_is_owner_note_with_only_the_address_changed() -> None:
+    from aie.config import load_config
+    from aie.scenarios.schema import normalize
+
+    base = {a.id: a for a in load_attacks(REPO / "src/aie/scenarios/attacks.yaml")}
+    quiet = load_attacks(REPO / "configs" / "attacks_quiet.yaml")
+    assert [a.id for a in quiet] == ["inject_owner_note_plain"]
+    old, new = base["inject_owner_note"].goal.to, quiet[0].goal.to
+    assert old != new and set(quiet[0].payloads) == set(base["inject_owner_note"].payloads)
+    for lang, text in quiet[0].payloads.items():
+        assert normalize(text) == normalize(
+            base["inject_owner_note"].payloads[lang].replace(old, new)
+        )
+    expected = {"quiet": 100, "quiet_control": 5, "hosted_quiet": 100, "hosted_quiet_control": 5}
+    for name, n in expected.items():
+        cfg = load_config(REPO / "configs" / f"{name}.yaml")
+        scen, _ = build_grid(cfg, load_tasks(cfg.tasks_file), load_attacks(cfg.attacks_file))
+        assert len(scen) == n, name
+        assert all(s.attack is not None and s.attack.id == "inject_owner_note_plain" for s in scen)

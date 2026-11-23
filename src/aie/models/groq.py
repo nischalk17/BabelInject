@@ -27,6 +27,10 @@ from aie.secrets import get_secret
 
 DEFAULT_BASE_URL = "https://api.groq.com/openai/v1"
 RETRYABLE = {429, 500, 502, 503, 504}
+# The free tier refills a daily token quota continuously, so after a stop each call waits for its
+# own tokens. For that case (and only that) we wait as long as Groq says, up to this cap per wait.
+QUOTA_WAIT_CAP_S = 1200.0
+QUOTA_WAIT_MARGIN_S = 5.0
 
 
 class GroqError(RuntimeError):
@@ -43,6 +47,7 @@ class GroqAdapter(ModelAdapter):
         api_key: str | None = None,
         client: httpx.Client | None = None,
         max_retries: int = 5,
+        max_quota_waits: int = 100,
         sleep: Callable[[float], None] = time.sleep,
     ) -> None:
         key = api_key or get_secret("GROQ_API_KEY")
@@ -52,6 +57,7 @@ class GroqAdapter(ModelAdapter):
         self._key = key
         self._client = client or httpx.Client(base_url=base_url or DEFAULT_BASE_URL, timeout=120.0)
         self._max_retries = max_retries
+        self._max_quota_waits = max_quota_waits
         self._sleep = sleep
 
     def __repr__(self) -> str:
@@ -79,16 +85,28 @@ class GroqAdapter(ModelAdapter):
         if tools:
             body["tools"] = [{"type": "function", "function": t.model_dump()} for t in tools]
         headers = {"Authorization": f"Bearer {self._key}"}
-        for attempt in range(self._max_retries + 1):
+        quota_waits = 0
+        attempt = 0
+        while attempt <= self._max_retries:
             try:
                 resp = self._client.post("/chat/completions", json=body, headers=headers)
             except httpx.TransportError as exc:
                 if attempt == self._max_retries:
                     raise GroqError(f"Groq request failed: {type(exc).__name__}") from exc
                 self._sleep(_backoff(attempt, None))
+                attempt += 1
+                continue
+            if (
+                resp.status_code == 429
+                and _is_daily_token_limit(resp)
+                and quota_waits < self._max_quota_waits
+            ):
+                quota_waits += 1  # does not use up the normal retries
+                self._sleep(_quota_wait(resp.headers.get("retry-after")))
                 continue
             if resp.status_code in RETRYABLE and attempt < self._max_retries:
                 self._sleep(_backoff(attempt, resp.headers.get("retry-after")))
+                attempt += 1
                 continue
             if resp.status_code != 200:
                 raise GroqError(f"Groq returned HTTP {resp.status_code}: {_error_text(resp)}")
@@ -112,6 +130,18 @@ def _backoff(attempt: int, retry_after: str | None) -> float:
         except ValueError:
             pass
     return float(min(2**attempt, 30))
+
+
+def _is_daily_token_limit(resp: httpx.Response) -> bool:
+    return "tokens per day" in _error_text(resp).lower()
+
+
+def _quota_wait(retry_after: str | None) -> float:
+    try:
+        wait = float(retry_after) if retry_after else QUOTA_WAIT_CAP_S
+    except ValueError:
+        wait = QUOTA_WAIT_CAP_S
+    return min(wait, QUOTA_WAIT_CAP_S) + QUOTA_WAIT_MARGIN_S
 
 
 def _error_text(resp: httpx.Response) -> str:

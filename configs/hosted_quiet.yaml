@@ -1,0 +1,10 @@
+# Hosted 27B, same 100 runs as quiet.yaml (about 200,000 tokens = one day of the free quota).
+models:
+  - {provider: groq, model: "qwen/qwen3.8-27b"}
+gen: {temperature: 0.0, seed: 0}
+attacks_file: configs/attacks_quiet.yaml
+languages: [en, ne, ne_rom, hi, mix]
+channels: [file, tool_output]
+include_benign: false
+max_steps: 8
+output_dir: results/hosted_quiet
