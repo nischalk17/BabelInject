@@ -284,7 +284,7 @@ reruns free and results reproducible.
 | `tests/` | Automatic checks that the code behaves |
 | `docs/PROJECT_PLAN.md`, `RESEARCH_LOG.md` | The plan; the dated lab notebook of what we saw |
 
-**Not built yet:** the report. **Done:** the full no-defense grid on the 7B and 3B models, the capability control,
+**Not built yet:** the report text (an outline is in `report/OUTLINE.md`). **Done:** the full no-defense grid on the 7B and 3B models, the capability control,
 the defense grid (English and code-mixed only, because the other languages have a ~0% baseline) and a partial
 hosted-model pilot. **Still to run:** the address-only follow-up attack (`make run-quiet`, `make run-hosted-quiet`).
 
