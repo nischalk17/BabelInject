@@ -284,9 +284,9 @@ reruns free and results reproducible.
 | `tests/` | Automatic checks that the code behaves |
 | `docs/PROJECT_PLAN.md`, `RESEARCH_LOG.md` | The plan; the dated lab notebook of what we saw |
 
-**Not built yet:** the report. Built but not yet run for real: the defense grid, the 3B grid and the
-hosted-model grid. The full no-defense grid and the defense grid (English and code-mixed only, because the other
-languages have a ~0% baseline) are done. Not run yet: the 3B and hosted grids.
+**Not built yet:** the report. **Done:** the full no-defense grid on the 7B and 3B models, the capability control,
+the defense grid (English and code-mixed only, because the other languages have a ~0% baseline) and a partial
+hosted-model pilot. **Still to run:** the address-only follow-up attack (`make run-quiet`, `make run-hosted-quiet`).
 
 ---
 
@@ -354,6 +354,10 @@ Each line says how many times it was seen. None of this goes in the README as a 
    the user than when they are hidden in data. Why (training mostly on English injections? weaker
    instruction-following on foreign text inside tool results?) is untested. Still do not say "Nepali
    attacks are safer" without the larger model and more tasks.
+13. **Model size (3B vs 7B, n=120 per language each):** the bigger model is not simply safer or less safe.
+   English attacks worked more on the 7B (29% vs 21%), but Hindi attacks worked on the 3B (8%) and not at all
+   on the 7B (0%). The 3B is also much worse at the benign task (20/30 vs 29/30) and often never opens
+   the item, so it is exposed to the injection less. Cause of the Hindi difference is unknown.
 12. **Hosted 27B model, pilot (partial, 76 attacked runs):** 0 successes. The control showed the model also
    refuses the same request when the user asks directly (while replying in the user's language), so this
    is refusal of an obviously malicious address, not a language effect. Romanized Nepali was the one

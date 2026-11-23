@@ -12,15 +12,15 @@ Legend: **Claude** = code, analysis, drafts. **You** = review, decisions, git co
   4 channels. Two design flaws found and fixed (no send tool; duplicated tool-output channel).
 - English calibration on 7B (see `RESEARCH_LOG.md`).
 - Groq hosted adapter, tested live. Four defenses with tests. Analysis tables and figures with tests.
-- **Done Nov 23:** 7B defense grid (750 runs, English + code-mixed), logged. Full no-defense grid on 7B (630 runs); tables and heatmap built and logged. Non-English
+- **Done Nov 23:** 3B no-defense grid (630 runs) read and logged. 7B defense grid (750 runs, English + code-mixed), logged. Full no-defense grid on 7B (630 runs); tables and heatmap built and logged. Non-English
   attacks are about 0% on 7B; the capability control (done) shows it is not a comprehension limit.
 
 ## Revised plan (updated Nov 23, evening)
 
 | Day | Claude | You | Compute |
 |---|---|---|---|
-| **Nov 23 (Mon)** | Done: full 7B grid, tables, capability control, 7B defense grid, hosted pilot (quota stop), 3B config | Commit and push; start `make run-3b` before sleeping; skim AgentDojo and InjecAgent; tag `v0.1-mvp` | 3B grid overnight (about 2 h) |
-| **Nov 24 (Tue)** | Run `make run-quiet` (7B, about 1 h, after the 3B grid) and, after about 09:30, `make run-hosted-quiet` (about one day of free quota); read and log the 3B grid; `make figures`; draft the 4-page report (method, results, limitations) from `results/` | Send professor emails with the repo link (README already has results); review the report draft | Optional: resume the hosted run when the daily token window reopens (about 87 runs per day; the quota refills continuously, about 8,300 tokens an hour) |
+| **Nov 23 (Mon)** | Done: full 7B grid, tables, capability control, 7B defense grid, hosted pilot (quota stop), 3B grid (done) | Commit and push; skim AgentDojo and InjecAgent; tag `v0.1-mvp` | none |
+| **Nov 24 (Tue)** | Run `make run-quiet` (7B, about 1 h, after the 3B grid) and, after about 09:30, `make run-hosted-quiet` (about one day of free quota); draft the 4-page report (method, results, limitations) from `results/` | Send professor emails with the repo link (README already has results); review the report draft | Optional: resume the hosted run when the daily token window reopens (about 87 runs per day; the quota refills continuously, about 8,300 tokens an hour) |
 | **Nov 25 (Wed)** | Final tables and figures; finish the report; clean-clone reproduction of one table; doc audit | Edit the report in your own words (method, translations, limitations) | none, or reruns of failures |
 | **Nov 26 (Thu), end** | Final numbers check against `results/` | Final read; commit; tag `v1.0` | none |
 

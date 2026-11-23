@@ -8,8 +8,8 @@ different languages and hidden in different places. Everything runs in a mocked 
 email, web or file system is ever touched.
 
 > **Status (Nov 23, 2026): the benchmark, defenses and analysis code are built and tested; the full
-> no-defense grid and the 7B defense grid are done (results below); the hosted and 3B models are not
-> yet run.** Numbers appear in this README only when they come from `results/` through
+> no-defense grid and the 7B defense grid are done (results below); the 3B grid is done; the hosted
+> 27B model is a partial pilot.** Numbers appear in this README only when they come from `results/` through
 > `analysis/`. Calibration runs and interim observations,
 > with exact settings and caveats, are in [docs/RESEARCH_LOG.md](docs/RESEARCH_LOG.md); the plan is in
 > [docs/SCHEDULE.md](docs/SCHEDULE.md) and a plain-language guide is in
@@ -57,6 +57,21 @@ attacked run but also withholds the tool result, so the task itself fails under 
 false-alarms on 4 of 30 benign runs. Spotlighting's code-mixed effect is not distinguishable from zero.
 Nepali and Hindi were not defended on this model because their baseline is about 0%. One model, small n;
 see the research log for caveats.
+
+## Model-size comparison (no defense, n=120 per language and model)
+
+| Language | qwen2.5:3b | qwen2.5:7b |
+|---|---|---|
+| English | 25/120 (20.8%) | 35/120 (29.2%) |
+| Hindi | 10/120 (8.3%) | 0/120 |
+| Code-mixed | 6/120 (5.0%) | 12/120 (10.0%) |
+| Nepali | 2/120 (1.7%) | 1/120 (0.8%) |
+| Romanized Nepali | 1/120 (0.8%) | 0/120 |
+
+Attack success is not monotone in model size: the 7B is more exposed in English and code-mixed, the 3B in
+Hindi. The 3B also reads the relevant item less often (benign task success 20/30 vs 29/30), so many of its
+runs never reach the injected text. Source: `results/summary/table1_asr_language_channel.csv`. One run per
+scenario; see the research log for caveats.
 
 ## Hosted model pilot (Qwen 27B on Groq, partial)
 
