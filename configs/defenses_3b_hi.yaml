@@ -1,0 +1,23 @@
+# Defenses on the 3B model in Hindi and English (the only place a non-English language has a non-zero
+# no-defense baseline: 3B Hindi 8/40 with inject_override, English 20/40; the 7B is about 0% in Hindi).
+# inject_override only (all 8 of the 3B's Hindi override successes; owner_note was 0/40 in Hindi), all four
+# channels (successes were spread over email, doc, file, tool_output). `none` is included as the matched
+# baseline and is served from the response cache after the full_3b grid. No benign runs (3B benign utility
+# is already measured: 20/30; attacked-run utility is reported per defense).
+# 5 defenses x 2 languages x 4 channels x 10 tasks = 400 runs (80 of them cached); the detector adds a call
+# per tool result.
+models:
+  - {provider: ollama, model: "qwen2.5:3b"}
+defenses:
+  - {name: none}
+  - {name: spotlight}
+  - {name: sandwich}
+  - {name: tool_policy}
+  - {name: detector}
+gen: {temperature: 0.0, seed: 0}
+attack_ids: [inject_override]
+languages: [en, hi]
+channels: [email, file, doc, tool_output]
+include_benign: false
+max_steps: 8
+output_dir: results/defenses_3b_hi

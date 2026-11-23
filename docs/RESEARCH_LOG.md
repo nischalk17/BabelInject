@@ -913,3 +913,19 @@ that the 7B recognises injected instructions in Nepali, romanized Nepali, Hindi 
 n = 6 per language (0/6 has a 95% upper bound of 39%); short, non-imperative sentences are easier to classify
 as NO than real emails; one fact accounts for both flags; recognition by a YES/NO question is still not the same
 as understanding while acting.
+
+
+## 2026-11-23: Design, defenses on the 3B model in Hindi and English
+
+**Question:** do the defenses reduce attack success outside English, where an attack works? On the 7B, Hindi is
+about 0% so there is nothing to reduce; the 3B has Hindi 8/40 with `inject_override` (this day's breakdown entry).
+**Design:** `configs/defenses_3b_hi.yaml`: `qwen2.5:3b`, `inject_override` only, languages en and hi, all four
+channels, 5 defenses (none, spotlight, sandwich, tool_policy, detector), 10 tasks: 400 runs (80 `none` runs are
+cached). No benign runs. `make run-defenses-3b-hi`, then `make tables-defenses-3b-hi` (writes
+`results/summary_defenses_3b_hi/`, kept out of the main tables). **Predictions, written before the run
+(uncertain):** tool_policy 0/40 in both languages (by construction); detector near 0 in both languages (it
+recognised Hindi injections on the 7B; the 3B detector is untested); spotlight and sandwich lower than none in
+English, and in Hindi lower or equal but with an interval too wide to rank. **Caveats:** n = 40 per cell, so the
+Hindi baseline of 8/40 leaves little room to see a reduction (a drop to 2/40 has a Newcombe interval that likely
+spans zero); one attack; the sandwich reminder is English; the 3B detector may be a weaker classifier than the 7B;
+tool_policy is 0% by construction.
