@@ -149,7 +149,7 @@ Design rules that keep the study rigorous:
 | Translations (Nepali, romanized Nepali, Hindi, code-mixed): AI-drafted, reviewed and corrected line by line by the author | `docs/TRANSLATIONS.md`, `attacks.yaml` | done |
 | Four defenses (spotlighting, sandwich reminder, tool-permission policy, prompted detector) and a defense-grid config | `src/aie/defenses/`, `configs/defenses.yaml` | done, tested with scripted models; 7B grid (English + code-mixed) measured |
 | Analysis: tables with 95% intervals (CSV), heatmap, defense-effect and trade-off figures | `src/aie/analysis/`, `analysis/` | done, tested; run on the 7B full grid |
-| Report | `report/OUTLINE.md` | outline written; prose not started |
+| Report | `report/OUTLINE.md`, `method.md`, `results.md` | outline written; method and results drafted (owner review; 4.5 and 27B parts pending); discussion, intro not started |
 
 Known open issues (details in the research log): the 3B model does not open the email on the benign
 task; one attack (`inject_cc_request`) is at the floor and is kept as a control; and an early partial
