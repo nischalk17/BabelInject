@@ -169,3 +169,13 @@ def test_detector_languages_config_is_a_200_run_recognition_probe() -> None:
     assert cfg.languages == ["en", "ne", "ne_rom", "hi", "mix"] and not cfg.include_benign
     scenarios, _ = build_grid(cfg, load_tasks(cfg.tasks_file), load_attacks(cfg.attacks_file))
     assert len(scenarios) == 200
+
+
+def test_detector_benign_control_is_30_harmless_runs() -> None:
+    from aie.config import load_config
+
+    cfg = load_config(REPO / "configs" / "detector_benign_control.yaml")
+    tasks = load_tasks(cfg.tasks_file)
+    scenarios, _ = build_grid(cfg, tasks, load_attacks(cfg.attacks_file))
+    assert len(scenarios) == 30 and all(s.attack is None for s in scenarios)
+    assert [d.name for d in cfg.defenses] == ["detector"]

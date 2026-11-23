@@ -175,6 +175,7 @@ make run-mvp                        # MVP grid (English + Nepali) -> results/mvp
 make run-all                        # full no-defense grid (630 runs)
 make run-3b                         # full no-defense grid on qwen2.5:3b (630 runs, about 2 h)
 make run-detector-langs              # detector on all 5 languages, 7B recognition probe (200 runs)
+make run-detector-benign            # non-English benign control for the detector (30 runs)
 make run-quiet                      # address-only follow-up attack on 7B (105 runs)
 make run-hosted-quiet               # same on hosted 27B (about one day of free quota)
 make run-hosted                     # hosted Qwen 27B (Groq key in .env): control + 230 runs, one day of free-tier quota

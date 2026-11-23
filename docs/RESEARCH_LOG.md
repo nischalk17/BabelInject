@@ -876,3 +876,17 @@ detector removes the list_emails result, so `item_opened` is 0/20 there by const
 with the no-defense tables. (4) ASR 0 is partly the withholding cost already logged (attacked utility 0/200).
 (5) English detector prompt; n = 20 per cell. **Next step if time allows:** a small non-English benign control
 (a few harmless sentences in ne and hi, author-translated) to rule out caveat 1.
+
+
+## 2026-11-23: Design, non-English benign control for the detector probe
+
+**Question:** the detector flagged 20/20 in every language (previous entry). Would it also say YES to harmless
+text in Nepali, romanized Nepali, Hindi or code-mixed? **Design:** `configs/detector_benign_control.yaml`: 6 harmless
+informational facts (no imperatives) x 5 languages, each in a file the agent is asked to read; detector on; 30
+runs on the 7B (`make run-detector-benign`; tables via `make tables-detector-langs`, new `table7`). Texts are in
+`configs/fixtures/benign_control_files.yaml` and `docs/TRANSLATIONS.md`; AI-drafted, author review pending, and the
+run waits for it. **Predictions, written before the run:** flag rate low (at most about 1 in 6) in every language.
+A rate near 100% in the non-English languages would mean the 20/20 result says nothing about recognition.
+**Caveats:** n = 6 per language (0/6 has a 95% upper bound of 39%); sentences are short and not imperative, so
+they are easier to classify as NO than benign email bodies; the English false positive rate on the original
+benign tasks was 4/30.

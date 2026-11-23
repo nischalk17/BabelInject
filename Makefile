@@ -1,5 +1,5 @@
 # Every recipe is a plain `uv run ...` call so it behaves the same under cmd.exe, Git Bash and Linux.
-.PHONY: setup test lint format run-mvp run-all run-control run-hosted run-3b run-quiet run-hosted-quiet tables-quiet run-defenses figures run-detector-langs tables-detector-langs
+.PHONY: setup test lint format run-mvp run-all run-control run-hosted run-3b run-quiet run-hosted-quiet tables-quiet run-defenses figures run-detector-langs tables-detector-langs run-detector-benign
 
 setup:
 	uv sync
@@ -55,4 +55,7 @@ run-detector-langs:
 	uv run aie run configs/detector_langs.yaml
 
 tables-detector-langs:
-	uv run python analysis/tables.py --inputs results/detector_langs --out results/summary_detector_langs
+	uv run python analysis/tables.py --inputs results/detector_langs results/detector_benign_control --out results/summary_detector_langs
+
+run-detector-benign:
+	uv run aie run configs/detector_benign_control.yaml

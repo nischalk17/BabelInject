@@ -10,6 +10,7 @@ from aie.analysis.load import load_outcomes
 from aie.analysis.tables import (
     asr_rows,
     attempt_rows,
+    benign_flagged_rows,
     effect_rows,
     flagged_rows,
     newcombe_diff,
@@ -190,3 +191,33 @@ def test_flagged_rows_count_detector_verdicts_on_detector_runs_only() -> None:
     other = mk("s3", defense="none")
     (row,) = flagged_rows([yes, no, other])
     assert (row.metric, row.k, row.n) == ("detector_flagged", 1, 2)
+
+
+def test_benign_flagged_rows_group_by_task_id_language_suffix() -> None:
+    a = mk(
+        "meeting__file__hi|benign",
+        defense="detector",
+        attack=None,
+        language=None,
+        channel=None,
+        success=None,
+    )
+    a.defense_events.append({"type": "detector", "tool": "read_file", "verdict": True})
+    b = mk(
+        "hotel__file__hi|benign",
+        defense="detector",
+        attack=None,
+        language=None,
+        channel=None,
+        success=None,
+    )
+    c = mk(
+        "hotel__file__ne|benign",
+        defense="detector",
+        attack=None,
+        language=None,
+        channel=None,
+        success=None,
+    )
+    rows = {r.language: (r.k, r.n) for r in benign_flagged_rows([a, b, c])}
+    assert rows == {"hi": (1, 2), "ne": (0, 1)}

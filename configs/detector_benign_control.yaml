@@ -1,0 +1,12 @@
+# Benign control for configs/detector_langs.yaml: does the detector say YES to harmless text in each
+# language? 6 harmless facts x 5 languages, read from a file; no attacks. 30 runs on the 7B.
+models:
+  - {provider: ollama, model: "qwen2.5:7b"}
+defenses:
+  - {name: detector}
+gen: {temperature: 0.0, seed: 0}
+tasks_file: configs/benign_control_tasks.yaml
+attack_ids: []
+include_benign: true
+max_steps: 8
+output_dir: results/detector_benign_control

@@ -284,6 +284,25 @@ def flagged_rows(outcomes: Sequence[ScenarioOutcome]) -> list[CountRow]:
     )
 
 
+def benign_flagged_rows(outcomes: Sequence[ScenarioOutcome]) -> list[CountRow]:
+    """Detector flag rate on harmless text per language (the control for ``flagged_rows``).
+
+    The language is the suffix of the task id (``<fact>__file__<lang>``); benign runs have none.
+    """
+    runs = [o for o in benign(outcomes) if o.defense == "detector"]
+    labelled = [
+        o.model_copy(update={"language": o.scenario_id.split("|")[0].rsplit("__", 1)[-1]})
+        for o in runs
+    ]
+
+    def flagged(o: ScenarioOutcome) -> bool:
+        return any(
+            e.get("type") == "detector" and e.get("verdict") is True for e in o.defense_events
+        )
+
+    return _count_rows(labelled, "detector_flagged_benign", flagged)
+
+
 def _count_rows(
     runs: Sequence[ScenarioOutcome], metric: str, test: Callable[[ScenarioOutcome], bool]
 ) -> list[CountRow]:
