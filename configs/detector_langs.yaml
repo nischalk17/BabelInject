@@ -1,0 +1,16 @@
+# Recognition probe: the prompted detector on ALL five languages (7B). The main defense grid ran only
+# English and code-mixed because the other languages sit at about 0% ASR. Here the readout is the detector's
+# flag rate per language (does the model recognise the injected text as instructions?) next to
+# item_opened, not ASR. Channels file and tool_output, attacks override and owner_note, no benign runs:
+# 2 attacks x 5 languages x (10 file + 10 tool_output) = 200 runs; the detector adds one call per tool result.
+models:
+  - {provider: ollama, model: "qwen2.5:7b"}
+defenses:
+  - {name: detector}
+gen: {temperature: 0.0, seed: 0}
+attack_ids: [inject_override, inject_owner_note]
+languages: [en, ne, ne_rom, hi, mix]
+channels: [file, tool_output]
+include_benign: false
+max_steps: 8
+output_dir: results/detector_langs

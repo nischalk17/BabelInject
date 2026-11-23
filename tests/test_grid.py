@@ -159,3 +159,13 @@ def test_quiet_attack_is_owner_note_with_only_the_address_changed() -> None:
         scen, _ = build_grid(cfg, load_tasks(cfg.tasks_file), load_attacks(cfg.attacks_file))
         assert len(scen) == n, name
         assert all(s.attack is not None and s.attack.id == "inject_owner_note_plain" for s in scen)
+
+
+def test_detector_languages_config_is_a_200_run_recognition_probe() -> None:
+    from aie.config import load_config
+
+    cfg = load_config(REPO / "configs" / "detector_langs.yaml")
+    assert [d.name for d in cfg.defenses] == ["detector"]
+    assert cfg.languages == ["en", "ne", "ne_rom", "hi", "mix"] and not cfg.include_benign
+    scenarios, _ = build_grid(cfg, load_tasks(cfg.tasks_file), load_attacks(cfg.attacks_file))
+    assert len(scenarios) == 200

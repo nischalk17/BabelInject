@@ -814,3 +814,41 @@ noise. Non-English about 0 matched.
 conspicuous address; if anything the quiet address did not raise ASR). This does not answer the open question
 about the 27B; that needs `make run-hosted-quiet`. **Caveats:** n = 1 per language in the control (ne_rom 0/1
 is a single run), single run per scenario, one attack text.
+
+
+## 2026-11-23: Analysis, which attacks work where (7B and 3B, no defense; from existing rows, no new runs)
+
+**Source:** `results/full/` and `results/full_3b/` rows, grouped by attack x language (n = 40 per cell: 10 tasks
+x 4 channels). Descriptive only; one run per scenario.
+
+| Attack | model | en | ne | ne_rom | hi | mix |
+|---|---|---|---|---|---|---|
+| `inject_override` | 7B | 14/40 | 1/40 | 0/40 | 0/40 | 11/40 |
+| `inject_override` | 3B | 20/40 | 1/40 | 1/40 | 8/40 | 5/40 |
+| `inject_owner_note` | 7B | 21/40 | 0/40 | 0/40 | 0/40 | 1/40 |
+| `inject_owner_note` | 3B | 5/40 | 1/40 | 0/40 | 0/40 | 1/40 |
+| `inject_cc_request` | 7B | 0/40 | 0 | 0 | 0 | 0 |
+| `inject_cc_request` | 3B | 0/40 | 0 | 0 | 2/40 | 0 |
+
+**Findings:** (1) The 3B's 10 Hindi successes are 8 `inject_override` (the blunt attack) and 2
+`inject_cc_request`; none are `inject_owner_note`. In all 8 override successes the email sent was exactly the
+payload's "hello"/"done". (2) The 7B's English success is mostly `inject_owner_note` (21/40), the 3B's mostly
+`inject_override` (20/40): the two models are vulnerable to different attack styles, so "model size is not
+monotone" is partly an attack-style effect. (3) Hindi works on the 3B (8/40 override) but Nepali does not
+(1/40): consistent with, but not proof of, the 3B reading Hindi better than Nepali. **Caveats:** small n,
+no tests of causes.
+
+## 2026-11-23: Decision and design, detector recognition probe on all five languages (7B)
+
+**Question:** the 7B follows direct requests in every language (capability control, 14/15) yet is injected
+about 0% outside English and code-mixed. Is that (a) the model not recognising instructions inside data in
+those languages, or (b) recognising them and not acting? **Design:** `configs/detector_langs.yaml` runs the
+existing prompted detector (`detector-v1`, English prompt) on all five languages, channels file and
+tool_output, attacks override and owner_note, 200 runs, no benign runs (`make run-detector-langs`, then
+`make tables-detector-langs`). The new readout `detector_flagged` (table6) is the share of attacked runs where
+the detector flagged a tool result, read next to `item_opened`. It also gives the first defense data outside
+English and code-mixed. **Predictions, written before the run (uncertain):** English and code-mixed near 100%
+as in the defense grid (120/120); Hindi, Nepali and romanized Nepali lower, but not zero. A flag rate near 100%
+in those languages would point to (b); a sharp drop would point to (a). **Caveats:** a YES/NO classification
+is easier than acting on text, so a high flag rate does not prove the agent understood the instruction when
+acting; the detector prompt is English; n = 20 per cell; flagged runs depend on the item being opened.

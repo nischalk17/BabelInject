@@ -11,6 +11,7 @@ from aie.analysis.tables import (
     asr_rows,
     attempt_rows,
     effect_rows,
+    flagged_rows,
     newcombe_diff,
     opened_rows,
     utility_rows,
@@ -179,3 +180,13 @@ def test_figures_render_for_synthetic_data(tmp_path: Path) -> None:
 def test_json_roundtrip_of_a_row_is_loadable() -> None:
     row = mk("s1")
     assert ScenarioOutcome.model_validate(json.loads(row.model_dump_json())) == row
+
+
+def test_flagged_rows_count_detector_verdicts_on_detector_runs_only() -> None:
+    yes = mk("s1", defense="detector")
+    yes.defense_events.append({"type": "detector", "tool": "read_file", "verdict": True})
+    no = mk("s2", defense="detector")
+    no.defense_events.append({"type": "detector", "tool": "read_file", "verdict": None})
+    other = mk("s3", defense="none")
+    (row,) = flagged_rows([yes, no, other])
+    assert (row.metric, row.k, row.n) == ("detector_flagged", 1, 2)

@@ -11,6 +11,7 @@ from aie.analysis.tables import (
     asr_rows,
     attempt_rows,
     effect_rows,
+    flagged_rows,
     opened_rows,
     utility_rows,
     write_csv,
@@ -50,6 +51,8 @@ def build_tables(
     put("table3_utility.csv", utility_rows(outcomes))
     put("table4_item_opened.csv", opened_rows(outcomes))
     put("table5_attack_attempted.csv", attempt_rows(outcomes, _attackers(attacks_file)))
+    if "detector" in defenses:
+        put("table6_detector_flagged.csv", flagged_rows(outcomes))
     prov = out_dir / "load_report.json"
     prov.write_text(report.model_dump_json(indent=2), encoding="utf-8")
     written.append(prov)
