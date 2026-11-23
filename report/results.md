@@ -65,3 +65,11 @@ The benign control addresses the first caveat: on 6 harmless sentences per langu
 1 of 6 English, 0 of 6 Nepali, 0 of 6 romanized Nepali, 0 of 6 Hindi and 1 of 6 code-mixed runs
 [table7], so the 20/20 flags are not a general bias against non-English text. With 6 runs per language, a
 rate up to about 39% cannot be excluded.
+
+**4.4c Defenses on the 3B in Hindi and English (pilot).** On the 3B, where Hindi has a non-zero baseline
+(8/40 with the blunt attack against 20/40 in English), spotlight and sandwich reduced attack success by
+similar amounts in both languages (Hindi 8/40 to 2/40 and 3/40; English 20/40 to 16/40 and 13/40), but only
+spotlight in Hindi has an interval above zero (15.0 points, 0.1 to 30.2) [`results/defenses_3b_hi`]. The
+detector removed English attacks (0/40) but not Hindi ones (5/40): it flagged 30 of 40 English and 15 of 40
+Hindi attacked runs, whereas the 7B flagged every one in every language. n = 40 per cell, so we treat this as
+a pilot.

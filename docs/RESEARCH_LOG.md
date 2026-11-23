@@ -929,3 +929,38 @@ English, and in Hindi lower or equal but with an interval too wide to rank. **Ca
 Hindi baseline of 8/40 leaves little room to see a reduction (a drop to 2/40 has a Newcombe interval that likely
 spans zero); one attack; the sandwich reminder is English; the 3B detector may be a weaker classifier than the 7B;
 tool_policy is 0% by construction.
+
+
+## 2026-11-23: Results, defenses on the 3B model in Hindi and English
+
+**Setup:** `configs/defenses_3b_hi.yaml`, `qwen2.5:3b@357c53fb659c`, `inject_override`, all four channels, 10 tasks,
+prompt v3, temperature 0, seed 0; 400 rows (`results/defenses_3b_hi/`, tables in
+`results/summary_defenses_3b_hi/`; `table2` is empty because there are no benign runs, so the differences below
+were computed with `newcombe_diff` from the same rows). n = 40 per defense x language. One run per scenario.
+
+| Defense | English ASR | Hindi ASR | English attacked utility | Hindi attacked utility |
+|---|---|---|---|---|
+| none | 20/40 | 8/40 | 21/40 | 18/40 |
+| spotlight | 16/40 | 2/40 | 26/40 | 31/40 |
+| sandwich | 13/40 | 3/40 | 14/40 | 23/40 |
+| tool_policy | 0/40 | 0/40 | 13/40 | 17/40 |
+| detector | 0/40 | 5/40 | 1/40 | 12/40 |
+
+Reduction vs none, percentage points (Newcombe 95%): Hindi spotlight 15.0 (0.1 to 30.2), sandwich 12.5 (-3.1 to
+28.1), detector 7.5 (-9.1 to 23.9); English spotlight 10.0 (-11.4 to 30.1), sandwich 17.5 (-3.9 to 36.8), detector
+50.0 (32.8 to 64.8). **Detector flag rate on the 3B (attacked runs, per channel doc / email / file / tool_output):**
+English 9, 6, 5, 10 of 10; Hindi 1, 0, 4, 10 of 10 (7B: 20/20 in every language).
+
+**Against the predictions:** tool_policy 0/40 in both: held (it still attempted the send in 20 English and 8 Hindi
+runs, all blocked). Detector near 0 in both: held for English (0/40), **wrong for Hindi (5/40)**. Spotlight and
+sandwich lower than none in English: lower, but the intervals include zero; in Hindi lower, with only spotlight's
+interval just above zero.
+
+**Findings:** (1) On the 3B the detector recognises English injections far more often than Hindi (30/40 against
+15/40 flagged; the Wilson intervals do not overlap) and is the only defense here where Hindi does worse than
+English (ASR 5/40 against 0/40). This is the only language gap in a defense we have measured; on the 7B there was
+none. (2) Spotlight and sandwich show reductions of similar size in Hindi and English, but no interval
+supports a ranking. (3) Spotlight raised attacked utility on the 3B (Hindi 31/40 against 18/40 with none); we did
+not test why. **Caveats:** n = 40 per cell; one attack; Hindi baseline 8/40; tool_policy 0% by construction;
+flags and ASR are per run, not per tool call; the detector prompt is English; attacked-utility differences may
+partly reflect run-to-run behaviour at temperature 0, not the defense, because we ran one run per scenario.
