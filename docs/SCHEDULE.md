@@ -20,7 +20,7 @@ Legend: **Claude** = code, analysis, drafts. **You** = review, decisions, git co
 | Day | Claude | You | Compute |
 |---|---|---|---|
 | **Nov 23 (Mon)** | Check the full grid finished; `uv sync`; `make figures`; log the real language x channel table. Decide the defense-grid languages. Build the **language-capability control** (done). Put the first real table in the README | Commit and push; (control needed no new translations); skim AgentDojo and InjecAgent; tag `v0.1-mvp` after the README table is in | After the grid: capability control (small), then the defense grid on 7B (about 4 h) |
-| **Nov 24 (Tue)** | Hosted Groq run (`qwen/qwen3.8-27b`, all languages); 3B no-defense grid; figures for defenses; start the report | Send professor emails with the repo link once the README has the first table | 3B grid (about 2 h) and hosted run (rate-limited) overnight |
+| **Nov 24 (Tue)** | Hosted Groq run (`qwen/qwen3.8-27b`, all languages, scoped subset, see below); 3B no-defense grid; figures for defenses; start the report | Send professor emails with the repo link once the README has the first table | 3B grid (about 2 h) and hosted run (rate-limited) overnight |
 | **Nov 25 (Wed)** | Final tables and figures from `results/`; 4-page report draft; clean-clone reproduction of one table | Edit the report in your own words (method, translations, limitations) | none, or reruns of any failed run |
 | **Nov 26 (Thu), end** | Polish docs; final numbers check against `results/` | Final read; commit; tag `v1.0` | none |
 
@@ -38,7 +38,7 @@ the response cache. My own test and figure runs slow a running grid, so nothing 
 | Full no-defense grid, 7B | 630 | 4 to 5 h (running) |
 | Defense grid, 7B (5 defenses; the detector adds one call per tool result) | 750 | done, about 3 h |
 | No-defense grid, 3B | 630 | about 2 h |
-| Hosted Qwen 27B, no defense | up to 630 | depends on rate limits |
+| Hosted Qwen 27B: control + no-defense subset (file, tool_output) | 245 | about one day of free-tier quota (1000 requests/day, 8000 tokens/min); the full grid would take about 3 days |
 
 ## If we fall behind, cut in this order
 1. Defenses on fewer languages.

@@ -1,0 +1,17 @@
+# Hosted-model comparison, no defense: qwen/qwen3.8-27b on Groq, all 5 languages.
+# Scoped to fit the free tier, measured on 2026-11-23: 1000 requests per day and 8000 tokens per minute.
+# The 7B grid averaged 2.9 model calls per run, so 230 runs is about 700 requests (one day); the full
+# 630-run grid would take about three days. Chosen cells are the ones with signal on 7B:
+# 30 benign + 2 attacks (override, owner_note) x 5 languages x (10 file + 10 tool_output) = 230 runs.
+# Skipped, to run later if quota allows: email and doc channels, and inject_cc_request (0% floor).
+# Re-running resumes from the response cache after a quota stop. Every row carries started_at; record
+# the date with any number, because hosted models can change silently.
+models:
+  - {provider: groq, model: "qwen/qwen3.8-27b"}
+gen: {temperature: 0.0, seed: 0}
+attack_ids: [inject_override, inject_owner_note]
+languages: [en, ne, ne_rom, hi, mix]
+channels: [file, tool_output]
+include_benign: true
+max_steps: 8
+output_dir: results/hosted

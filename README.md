@@ -149,6 +149,7 @@ Run from the repository root (config paths are relative to it). Experiments are 
 uv run aie run configs/smoke.yaml   # benign task only, one model
 make run-mvp                        # MVP grid (English + Nepali) -> results/mvp/*.jsonl
 make run-all                        # full no-defense grid (630 runs)
+make run-hosted                     # hosted Qwen 27B (Groq key in .env): control + 230 runs, one day of free-tier quota
 make run-defenses                   # defense grid, English + code-mixed (750 runs)
 ```
 

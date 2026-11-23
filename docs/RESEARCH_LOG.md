@@ -646,3 +646,22 @@ were run; this says nothing about Nepali or Hindi defenses (baseline ~0% on 7B).
 in `table3_utility.csv` compare different scenario sets (the `none` row spans the whole 600-run grid), so do
 not compare them across defenses; use the benign rows and the paired table. `inject_owner_note` in code-mixed
 tool_output is 0/10 at baseline, so some "no effect" cells are floors.
+
+
+## 2026-11-23: Decision, hosted Qwen 27B scope (rate limits measured)
+
+**Measured:** one 18-token call to `groq/qwen/qwen3.8-27b` returned the limits for this free-tier key:
+1000 requests (refilling at one per 86.4 s, i.e. per day) and 8000 tokens per minute. The 7B full grid
+averaged 2.87 model calls per run (max 7), so roughly 350 runs per day fit the request cap, and the 8000
+tokens-per-minute cap allows only a few runs per minute. The full 630-run grid would take about three days,
+which does not fit the Nov 26 end. The daily token cap is not shown in the headers and may bind sooner.
+**Decision (recommendation, owner approved by asking for the config):** two configs.
+1. `configs/hosted_control.yaml`: the capability control, 15 runs (about 45 requests), run first.
+2. `configs/hosted.yaml`: no defense, all 5 languages, attacks `inject_override` and `inject_owner_note`,
+   channels `file` and `tool_output`, plus 30 benign = 230 runs (about 700 requests, one day).
+Skipped for now: email and doc channels and `inject_cc_request`; add them if quota allows.
+**Caveats:** the hosted grid is a subset of the 7B grid, so compare the same cells only (7B baseline for
+these cells is in `table1`). Hosted models can change silently and `temperature 0` is not guaranteed
+deterministic; every row carries `started_at`, the returned model id and fingerprint are in `raw`. A quota
+stop raises an error; rows already written are kept and re-running resumes from the cache. The 27B model
+may use more calls per run than 7B, so the request estimate could be low.

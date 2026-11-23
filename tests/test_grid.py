@@ -106,3 +106,23 @@ def test_defense_grid_config_lists_all_five_defenses() -> None:
         "detector",
     ]
     assert cfg.languages == ["en", "mix"] and cfg.channels == ["file", "doc", "tool_output"]
+
+
+def test_hosted_configs_fit_the_free_tier() -> None:
+    from aie.config import load_config
+
+    control = load_config(REPO / "configs" / "hosted_control.yaml")
+    hosted = load_config(REPO / "configs" / "hosted.yaml")
+    for cfg in (control, hosted):
+        assert cfg.models[0].provider == "groq" and cfg.models[0].model == "qwen/qwen3.8-27b"
+        assert cfg.gen.temperature == 0.0
+    c_scen, c_skip = build_grid(
+        control, load_tasks(control.tasks_file), load_attacks(control.attacks_file)
+    )
+    h_scen, _ = build_grid(hosted, load_tasks(hosted.tasks_file), load_attacks(hosted.attacks_file))
+    assert len(c_scen) == 15 and not c_skip
+    # 30 benign + 2 attacks x 5 languages x (10 file + 10 tool_output); email-only tasks skip file.
+    assert len(h_scen) == 230
+    assert (
+        len(c_scen) + len(h_scen) <= 300
+    )  # about 2.9 calls per run keeps one day under 1000 requests
