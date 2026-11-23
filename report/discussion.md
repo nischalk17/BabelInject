@@ -14,7 +14,7 @@ not monotone in model size: the 3B was more exposed in Hindi (10/120) than the 7
 three author-reviewed attack texts, is a floor result: it leaves no room to measure a defense, and the
 capability control rules out only an inability to follow the language, not other explanations. We cannot say anything about large frontier models; the only larger
 model is a partial hosted pilot (0/76), and we do not know why it refuses direct requests. We cannot say defenses in general work in Nepali, Hindi or romanized Nepali: only the detector was run
-there (it flagged all 20 of 20 runs per cell, without a non-English benign control); spotlighting, sandwich and
+there (it flagged all 20 of 20 runs per cell, and flagged 0 of 6 harmless Nepali, romanized Nepali and Hindi sentences); spotlighting, sandwich and
 tool policy were not. We do not know why the 3B is
 vulnerable in Hindi.
 

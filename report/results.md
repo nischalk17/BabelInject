@@ -59,6 +59,9 @@ resistance in these conditions but not which cause explains it.
 act", we ran the prompted detector on all five languages (file and tool output, 20 runs per cell). It
 flagged the injected text in 20 of 20 runs in every cell, and no attacked run sent the attacker email
 (0/200) [table6, `results/summary_detector_langs/`]. We expected lower recognition in Nepali and Hindi; we
-found none. Two caveats: we have no non-English benign control (the benign tasks are English), so a detector
-that answers YES to any non-English text would look the same, and a YES/NO classification is easier than
-acting on the text.
+found none. One caveat: a YES/NO classification is easier than acting on the text.
+
+The benign control addresses the first caveat: on 6 harmless sentences per language, the detector said YES in
+1 of 6 English, 0 of 6 Nepali, 0 of 6 romanized Nepali, 0 of 6 Hindi and 1 of 6 code-mixed runs
+[table7], so the 20/20 flags are not a general bias against non-English text. With 6 runs per language, a
+rate up to about 39% cannot be excluded.
