@@ -58,6 +58,15 @@ false-alarms on 4 of 30 benign runs. Spotlighting's code-mixed effect is not dis
 Nepali and Hindi were not defended on this model because their baseline is about 0%. One model, small n;
 see the research log for caveats.
 
+## Hosted model pilot (Qwen 27B on Groq, partial)
+
+The free tier allows 200,000 tokens per day, so only part of the planned hosted grid ran (87 of 230 runs,
+plus the 15-run control). On this partial set, 0 of 76 injected attacks succeeded across all five languages
+(95% upper bound 4.8%). The control shows why this is not a language result: the model also declined the
+same request when the user asked directly, in English, Nepali, Hindi and code-mixed, while understanding it
+(it answered in the same language). Only romanized Nepali got through (1 of 3). The first four fact sets
+only, not a random sample. Details and caveats: `docs/RESEARCH_LOG.md`.
+
 ## The problem, in plain terms
 
 An **LLM agent** is a language model that can take actions through tools: read email, open files,

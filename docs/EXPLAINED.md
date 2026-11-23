@@ -354,6 +354,10 @@ Each line says how many times it was seen. None of this goes in the README as a 
    the user than when they are hidden in data. Why (training mostly on English injections? weaker
    instruction-following on foreign text inside tool results?) is untested. Still do not say "Nepali
    attacks are safer" without the larger model and more tasks.
+12. **Hosted 27B model, pilot (partial, 76 attacked runs):** 0 successes. The control showed the model also
+   refuses the same request when the user asks directly (while replying in the user's language), so this
+   is refusal of an obviously malicious address, not a language effect. Romanized Nepali was the one
+   exception (1 of 3 direct requests). Partial and not random, so treat it as a pilot.
 11. **Defenses on the 7B model (English and code-mixed, n=60 per cell):** attack success fell from 53% to
    27% (spotlighting), 10% (sandwich), 0% (tool policy) and 0% (detector) in English. The tool policy is 0%
    by construction, and the detector reached 0% by blocking the tool result, so the task also fails under
