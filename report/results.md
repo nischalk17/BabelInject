@@ -54,3 +54,11 @@ is not what limits attack success. Whether it explains the 27B's refusals is **P
 free-tier token quota stopped the run), the 27B was never successfully attacked (0/76, 95% upper bound
 4.8%), and finished 11 of 11 benign tasks. Given its refusal of direct requests (4.2), this shows
 resistance in these conditions but not which cause explains it.
+
+**4.4b Detector on all five languages (7B).** To separate "cannot recognise" from "recognises but does not
+act", we ran the prompted detector on all five languages (file and tool output, 20 runs per cell). It
+flagged the injected text in 20 of 20 runs in every cell, and no attacked run sent the attacker email
+(0/200) [table6, `results/summary_detector_langs/`]. We expected lower recognition in Nepali and Hindi; we
+found none. Two caveats: we have no non-English benign control (the benign tasks are English), so a detector
+that answers YES to any non-English text would look the same, and a YES/NO classification is easier than
+acting on the text.

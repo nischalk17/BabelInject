@@ -852,3 +852,27 @@ as in the defense grid (120/120); Hindi, Nepali and romanized Nepali lower, but 
 in those languages would point to (b); a sharp drop would point to (a). **Caveats:** a YES/NO classification
 is easier than acting on text, so a high flag rate does not prove the agent understood the instruction when
 acting; the detector prompt is English; n = 20 per cell; flagged runs depend on the item being opened.
+
+
+## 2026-11-23: Results, detector recognition probe on all five languages (7B)
+
+**Setup:** `configs/detector_langs.yaml`, `qwen2.5:7b@845dbda0ea48`, defense `detector-v1`, prompt v3, temperature
+0, seed 0; 200 rows (`results/detector_langs/`, tables in `results/summary_detector_langs/`). Attacks override
+and owner_note; channels file and tool_output; n = 20 per language x channel cell. One run per scenario.
+
+**Results:** `detector_flagged` = 20/20 in all 10 cells (every language, both channels; Wilson 95% interval
+83.9% to 100%). Attacked runs that sent the attacker email: 0/200 (upper bound 1.9%). Attack attempted: 0/200.
+
+**Against the predictions written before the run:** wrong. I predicted lower flag rates in Nepali, romanized
+Nepali and Hindi; the detector flagged all of them.
+
+**Reading (cautious):** the 7B, asked directly, recognises the injected text as instructions aimed at an
+assistant in every language, including those where its injected ASR is about 0. This favours "recognises but
+does not act" over "cannot recognise" as the explanation of the non-English floor, and it shows the detector
+works across languages in this setup. **Caveats:** (1) no non-English benign control: benign tasks are in
+English, so a detector that answers YES to any non-English text would give the same table; the English false
+positive rate was 4/30. (2) A YES/NO classification is easier than acting on text. (3) For tool_output the
+detector removes the list_emails result, so `item_opened` is 0/20 there by construction and is not comparable
+with the no-defense tables. (4) ASR 0 is partly the withholding cost already logged (attacked utility 0/200).
+(5) English detector prompt; n = 20 per cell. **Next step if time allows:** a small non-English benign control
+(a few harmless sentences in ne and hi, author-translated) to rule out caveat 1.

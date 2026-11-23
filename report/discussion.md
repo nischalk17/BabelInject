@@ -1,6 +1,6 @@
 # 5. Discussion and limitations (first draft, about 0.45 page)
 
-Status: draft from `docs/RESEARCH_LOG.md` and `results.md`. Revisit after `make run-hosted-quiet`.
+Status: draft (updated after the detector probe) from `docs/RESEARCH_LOG.md` and `results.md`. Revisit after `make run-hosted-quiet`.
 
 **What the results support.** For these models and settings, indirect injection against a tool-using agent
 works in English and code-mixed text, depends strongly on where the text appears, and barely works in Nepali,
@@ -13,8 +13,9 @@ not monotone in model size: the 3B was more exposed in Hindi (10/120) than the 7
 **What they do not support.** We cannot say Nepali or Hindi are "safer": zero success on one small model, for
 three author-reviewed attack texts, is a floor result: it leaves no room to measure a defense, and the
 capability control rules out only an inability to follow the language, not other explanations. We cannot say anything about large frontier models; the only larger
-model is a partial hosted pilot (0/76), and we do not know why it refuses direct requests. We cannot say any
-defense works in Nepali, Hindi or romanized Nepali, because none were run there. We do not know why the 3B is
+model is a partial hosted pilot (0/76), and we do not know why it refuses direct requests. We cannot say defenses in general work in Nepali, Hindi or romanized Nepali: only the detector was run
+there (it flagged all 20 of 20 runs per cell, without a non-English benign control); spotlighting, sandwich and
+tool policy were not. We do not know why the 3B is
 vulnerable in Hindi.
 
 **Limitations.**
