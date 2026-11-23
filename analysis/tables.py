@@ -7,7 +7,7 @@ from pathlib import Path
 
 from aie.analysis.report import build_tables, describe
 
-DEFAULT_INPUTS = ["results/full", "results/defenses", "results/hosted"]
+DEFAULT_INPUTS = ["results/full", "results/defenses", "results/hosted", "results/full_3b"]
 
 
 def main() -> None:

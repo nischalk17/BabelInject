@@ -126,3 +126,15 @@ def test_hosted_configs_fit_the_free_tier() -> None:
     assert (
         len(c_scen) + len(h_scen) <= 300
     )  # about 2.9 calls per run keeps one day under 1000 requests
+
+
+def test_3b_config_matches_the_7b_grid_except_the_model() -> None:
+    from aie.config import load_config
+
+    big = load_config(REPO / "configs" / "full.yaml")
+    small = load_config(REPO / "configs" / "full_3b.yaml")
+    assert small.models[0].model == "qwen2.5:3b" and big.models[0].model == "qwen2.5:7b"
+    for field in ("languages", "channels", "attack_ids", "task_ids", "include_benign", "gen"):
+        assert getattr(small, field) == getattr(big, field), field
+    scenarios, _ = build_grid(small, load_tasks(small.tasks_file), load_attacks(small.attacks_file))
+    assert len(scenarios) == 630

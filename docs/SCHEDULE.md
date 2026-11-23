@@ -15,14 +15,14 @@ Legend: **Claude** = code, analysis, drafts. **You** = review, decisions, git co
 - **Done Nov 23:** 7B defense grid (750 runs, English + code-mixed), logged. Full no-defense grid on 7B (630 runs); tables and heatmap built and logged. Non-English
   attacks are about 0% on 7B; the capability control (done) shows it is not a comprehension limit.
 
-## Revised plan
+## Revised plan (updated Nov 23, evening)
 
 | Day | Claude | You | Compute |
 |---|---|---|---|
-| **Nov 23 (Mon)** | Check the full grid finished; `uv sync`; `make figures`; log the real language x channel table. Decide the defense-grid languages. Build the **language-capability control** (done). Put the first real table in the README | Commit and push; (control needed no new translations); skim AgentDojo and InjecAgent; tag `v0.1-mvp` after the README table is in | After the grid: capability control (small), then the defense grid on 7B (about 4 h) |
-| **Nov 24 (Tue)** | Hosted Groq run (`qwen/qwen3.8-27b`, all languages, scoped subset, see below); 3B no-defense grid; figures for defenses; start the report | Send professor emails with the repo link once the README has the first table | 3B grid (about 2 h) and hosted run (rate-limited) overnight |
-| **Nov 25 (Wed)** | Final tables and figures from `results/`; 4-page report draft; clean-clone reproduction of one table | Edit the report in your own words (method, translations, limitations) | none, or reruns of any failed run |
-| **Nov 26 (Thu), end** | Polish docs; final numbers check against `results/` | Final read; commit; tag `v1.0` | none |
+| **Nov 23 (Mon)** | Done: full 7B grid, tables, capability control, 7B defense grid, hosted pilot (quota stop), 3B config | Commit and push; start `make run-3b` before sleeping; skim AgentDojo and InjecAgent; tag `v0.1-mvp` | 3B grid overnight (about 2 h) |
+| **Nov 24 (Tue)** | Read and log the 3B grid; `make figures`; draft the 4-page report (method, results, limitations) from `results/` | Send professor emails with the repo link (README already has results); review the report draft | Optional: resume the hosted run when the daily token window reopens (about 87 runs per day) |
+| **Nov 25 (Wed)** | Final tables and figures; finish the report; clean-clone reproduction of one table; doc audit | Edit the report in your own words (method, translations, limitations) | none, or reruns of failures |
+| **Nov 26 (Thu), end** | Final numbers check against `results/` | Final read; commit; tag `v1.0` | none |
 
 ## Decisions still open
 1. **Defense-grid languages.** Decided Nov 23: English and code-mixed on 7B (`configs/defenses.yaml`, channels file, doc, tool_output). The full grid confirmed that Nepali, romanized Nepali and Hindi attacks

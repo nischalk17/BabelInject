@@ -700,3 +700,13 @@ this but needs a new reviewed attack text. Hosted model; may change without noti
 **Recommendation:** do not spend the next two days of quota completing a grid that is likely 0% throughout.
 Treat the hosted run as a pilot (report it as 0/76 plus the control), run the local 3B grid next, and resume
 the hosted run only if quota and time remain. Defenses on the hosted model would have no baseline to reduce.
+
+
+## 2026-11-23: Decision, 3B scale comparison config
+
+`configs/full_3b.yaml` is the same 630-run no-defense grid as `full.yaml` on `qwen2.5:3b` (digest
+`357c53fb659c`), output `results/full_3b/`, `make run-3b`. A test asserts it matches the 7B grid in every
+field except the model. Purpose: the model-size comparison (3B vs 7B; the 27B hosted run is only a partial
+pilot). **Caveat:** the calibration showed the 3B model sometimes does not open the email on the benign
+task, so any lower 3B attack success may be a failure to reach the injected text; read it with the
+item-opened table (table4). The 3B grid is no-defense only; no defenses are planned on it.

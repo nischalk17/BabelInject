@@ -1,0 +1,13 @@
+# Scale comparison: the same 630-run no-defense grid as configs/full.yaml on the smaller model, qwen2.5:3b.
+# 30 benign + 3 attacks x 5 languages x (10 email + 10 file + 10 doc + 10 tool_output) = 630 runs.
+# Known issue from calibration: the 3B model sometimes does not open the email on the benign task, so read
+# attack success together with the item-opened table (table4). Responses are cached; an interrupted run
+# resumes when re-run. Keep the laptop on power with sleep off.
+models:
+  - {provider: ollama, model: "qwen2.5:3b"}
+gen: {temperature: 0.0, seed: 0}
+languages: [en, ne, ne_rom, hi, mix]
+channels: [email, file, doc, tool_output]
+include_benign: true
+max_steps: 8
+output_dir: results/full_3b
