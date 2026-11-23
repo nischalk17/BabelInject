@@ -285,8 +285,8 @@ reruns free and results reproducible.
 | `docs/PROJECT_PLAN.md`, `RESEARCH_LOG.md` | The plan; the dated lab notebook of what we saw |
 
 **Not built yet:** the report. Built but not yet run for real: the defense grid, the 3B grid and the
-hosted-model grid. The full no-defense grid is done; the defense grid (English and code-mixed only, because the other
-languages have a ~0% baseline) is the current run.
+hosted-model grid. The full no-defense grid and the defense grid (English and code-mixed only, because the other
+languages have a ~0% baseline) are done. Not run yet: the 3B and hosted grids.
 
 ---
 
@@ -354,6 +354,11 @@ Each line says how many times it was seen. None of this goes in the README as a 
    the user than when they are hidden in data. Why (training mostly on English injections? weaker
    instruction-following on foreign text inside tool results?) is untested. Still do not say "Nepali
    attacks are safer" without the larger model and more tasks.
+11. **Defenses on the 7B model (English and code-mixed, n=60 per cell):** attack success fell from 53% to
+   27% (spotlighting), 10% (sandwich), 0% (tool policy) and 0% (detector) in English. The tool policy is 0%
+   by construction, and the detector reached 0% by blocking the tool result, so the task also fails under
+   attack and 4 of 30 benign runs were wrongly blocked. Spotlighting did not help in code-mixed (interval
+   includes zero). These are single-model, small-n results.
 
 ---
 

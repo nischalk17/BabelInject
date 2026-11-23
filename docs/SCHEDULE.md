@@ -12,7 +12,7 @@ Legend: **Claude** = code, analysis, drafts. **You** = review, decisions, git co
   4 channels. Two design flaws found and fixed (no send tool; duplicated tool-output channel).
 - English calibration on 7B (see `RESEARCH_LOG.md`).
 - Groq hosted adapter, tested live. Four defenses with tests. Analysis tables and figures with tests.
-- **Done Nov 23:** full no-defense grid on 7B (630 runs); tables and heatmap built and logged. Non-English
+- **Done Nov 23:** 7B defense grid (750 runs, English + code-mixed), logged. Full no-defense grid on 7B (630 runs); tables and heatmap built and logged. Non-English
   attacks are about 0% on 7B; the capability control (done) shows it is not a comprehension limit.
 
 ## Revised plan
@@ -36,7 +36,7 @@ the response cache. My own test and figure runs slow a running grid, so nothing 
 | Run | Runs | Est. time |
 |---|---|---|
 | Full no-defense grid, 7B | 630 | 4 to 5 h (running) |
-| Defense grid, 7B (5 defenses; the detector adds one call per tool result) | 750 (150 of them cached) | about 4 h |
+| Defense grid, 7B (5 defenses; the detector adds one call per tool result) | 750 | done, about 3 h |
 | No-defense grid, 3B | 630 | about 2 h |
 | Hosted Qwen 27B, no defense | up to 630 | depends on rate limits |
 

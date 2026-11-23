@@ -8,8 +8,8 @@ different languages and hidden in different places. Everything runs in a mocked 
 email, web or file system is ever touched.
 
 > **Status (Nov 23, 2026): the benchmark, defenses and analysis code are built and tested; the full
-> no-defense grid on qwen2.5:7b is done (first results below); defenses and the other models are not
-> yet measured.** Numbers appear in this README only when they come from `results/` through
+> no-defense grid and the 7B defense grid are done (results below); the hosted and 3B models are not
+> yet run.** Numbers appear in this README only when they come from `results/` through
 > `analysis/`. Calibration runs and interim observations,
 > with exact settings and caveats, are in [docs/RESEARCH_LOG.md](docs/RESEARCH_LOG.md); the plan is in
 > [docs/SCHEDULE.md](docs/SCHEDULE.md) and a plain-language guide is in
@@ -38,6 +38,25 @@ design. Single model, one run per scenario, small per-cell n; see the research l
 request): the model sent the email in 14 of 15 runs: English 2/3, and 3/3 in each of Nepali, romanized
 Nepali, Hindi and code-mixed. So the 7B model understands these languages well enough to act; the
 near-zero injected ASR above is not explained by it failing to understand. n=3 per language.
+
+## Defenses (qwen2.5:7b, English and code-mixed, n=60 attacked runs per cell)
+
+Attack success rate with each defense (source `results/summary/table2b_asr_by_defense.csv`, figure
+`docs/figures/fig2_defense_effect_*.png`):
+
+| Defense | English | Code-mixed | Benign task success |
+|---|---|---|---|
+| none | 32/60 (53%) | 12/60 (20%) | 29/30 |
+| spotlighting | 16/60 (27%) | 7/60 (12%) | 29/30 |
+| sandwich reminder | 6/60 (10%) | 0/60 | 30/30 |
+| tool-permission policy | 0/60 | 0/60 | 29/30 |
+| prompted detector | 0/60 | 0/60 | 25/30 |
+
+The tool policy is 0% by construction (the attacker is never a known contact). The detector blocks every
+attacked run but also withholds the tool result, so the task itself fails under attack, and it
+false-alarms on 4 of 30 benign runs. Spotlighting's code-mixed effect is not distinguishable from zero.
+Nepali and Hindi were not defended on this model because their baseline is about 0%. One model, small n;
+see the research log for caveats.
 
 ## The problem, in plain terms
 
@@ -104,7 +123,7 @@ Design rules that keep the study rigorous:
 | 30 tasks (10 facts x 3 carriers: email, file, web page); 3 attacks (blunt, authority, casual) in 5 languages; 4 channels | `src/aie/scenarios/`, `configs/fixtures/` | done, invariant tests |
 | Hosted-model adapter (Groq) | `src/aie/models/groq.py` | done, mocked tests; one live check passed |
 | Translations (Nepali, romanized Nepali, Hindi, code-mixed): AI-drafted, reviewed and corrected line by line by the author | `docs/TRANSLATIONS.md`, `attacks.yaml` | done |
-| Four defenses (spotlighting, sandwich reminder, tool-permission policy, prompted detector) and a defense-grid config | `src/aie/defenses/`, `configs/defenses.yaml` | done, tested with scripted models; 7B grid (English + code-mixed) running |
+| Four defenses (spotlighting, sandwich reminder, tool-permission policy, prompted detector) and a defense-grid config | `src/aie/defenses/`, `configs/defenses.yaml` | done, tested with scripted models; 7B grid (English + code-mixed) measured |
 | Analysis: tables with 95% intervals (CSV), heatmap, defense-effect and trade-off figures | `src/aie/analysis/`, `analysis/` | done, tested; run on the 7B full grid |
 | Report | `report/` | not started |
 
