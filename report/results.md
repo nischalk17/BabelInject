@@ -3,8 +3,7 @@
 Status: draft. Every number is copied from `results/summary/` (tables named in brackets) or
 `results/summary_quiet/`; the final numbers check on Nov 26 must re-compare each one. Figures are in
 `docs/figures/`. Rates are k/n with 95% Wilson intervals where quoted. One run per scenario, so these
-are rates over 10 to 120 runs, not repeated-measure estimates. Section 4.5 and the 27B part of 4.6 wait on
-`make run-hosted-quiet`.
+are rates over 10 to 120 runs, not repeated-measure estimates. Section 4.5 now includes the hosted 27B follow-up.
 
 **4.1 Language and channel (7B, no defense).** Across the 630-run grid, an attack succeeded in 35 of
 120 English runs (29%), 12 of 120 code-mixed (10%), 1 of 120 Nepali, and 0 of 120 each for Hindi and
@@ -44,11 +43,11 @@ rather than a measured robustness. The detector also reaches 0% but flagged all 
 the best defense that keeps the task working here. (Fig. 2, Fig. 3.) We did not run defenses on Nepali,
 Hindi or romanized Nepali, where the baseline is already about 0%.
 
-**4.5 Address-only follow-up (7B done; 27B pending).** With the attacker address changed to a plausible
+**4.5 Address-only follow-up (7B and hosted 27B).** With the attacker address changed to a plausible
 partner address and the text otherwise identical, the 7B was still attacked in 10 of 10 English
 tool-output runs, and in 6 of 10 English file runs (9 of 10 with the original address; the intervals
 overlap), and in 0 of 10 in each of the eight non-English cells [summary_quiet]. So on the 7B the address
-is not what limits attack success. Whether it explains the 27B's refusals is **PENDING**.
+is not what limits attack success. On the hosted 27B with the same plain address, 1 of 100 injected runs succeeded (English, file) and 1 of 5 direct requests was followed (English only), against 0/76 and 1/15 with the conspicuous address [summary_quiet]. So the address does not explain the 27B's refusals either, although a small effect cannot be excluded at n = 10 per cell. In the English tool-output runs we read, the 27B finished the task and told the user about the embedded note, which suggests it recognises the text and declines; we did not count this across all runs.
 
 **4.6 Hosted pilot.** On the first 11 tasks of the hosted grid (76 attacked runs, not a random slice; the
 free-tier token quota stopped the run), the 27B was never successfully attacked (0/76, 95% upper bound
