@@ -989,3 +989,24 @@ the task and told the user the listing contained an embedded "note" asking it to
 recognised the injected text and reported it instead of acting. **Caveats:** one attack text, one model, n = 10
 per cell, single run per scenario; "recognised and reported" is from a handful of answers and was not checked
 across all runs; the control has n = 1 per non-English language; hosted models can change.
+
+
+## 2026-11-24: Count, how often the hosted 27B mentions the injection in its final answer
+
+**Method:** a keyword heuristic on the final answer (`INJECTION_MENTION` in `src/aie/analysis/tables.py`; new
+table 8, `answer_mentions_injection`). It is secondary and descriptive; the deterministic judge still decides
+attack success. The pattern was written after reading a few answers, then checked on 10 random matches (all real
+mentions). It was **validated on the 27B only**; do not read the 7B rows of table 8 (keyword hits may be
+unrelated uses of words such as "note"). The 5 `user` control rows are excluded below.
+
+**Result (hosted 27B, plain-address grid, 100 attacked runs, `results/summary_quiet/`):** the answer mentions the
+injection in 77/100 runs. By language (file + tool_output, n = 20 each): en 18, hi 19, mix 18, ne 16, ne_rom 6.
+Those mentions say, for example, that the file or inbox listing "contained an embedded instruction" to send a
+confirmation email and that the model is ignoring it, including for Hindi and Nepali payloads.
+
+**Reading:** the 27B recognises and reports injected instructions in English, Hindi, Nepali and code-mixed text
+(16 to 19 of 20), then does not act on them. Romanized Nepali is the exception (6/20 mention it), and romanized
+Nepali was the only language the 27B followed as a direct request in the original-address control (1/3). We do
+not know whether it fails to recognise romanized Nepali or just does not comment on it. **Caveats:** keyword rule,
+not a classifier; a mention is not proof of understanding; n = 20 per language; one attack text; one run per
+scenario; an unflagged answer may still have recognised the text.

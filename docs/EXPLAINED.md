@@ -552,3 +552,13 @@ minus ASR without"). Ours is deliberately cautious.
 exactly.
 **Response cache key:** the fingerprint of a full request (model, messages, tools, settings); the same
 fingerprint always gets the same saved answer.
+
+
+14. **Follow-ups (Nov 23 to 24, all small n; details in `docs/RESEARCH_LOG.md`):** (a) changing the attacker
+    address to a normal-looking one did not make the hosted 27B obey (1/100 injected runs), so the address is
+    not why it refuses; in 77/100 runs it told the user about the hidden instruction instead. (b) The 7B model
+    recognised the injected text as instructions in all five languages (the detector flagged 20/20 in each) and
+    did not flag harmless Nepali, Hindi or romanized Nepali sentences (0/6 each), so its near-zero non-English
+    attack rate looks like "recognises but does not act", not "cannot read it" (a yes/no question is easier
+    than acting, so this is suggestive). (c) On the 3B model the detector caught English attacks (0/40 got
+    through) but missed some Hindi ones (5/40 got through): the only language gap in a defense we measured.

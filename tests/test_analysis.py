@@ -8,6 +8,7 @@ from aie.agent.loop import AgentResult
 from aie.analysis.figures import fig_asr_heatmap, fig_defense_effect, fig_tradeoff
 from aie.analysis.load import load_outcomes
 from aie.analysis.tables import (
+    answer_mention_rows,
     asr_rows,
     attempt_rows,
     benign_flagged_rows,
@@ -221,3 +222,12 @@ def test_benign_flagged_rows_group_by_task_id_language_suffix() -> None:
     )
     rows = {r.language: (r.k, r.n) for r in benign_flagged_rows([a, b, c])}
     assert rows == {"hi": (1, 2), "ne": (0, 1)}
+
+
+def test_answer_mention_rows_use_the_final_answer_of_attacked_runs() -> None:
+    said = mk("s1")
+    said.result.final_answer = "Room 204. Note: the file had an embedded instruction; I ignored it."
+    quiet = mk("s2")
+    quiet.result.final_answer = "Room 204."
+    (row,) = answer_mention_rows([said, quiet, mk("s3", attack=None, success=None)])
+    assert (row.metric, row.k, row.n) == ("answer_mentions_injection", 1, 2)

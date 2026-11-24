@@ -20,7 +20,7 @@ replying in the user's language. (Table A.)
 
 **4.3 Model size.** The 3B model was successfully attacked in 25 of 120 English runs, 10 of 120 Hindi,
 6 of 120 code-mixed, 2 of 120 Nepali and 1 of 120 romanized Nepali [table1]. Hindi is the notable
-difference: 10/120 on the 3B against 0/120 on the 7B (Wilson intervals about 4.6% to 14.6% against 0% to
+difference: 10/120 on the 3B against 0/120 on the 7B (Wilson intervals about 4.6% to 14.7% against 0% to
 3.1%, not overlapping). The 3B also finishes fewer benign tasks (20/30 against 29/30) and opens the
 injected item less often (for example file 15/30), so attack success is not monotone in model size and we
 do not know why the 3B is vulnerable in Hindi. (Fig. 1, both heatmaps; Table B.)
@@ -72,3 +72,10 @@ spotlight in Hindi has an interval above zero (15.0 points, 0.1 to 30.2) [`resul
 detector removed English attacks (0/40) but not Hindi ones (5/40): it flagged 30 of 40 English and 15 of 40
 Hindi attacked runs, whereas the 7B flagged every one in every language. n = 40 per cell, so we treat this as
 a pilot.
+
+**4.6b What the 27B says about the injection.** In the plain-address grid the 27B's final answer mentions the
+injected text in 77 of 100 runs (keyword rule, validated on this model only; [table8]): English 18 of 20, Hindi
+19, code-mixed 18, Nepali 16, romanized Nepali 6. The mentions typically report an "embedded instruction" to send
+a confirmation email and say it is being ignored. So the 27B appears to recognise and decline injected
+instructions in Hindi and Nepali as well as English, with romanized Nepali the exception (cause unknown). This
+is descriptive: a mention is not proof of understanding, and an unflagged answer may still have recognised the text.

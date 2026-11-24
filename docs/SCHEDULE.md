@@ -39,6 +39,7 @@ the response cache. My own test and figure runs slow a running grid, so nothing 
 | Defense grid, 7B (5 defenses; the detector adds one call per tool result) | 750 | done, about 3 h |
 | No-defense grid, 3B | 630 | about 2 h |
 | Defenses on 3B, Hindi + English (`make run-defenses-3b-hi`; 80 runs cached) | 400 | about 1 to 1.5 h (estimate, not yet measured) |
+| Hosted quiet follow-up (`make run-hosted-quiet`, 105 runs): done Nov 24 after quota waits |
 | Hosted Qwen 27B: control + no-defense subset (file, tool_output) | 245 | **hit the free-tier cap of 200,000 tokens/day after 102 runs** (control done, grid 87 of 230); finishing it needs about 1.5 more days of quota |
 
 ## If we fall behind, cut in this order

@@ -1,4 +1,4 @@
-# agent-injection-eval
+﻿# agent-injection-eval
 
 **Do prompt-injection defenses for LLM agents hold up across languages and injection channels?**
 
@@ -7,9 +7,9 @@ models that use tools, and how well lightweight defenses stop them, when the att
 different languages and hidden in different places. Everything runs in a mocked sandbox: no real
 email, web or file system is ever touched.
 
-> **Status (Nov 23, 2026): the benchmark, defenses and analysis code are built and tested; the full
-> no-defense grid and the 7B defense grid are done (results below); the 3B grid is done; the hosted
-> 27B model is a partial pilot.** Numbers appear in this README only when they come from `results/` through
+> **Status (Nov 24, 2026): the benchmark, defenses and analysis code are built and tested; the full
+> no-defense grid, the 7B defense grid, the 3B grid and the follow-up experiments are done (results below);
+> the hosted 27B grid is a partial pilot, its address-only follow-up is complete.** Numbers appear in this README only when they come from `results/` through
 > `analysis/`. Calibration runs and interim observations,
 > with exact settings and caveats, are in [docs/RESEARCH_LOG.md](docs/RESEARCH_LOG.md); the plan is in
 > [docs/SCHEDULE.md](docs/SCHEDULE.md) and a plain-language guide is in
@@ -55,7 +55,7 @@ Attack success rate with each defense (source `results/summary/table2b_asr_by_de
 The tool policy is 0% by construction (the attacker is never a known contact). The detector blocks every
 attacked run but also withholds the tool result, so the task itself fails under attack, and it
 false-alarms on 4 of 30 benign runs. Spotlighting's code-mixed effect is not distinguishable from zero.
-Nepali and Hindi were not defended on this model because their baseline is about 0%. One model, small n;
+Nepali and Hindi were not defended in this grid because their 7B baseline is about 0%; see the follow-up section for the detector on all languages and a 3B pilot in Hindi. One model, small n;
 see the research log for caveats.
 
 ## Model-size comparison (no defense, n=120 per language and model)
@@ -81,6 +81,21 @@ plus the 15-run control). On this partial set, 0 of 76 injected attacks succeede
 same request when the user asked directly, in English, Nepali, Hindi and code-mixed, while understanding it
 (it answered in the same language). Only romanized Nepali got through (1 of 3). The first four fact sets
 only, not a random sample. Details and caveats: `docs/RESEARCH_LOG.md`.
+
+## Follow-up experiments (Nov 23 to 24; each is small, see `docs/RESEARCH_LOG.md` for n and caveats)
+
+- **Address-only attack** (same text as `inject_owner_note`, recipient `reports@partner-lab.test`, n=10 per
+  cell). 7B: English file 6/10, tool output 10/10, every non-English cell 0/10. Hosted 27B: 1/100 injected runs
+  succeeded (English, file). So the conspicuous attacker address does not explain the 27B's refusals.
+- **27B final answers:** a keyword rule finds a mention of the injected instruction in 77/100 runs
+  (English 18/20, Hindi 19, code-mixed 18, Nepali 16, romanized Nepali 6); the answers typically say the instruction is being ignored.
+- **Detector on all five languages (7B, n=20 per cell):** it flagged the injected text in every cell
+  (20/20), and flagged 0/6 harmless Nepali, romanized Nepali and Hindi sentences (English 1/6, code-mixed 1/6).
+  So the 7B recognises injected instructions in all five languages, yet only follows them in English and
+  code-mixed text.
+- **Defenses on the 3B in Hindi and English (blunt attack, n=40 per cell):** attack success none 20/40 (en) and
+  8/40 (hi); spotlight 16 and 2; sandwich 13 and 3; tool policy 0 and 0; detector 0 and 5. The 3B detector
+  flagged 30/40 English but only 15/40 Hindi attacked runs. A pilot: most intervals include zero.
 
 ## The problem, in plain terms
 
@@ -149,7 +164,7 @@ Design rules that keep the study rigorous:
 | Translations (Nepali, romanized Nepali, Hindi, code-mixed): AI-drafted, reviewed and corrected line by line by the author | `docs/TRANSLATIONS.md`, `attacks.yaml` | done |
 | Four defenses (spotlighting, sandwich reminder, tool-permission policy, prompted detector) and a defense-grid config | `src/aie/defenses/`, `configs/defenses.yaml` | done, tested with scripted models; 7B grid (English + code-mixed) measured |
 | Analysis: tables with 95% intervals (CSV), heatmap, defense-effect and trade-off figures | `src/aie/analysis/`, `analysis/` | done, tested; run on the 7B full grid |
-| Report | `report/OUTLINE.md`, `method.md`, `results.md`, `discussion.md`, `related.md` | outline written; method, results, discussion and related work drafted (owner review; 4.5 and 27B parts pending; skim the 3 papers); intro, abstract, conclusion not started |
+| Report | `report/OUTLINE.md`, `method.md`, `results.md`, `discussion.md`, `related.md` | outline written; method, results, discussion and related work drafted (owner review; skim the 3 papers); intro, abstract, conclusion not started |
 
 Known open issues (details in the research log): the 3B model does not open the email on the benign
 task; one attack (`inject_cc_request`) is at the floor and is kept as a control; and an early partial

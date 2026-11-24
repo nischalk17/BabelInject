@@ -8,6 +8,7 @@ from pathlib import Path
 from aie.analysis.figures import fig_asr_heatmap, fig_defense_effect, fig_tradeoff
 from aie.analysis.load import LoadReport, load_outcomes
 from aie.analysis.tables import (
+    answer_mention_rows,
     asr_rows,
     attempt_rows,
     benign_flagged_rows,
@@ -52,6 +53,7 @@ def build_tables(
     put("table3_utility.csv", utility_rows(outcomes))
     put("table4_item_opened.csv", opened_rows(outcomes))
     put("table5_attack_attempted.csv", attempt_rows(outcomes, _attackers(attacks_file)))
+    put("table8_answer_mentions_injection.csv", answer_mention_rows(outcomes))
     if "detector" in defenses:
         put("table6_detector_flagged.csv", flagged_rows(outcomes))
         put("table7_detector_benign_flagged.csv", benign_flagged_rows(outcomes))
