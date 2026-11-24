@@ -1010,3 +1010,14 @@ Nepali was the only language the 27B followed as a direct request in the origina
 not know whether it fails to recognise romanized Nepali or just does not comment on it. **Caveats:** keyword rule,
 not a classifier; a mention is not proof of understanding; n = 20 per language; one attack text; one run per
 scenario; an unflagged answer may still have recognised the text.
+
+
+## 2026-11-24: Clean-clone reproduction check
+
+**Setup:** a fresh `git clone` of commit `197f2d5` (no `.env`, no response cache, no raw results), then `uv sync`,
+`make lint`, `make test`, `make run-control` (15 runs, `qwen2.5:7b`, temperature 0, seed 0, same machine).
+**Results:** lint clean (mypy, ruff), 256 tests pass. The control reproduced exactly: 14/15 direct requests
+followed in both the original and the clone, with identical per-scenario verdicts and identical tool-call
+sequences in all 15 runs. **Caveats:** one table, the smallest run, same machine and Ollama install; the raw
+rows are not committed, so the other tables cannot be rebuilt from a clone without re-running models;
+temperature-0 output wording is not bit-for-bit deterministic (Nov 22 check), though actions matched here.

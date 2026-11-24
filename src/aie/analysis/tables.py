@@ -313,8 +313,9 @@ def benign_flagged_rows(outcomes: Sequence[ScenarioOutcome]) -> list[CountRow]:
     """
     runs = [o for o in benign(outcomes) if o.defense == "detector"]
     labelled = [
-        o.model_copy(update={"language": o.scenario_id.split("|")[0].rsplit("__", 1)[-1]})
+        o.model_copy(update={"language": lang})
         for o in runs
+        if (lang := o.scenario_id.split("|")[0].rsplit("__", 1)[-1]) in LANGUAGES
     ]
 
     def flagged(o: ScenarioOutcome) -> bool:

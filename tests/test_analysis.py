@@ -231,3 +231,8 @@ def test_answer_mention_rows_use_the_final_answer_of_attacked_runs() -> None:
     quiet.result.final_answer = "Room 204."
     (row,) = answer_mention_rows([said, quiet, mk("s3", attack=None, success=None)])
     assert (row.metric, row.k, row.n) == ("answer_mentions_injection", 1, 2)
+
+
+def test_benign_flagged_rows_skip_tasks_without_a_language_suffix() -> None:
+    plain = mk("meeting_room__email|benign", defense="detector", attack=None, success=None)
+    assert benign_flagged_rows([plain]) == []

@@ -56,7 +56,8 @@ def build_tables(
     put("table8_answer_mentions_injection.csv", answer_mention_rows(outcomes))
     if "detector" in defenses:
         put("table6_detector_flagged.csv", flagged_rows(outcomes))
-        put("table7_detector_benign_flagged.csv", benign_flagged_rows(outcomes))
+        if benign_rows := benign_flagged_rows(outcomes):
+            put("table7_detector_benign_flagged.csv", benign_rows)
     prov = out_dir / "load_report.json"
     prov.write_text(report.model_dump_json(indent=2), encoding="utf-8")
     written.append(prov)
