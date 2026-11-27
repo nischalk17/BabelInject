@@ -72,3 +72,4 @@ demo-data:
 demo: demo-data
 	npm --prefix demo ci
 	npm --prefix demo run build
+	npm --prefix demo run check:dist

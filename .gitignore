@@ -25,3 +25,8 @@ results/summary/*
 !results/summary/*.csv
 
 node_modules/
+
+# local planning docs (kept on disk, not published)
+docs/PROJECT_PLAN.md
+docs/READING_GUIDE.md
+docs/SCHEDULE.md

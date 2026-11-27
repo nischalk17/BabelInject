@@ -15,9 +15,8 @@ email, web or file system is ever touched.
 > no-defense grid, the 7B defense grid, the 3B grid and the follow-up experiments are done (results below);
 > the hosted 27B grid is a partial pilot, its address-only follow-up is complete.** Numbers appear in this README only when they come from `results/` through
 > `analysis/`. Calibration runs and interim observations,
-> with exact settings and caveats, are in [docs/RESEARCH_LOG.md](docs/RESEARCH_LOG.md); the plan is in
-> [docs/SCHEDULE.md](docs/SCHEDULE.md) and a plain-language guide is in
-> [docs/EXPLAINED.md](docs/EXPLAINED.md).
+> with exact settings and caveats, are in [docs/RESEARCH_LOG.md](docs/RESEARCH_LOG.md); a plain-language
+> guide is in [docs/EXPLAINED.md](docs/EXPLAINED.md).
 
 ## First results (qwen2.5:7b, no defense, 600 attacked runs)
 
@@ -128,8 +127,8 @@ things that are less studied:
   detector, a tool-permission policy) work as well on non-English injections?
 - **RQ3.** What does each defense cost in benign task success (utility)?
 
-The full design, models, milestones and planned tables are in
-[docs/PROJECT_PLAN.md](docs/PROJECT_PLAN.md).
+The design, models and tables are described in this README, the [report](report/) and
+[docs/RESEARCH_LOG.md](docs/RESEARCH_LOG.md).
 
 ## How it works
 
@@ -191,6 +190,13 @@ npm --prefix demo run dev        # local dev server
 npm --prefix demo test           # TypeScript tests (rendering, accessibility, contrast)
 npm --prefix demo run capture    # screenshots at 360, 768 and 1440 px (uses your installed Chrome)
 ```
+
+**Deployment.** `.github/workflows/pages.yml` builds the site on every pull request that touches `demo/` (type check,
+tests, a dependency audit of what ships to the browser, a production build, and `npm run check:dist`, which verifies
+the base path and data files and fails if a key, home path, personal email or raw result row would be published). On a
+push to `main` it deploys `demo/dist` to GitHub Pages. One-time setup: the repository must be public (or on a plan that
+allows Pages), and Settings > Pages > Source must be "GitHub Actions". CI never needs `results/`: the exported JSON in
+`demo/public/data/` is committed.
 
 The featured traces are listed in `configs/demo_traces.yaml` and the study folders in `configs/demo_studies.yaml`.
 The exporter fails if a featured run is missing or if the judge, re-run on a stored trace, disagrees with the stored
