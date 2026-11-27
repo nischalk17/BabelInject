@@ -255,3 +255,27 @@ def test_asr_pooled_rows_split_injected_from_user_and_pool_languages() -> None:
         ("en", "user"): (1, 1),
         ("ALL", "user"): (1, 1),
     }
+
+
+def test_paired_asr_rows_match_effect_rows_and_need_no_benign_runs() -> None:
+    from aie.analysis.tables import paired_asr_rows
+
+    base = [mk(f"s{i}", success=i < 3) for i in range(4)]  # 3 of 4 succeed without a defense
+    sand = [mk(f"s{i}", defense="sandwich", success=i == 0) for i in range(4)]  # 1 of 4 with it
+    (row,) = paired_asr_rows(base + sand)  # no benign runs: effect_rows would return nothing
+    assert (row.k, row.base_k, row.n) == (1, 3, 4)
+    assert row.reduction_pp == pytest.approx(50.0)
+    assert row.reduction_lo_pp < row.reduction_pp < row.reduction_hi_pp
+    benign_runs = [
+        mk("b1", attack=None, language=None, channel=None, success=None),
+        mk("b1", defense="sandwich", attack=None, language=None, channel=None, success=None),
+    ]
+    (effect,) = effect_rows(base + sand + benign_runs)
+    assert effect.reduction_pp == pytest.approx(row.reduction_pp)
+    assert effect.reduction_lo_pp == pytest.approx(row.reduction_lo_pp)
+
+
+def test_paired_rows_skip_defended_runs_with_no_baseline() -> None:
+    from aie.analysis.tables import paired_asr_rows
+
+    assert paired_asr_rows([mk("only-defended", defense="sandwich")]) == []

@@ -49,6 +49,26 @@ export interface Effect {
   utility_change_hi_pp: number;
 }
 
+export interface PairedRow {
+  model_tag: string;
+  defense: string;
+  language: string;
+  channels: string;
+  attacks: string;
+  n: number;
+  k: number;
+  base_k: number;
+  rate: number;
+  lo: number;
+  hi: number;
+  base_rate: number;
+  base_lo: number;
+  base_hi: number;
+  reduction_pp: number;
+  reduction_lo_pp: number;
+  reduction_hi_pp: number;
+}
+
 export interface BenignRow {
   model_tag: string;
   defense: string;
@@ -62,6 +82,7 @@ export interface Study {
   cells: Cell[];
   benign: BenignRow[];
   effects: Effect[];
+  paired: PairedRow[];
   pooled: CountRow[];
   metrics: Record<string, CountRow[]>;
 }

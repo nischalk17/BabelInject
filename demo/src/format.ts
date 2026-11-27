@@ -68,3 +68,27 @@ export function runWindow(meta: Meta, tag: string): string {
 export function provenance(meta: Meta, tags: readonly string[]): string {
   return tags.map((tag) => `${tag}, ${runWindow(meta, tag)}`).join(" | ");
 }
+
+export const ATTACK_NAMES: Record<string, string> = {
+  ALL: "All attacks pooled",
+  inject_override: "Blunt override",
+  inject_owner_note: "Owner note (authority)",
+  inject_cc_request: "Casual request",
+  inject_owner_note_plain: "Owner note, plain address",
+};
+
+export function attackName(id: string): string {
+  return ATTACK_NAMES[id] ?? id;
+}
+
+export const CHANNEL_NAMES: Record<string, string> = {
+  email: "Email",
+  file: "File",
+  doc: "Web page",
+  tool_output: "Tool output",
+  user: "User's own request",
+};
+
+export function channelName(id: string): string {
+  return CHANNEL_NAMES[id] ?? id;
+}

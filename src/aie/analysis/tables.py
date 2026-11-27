@@ -83,6 +83,32 @@ class EffectRow(BaseModel):
     utility_change_hi_pp: float
 
 
+class PairedRow(BaseModel):
+    """A defense against the baseline on the SAME attacked scenarios (no benign runs needed).
+
+    ``reduction_pp`` is baseline ASR minus defended ASR in percentage points (positive = better),
+    with a Newcombe interval; ``lo``/``hi`` and ``base_lo``/``base_hi`` are Wilson intervals.
+    """
+
+    model_tag: str
+    defense: str
+    language: str
+    channels: str
+    attacks: str
+    n: int
+    k: int
+    base_k: int
+    rate: float
+    lo: float
+    hi: float
+    base_rate: float
+    base_lo: float
+    base_hi: float
+    reduction_pp: float
+    reduction_lo_pp: float
+    reduction_hi_pp: float
+
+
 class CountRow(BaseModel):
     """A plain proportion for a secondary metric (item opened, attack attempted)."""
 
@@ -236,6 +262,50 @@ def effect_rows(outcomes: Sequence[ScenarioOutcome], baseline: str = "none") -> 
                 utility_change_pp=100 * chg,
                 utility_change_lo_pp=100 * chg_lo,
                 utility_change_hi_pp=100 * chg_hi,
+            )
+        )
+    return rows
+
+
+def paired_asr_rows(outcomes: Sequence[ScenarioOutcome], baseline: str = "none") -> list[PairedRow]:
+    """Each defense against the baseline, pairing attacked runs by (model, scenario)."""
+    base = {
+        (o.result.model_tag, o.scenario_id): o for o in attacked(outcomes) if o.defense == baseline
+    }
+    groups = _group(
+        (o for o in attacked(outcomes) if o.defense != baseline),
+        lambda o: (o.result.model_tag, o.defense, o.language or ""),
+    )
+    rows: list[PairedRow] = []
+    for (tag, defense, language), runs in sorted(groups.items()):
+        pairs = [(o, base[(tag, o.scenario_id)]) for o in runs if (tag, o.scenario_id) in base]
+        if not pairs:
+            continue
+        n = len(pairs)
+        k = sum(bool(o.judge.attack_success) for o, _ in pairs)
+        bk = sum(bool(b.judge.attack_success) for _, b in pairs)
+        rate, lo, hi = _rate(k, n)
+        brate, blo, bhi = _rate(bk, n)
+        red, red_lo, red_hi = newcombe_diff(bk, n, k, n)
+        rows.append(
+            PairedRow(
+                model_tag=tag,
+                defense=defense,
+                language=language,
+                channels="+".join(sorted({o.channel or "" for o, _ in pairs})),
+                attacks="+".join(sorted({o.attack_id or "" for o, _ in pairs})),
+                n=n,
+                k=k,
+                base_k=bk,
+                rate=rate,
+                lo=lo,
+                hi=hi,
+                base_rate=brate,
+                base_lo=blo,
+                base_hi=bhi,
+                reduction_pp=100 * red,
+                reduction_lo_pp=100 * red_lo,
+                reduction_hi_pp=100 * red_hi,
             )
         )
     return rows

@@ -5,6 +5,8 @@ import "./styles/views.css";
 import { loadData } from "./data";
 import { h } from "./dom";
 import { startRouter } from "./router";
+import { renderDefenses } from "./views/defenses";
+import { renderHeatmap } from "./views/heatmap";
 import { renderOverview } from "./views/overview";
 
 async function boot(): Promise<void> {
@@ -45,6 +47,18 @@ async function boot(): Promise<void> {
         label: "Overview",
         title: "Overview",
         render: (el) => renderOverview(el, data),
+      },
+      {
+        id: "heatmap",
+        label: "Heatmap",
+        title: "Heatmap",
+        render: (el) => renderHeatmap(el, data),
+      },
+      {
+        id: "defenses",
+        label: "Defenses",
+        title: "Defenses",
+        render: (el) => renderDefenses(el, data),
       },
     ],
     nav,

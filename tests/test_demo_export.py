@@ -204,3 +204,19 @@ def test_pooled_rollups_equal_the_pooled_csv_table(fixture_root: Path) -> None:
         got = pooled[(row["model_tag"], row["defense"], row["language"], row["channel"])]
         assert (got["k"], got["n"]) == (int(row["k"]), int(row["n"]))
         assert got["lo"] == pytest.approx(float(row["lo"]), abs=5e-5)
+
+
+def test_paired_rows_in_summary_equal_the_paired_csv(fixture_root: Path) -> None:
+    summary, _ = build_summary_and_meta(_cfg(), fixture_root, commit="abc")
+    out = fixture_root / "csv_paired"
+    build_tables([fixture_root / "results/a"], out, fixture_root / ATTACKS)
+    paired = summary["studies"][0]["paired"]
+    rows = list(csv.DictReader((out / "table11_defense_paired.csv").open(encoding="utf-8")))
+    assert rows and len(rows) == len(paired)
+    for row, got in zip(rows, paired, strict=True):
+        assert (got["k"], got["base_k"], got["n"]) == (
+            int(row["k"]),
+            int(row["base_k"]),
+            int(row["n"]),
+        )
+        assert got["reduction_pp"] == pytest.approx(float(row["reduction_pp"]), abs=1e-3)

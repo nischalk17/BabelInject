@@ -30,6 +30,7 @@ from aie.analysis.tables import (
     effect_rows,
     flagged_rows,
     opened_rows,
+    paired_asr_rows,
     utility_rows,
 )
 from aie.eval.runner import ScenarioOutcome
@@ -158,6 +159,7 @@ def build_study(
             if r.condition == "benign"
         ],
         "effects": [r.model_dump() for r in effect_rows(outcomes)],
+        "paired": [r.model_dump() for r in paired_asr_rows(outcomes)],
         "pooled": [_count_dict(r) for r in asr_pooled_rows(outcomes)],
         "metrics": {},
     }
@@ -184,6 +186,7 @@ def _empty_study(study: StudyConfig) -> dict[str, Any]:
         "cells": [],
         "benign": [],
         "effects": [],
+        "paired": [],
         "pooled": [],
         "metrics": {},
     }

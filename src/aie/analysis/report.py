@@ -17,6 +17,7 @@ from aie.analysis.tables import (
     effect_rows,
     flagged_rows,
     opened_rows,
+    paired_asr_rows,
     utility_rows,
     write_csv,
 )
@@ -48,6 +49,7 @@ def build_tables(
     defenses = sorted(_defenses(outcomes) - {"none"})
     if defenses:
         put("table2_defense_effect.csv", effect_rows(outcomes))
+        put("table11_defense_paired.csv", paired_asr_rows(outcomes))
         put(
             "table2b_asr_by_defense.csv",
             [r for d in sorted(_defenses(outcomes)) for r in asr_rows(outcomes, d)],
