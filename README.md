@@ -198,6 +198,18 @@ push to `main` it deploys `demo/dist` to GitHub Pages. One-time setup: the repos
 allows Pages), and Settings > Pages > Source must be "GitHub Actions". CI never needs `results/`: the exported JSON in
 `demo/public/data/` is committed.
 
+**GIF for the README (60 to 90 seconds).** Either record the screen, or build it from frames:
+`npm --prefix demo run build`, then `npm --prefix demo run frames` writes one numbered PNG per replay step for three
+traces (an attack that works, a defense that blocks it in English, the same defense missing it in Hindi) into
+`demo/shots/replay/` (git-ignored). Join them with ffmpeg, holding each frame 3 seconds:
+
+```
+ffmpeg -framerate 1/3 -i demo/shots/replay/%03d.png -vf "scale=900:-1:flags=lanczos,split[a][b];[a]palettegen[p];[b][p]paletteuse" docs/figures/replay.gif
+```
+
+To record instead, open the replay page, press Play, and capture the browser window with ScreenToGif (Windows) or
+any screen recorder; keep it under 90 seconds and under about 10 MB.
+
 The featured traces are listed in `configs/demo_traces.yaml` and the study folders in `configs/demo_studies.yaml`.
 The exporter fails if a featured run is missing or if the judge, re-run on a stored trace, disagrees with the stored
 verdict. The published JSON holds only fictional sandbox data and model outputs from the runs.

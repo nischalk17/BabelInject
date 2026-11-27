@@ -355,6 +355,7 @@ select {
   border-left-color: var(--accent);
 }
 .step-label {
+  text-transform: none; /* labels carry tool arguments: show them exactly as stored */
   margin: 0 0 0.5rem;
   max-width: none;
   overflow-wrap: anywhere;
