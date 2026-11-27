@@ -67,6 +67,11 @@ export function renderHeatmap(main: HTMLElement, data: Data): void {
     const study = studies.find((s) => s.id === state.study) ?? first;
     const cells = injectedCells(study);
     const models = uniq(cells.map((c) => c.model_tag));
+    if (state.model === "") {
+      // First visit: start on the model with the most cells, so the grid is not mostly "not run".
+      const count = (m: string): number => cells.filter((c) => c.model_tag === m).length;
+      state.model = [...models].sort((a, b) => count(b) - count(a) || a.localeCompare(b))[0] ?? "";
+    }
     state.model = pick(models, state.model);
     const forModel = cells.filter((c) => c.model_tag === state.model);
     const defenses = uniq(forModel.map((c) => c.defense));

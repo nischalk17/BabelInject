@@ -48,3 +48,9 @@ the response cache. My own test and figure runs slow a running grid, so nothing 
 3. Hosted run on a subset of cells.
 
 **Never cut:** the deterministic judge, per-run logging, and reporting n with confidence intervals.
+
+## After v1.0 (optional): Results Explorer demo
+A static, read-only demo in `demo/` (see README, "Results Explorer"). Built in milestones: M1 data export, M2 featured
+traces, M3 scaffold and Overview, M4 heatmap and defenses, M5 trace replay, M6 how-it-works, accessibility and
+responsive pass, README link. Remaining: M7 GitHub Actions deploy to Pages (you enable Pages with source "GitHub
+Actions"; the repo must be public or on a plan that allows Pages), M8 optional screenshot/GIF script. No compute needed.

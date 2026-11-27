@@ -112,8 +112,22 @@ select {
   border-top: 0;
   border-bottom: 1px solid var(--border);
 }
+.heat th,
+.heat td {
+  padding-inline: 0.35rem;
+}
 .heat th {
   white-space: normal;
+  overflow-wrap: break-word;
+  letter-spacing: 0;
+}
+.heat th:first-child {
+  width: 5.75rem;
+}
+@media (min-width: 40rem) {
+  .heat th:first-child {
+    width: 9rem;
+  }
 }
 .heat-cell {
   text-align: center;
@@ -401,4 +415,57 @@ mark.inj {
 }
 .replay-body > h2 {
   font-size: var(--step-1);
+}
+
+/* ---- how it works ---- */
+.how-grid {
+  display: grid;
+  gap: var(--gap);
+}
+@media (min-width: 64rem) {
+  .how-grid {
+    grid-template-columns: minmax(0, 26rem) minmax(0, 1fr);
+    align-items: start;
+  }
+  .how-grid .figure {
+    position: sticky;
+    top: 1rem;
+  }
+}
+.figure {
+  margin: 0;
+}
+.figure figcaption {
+  color: var(--muted);
+  font-size: var(--step--1);
+  margin-top: 0.5rem;
+  max-width: 36ch;
+}
+.diagram {
+  width: 100%;
+  max-width: 26rem;
+  height: auto;
+  display: block;
+}
+.diagram .box rect {
+  fill: var(--surface);
+  stroke: var(--border);
+}
+.diagram .box.loop rect {
+  stroke: var(--accent);
+}
+.diagram .box-title {
+  fill: var(--text);
+  font: 650 14px var(--font-sans);
+}
+.diagram .box-detail {
+  fill: var(--muted);
+  font: 12.5px var(--font-sans);
+}
+.diagram .arrow {
+  stroke: var(--muted);
+  stroke-width: 1.5;
+}
+.diagram .arrow-head {
+  fill: var(--muted);
 }

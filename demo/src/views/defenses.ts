@@ -46,7 +46,11 @@ export function renderDefenses(main: HTMLElement, data: Data): void {
     main.append(h("p", { class: "not-run" }, "Defenses: not run yet."));
     return;
   }
-  const models = [...new Set(paired.map((p) => p.model_tag))].sort();
+  const withCost = new Set(study.effects.map((e) => e.model_tag));
+  // Models with the benign-utility cost measured come first, so the first view shows both marks.
+  const models = [...new Set(paired.map((p) => p.model_tag))].sort(
+    (a, b) => Number(withCost.has(b)) - Number(withCost.has(a)) || a.localeCompare(b),
+  );
   const filters = h("div", { class: "filters" });
   const result = h("div", { class: "chart-box" });
   main.append(filters, result);

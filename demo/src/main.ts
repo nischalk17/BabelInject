@@ -7,6 +7,7 @@ import { h } from "./dom";
 import { startRouter } from "./router";
 import { renderDefenses } from "./views/defenses";
 import { renderHeatmap } from "./views/heatmap";
+import { renderHow } from "./views/how";
 import { renderOverview } from "./views/overview";
 import { renderReplay } from "./views/replay";
 
@@ -66,6 +67,12 @@ async function boot(): Promise<void> {
         label: "Trace replay",
         title: "Trace replay",
         render: (el, param) => renderReplay(el, data, param),
+      },
+      {
+        id: "how",
+        label: "How it works",
+        title: "How it works",
+        render: (el) => renderHow(el, data),
       },
     ],
     nav,

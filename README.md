@@ -1,5 +1,9 @@
 ﻿# agent-injection-eval
 
+[![Results Explorer](https://img.shields.io/badge/Results%20Explorer-live%20demo-f2b84b?style=flat-square&labelColor=0b0d10)](https://nischalk17.github.io/agent-injection-eval/)
+
+**Live demo:** <https://nischalk17.github.io/agent-injection-eval/>. A static, read-only explorer of the results (heatmap, defense effects, step-through traces). Every number in it comes from `results/` through the same analysis functions as the tables; no model is called. It is published by GitHub Actions after the first deploy (see [Results Explorer](#results-explorer-demo)).
+
 **Do prompt-injection defenses for LLM agents hold up across languages and injection channels?**
 
 A research benchmark that measures how often attacks succeed against small, locally run language
@@ -170,6 +174,27 @@ Known open issues (details in the research log): the 3B model does not open the 
 task; one attack (`inject_cc_request`) is at the floor and is kept as a control; and an early partial
 look suggested non-English attacks fail on the 7B model for lack of comprehension; the capability
 control (14/15 direct requests followed, all languages) argues against that, but n is tiny.
+
+## Results Explorer (demo)
+
+A static site in `demo/` (Vite + TypeScript, no UI framework, no runtime dependencies beyond two small d3 modules),
+served from GitHub Pages. It has an overview, a language x channel heatmap with filters, a defense-effect view
+with intervals, a step-through replay of 12 real traces (hidden instruction highlighted, judge verdict and rule),
+and a "how it works" page. Each chart also offers its numbers as a table. A view with no data says "not run yet".
+
+Regenerate it after new results (needs Node 20+ and the raw `results/` on your machine; raw rows are not committed):
+
+```
+make demo-data     # results/ -> demo/public/data/{summary,meta}.json and traces/*.json (commit these)
+make demo          # demo-data, then npm ci and a production build in demo/dist
+npm --prefix demo run dev        # local dev server
+npm --prefix demo test           # TypeScript tests (rendering, accessibility, contrast)
+npm --prefix demo run capture    # screenshots at 360, 768 and 1440 px (uses your installed Chrome)
+```
+
+The featured traces are listed in `configs/demo_traces.yaml` and the study folders in `configs/demo_studies.yaml`.
+The exporter fails if a featured run is missing or if the judge, re-run on a stored trace, disagrees with the stored
+verdict. The published JSON holds only fictional sandbox data and model outputs from the runs.
 
 ## Setup
 

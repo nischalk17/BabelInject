@@ -562,3 +562,13 @@ fingerprint always gets the same saved answer.
     attack rate looks like "recognises but does not act", not "cannot read it" (a yes/no question is easier
     than acting, so this is suggestive). (c) On the 3B model the detector caught English attacks (0/40 got
     through) but missed some Hindi ones (5/40 got through): the only language gap in a defense we measured.
+
+
+## The Results Explorer demo (optional, after v1.0)
+
+`demo/` is a small website that lets someone look at the results without running anything: a coloured grid of attack
+success by language and channel, a chart of what each defense changes (and costs), and a step-by-step replay of 12
+real runs with the hidden instruction highlighted and the judge's reasoning. It is built only from the project's
+own results files by `analysis/export_demo_data.py`, using the same functions as the tables, so no number on it is
+typed by hand. It makes no model calls and needs no server: it is plain files, published on GitHub Pages. If a view
+has no data it says "not run yet" instead of showing a made-up number. Regenerate it with `make demo`.

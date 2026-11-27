@@ -128,3 +128,7 @@ Standards: Python 3.11+, `uv`, `ruff`, `mypy`, `pytest`, pre-commit, type hints,
 - 3 qualitative failure examples (short traces).
 
 **What to put in your CV once there are numbers:** "Found that [defense X] reduced English injection ASR by A% but only B% for romanized-Nepali injections on [model] (n=…, 95% CI …)."
+
+> **Addendum (Nov 27, 2026): Results Explorer.** After v1.0 a static demo was added in `demo/` (Vite + TypeScript, data
+> exported from `results/` by `analysis/export_demo_data.py`, hosted on GitHub Pages). It adds no experiments and no
+> model calls; see the README section "Results Explorer" and `docs/SCHEDULE.md`.
