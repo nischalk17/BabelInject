@@ -11,6 +11,7 @@ from typing import Annotated
 
 import typer
 
+from aie.analysis.completeness import check_completeness, format_completeness
 from aie.config import ExperimentConfig, load_config
 from aie.eval.metrics import format_cell, summarize
 from aie.eval.runner import ScenarioOutcome, run_scenario
@@ -38,12 +39,19 @@ def plan_run(cfg: ExperimentConfig) -> tuple[list[Scenario], list[SkippedCell]]:
 
 
 def make_row(
-    cfg: ExperimentConfig, config_name: str, outcome: ScenarioOutcome
+    cfg: ExperimentConfig,
+    config_name: str,
+    outcome: ScenarioOutcome,
+    started_at: datetime | None = None,
 ) -> dict[str, object]:
-    """One JSONL row: the outcome plus the settings needed to audit it."""
+    """One JSONL row: the outcome plus the settings needed to audit it.
+
+    ``started_at`` is when the run began (local time); it defaults to now for callers that do not
+    track it.
+    """
     return {
         "config_name": config_name,
-        "started_at": datetime.now().isoformat(timespec="seconds"),  # hosted models can drift
+        "started_at": (started_at or datetime.now()).isoformat(timespec="seconds"),
         "gen": cfg.gen.model_dump(mode="json"),
         **outcome.model_dump(mode="json"),
     }
@@ -69,6 +77,7 @@ def run_models(
         for model in models:
             for defense_cfg, detector in zip(cfg.defenses, detector_models, strict=True):
                 for scenario in scenarios:
+                    started = datetime.now()
                     outcome = run_scenario(
                         model,
                         scenario,
@@ -78,7 +87,7 @@ def run_models(
                         detector_model=detector,
                     )
                     outcomes.append(outcome)
-                    row = make_row(cfg, config_name, outcome)
+                    row = make_row(cfg, config_name, outcome, started)
                     f.write(json.dumps(row, ensure_ascii=False) + "\n")
                     f.flush()
                     j = outcome.judge
@@ -88,6 +97,23 @@ def run_models(
                         f"attack_success={j.attack_success} utility={j.utility_success}"
                     )
     return outcomes
+
+
+@app.command()
+def check(config: Annotated[Path, typer.Argument(exists=True, dir_okay=False)]) -> None:
+    """Check that the rows on disk cover every scenario CONFIG expands to (exit 1 if not)."""
+    cfg = load_config(config)
+    scenarios, _ = plan_run(cfg)
+    report = check_completeness(
+        config.name,
+        [s.id for s in scenarios],
+        [d.name for d in cfg.defenses],
+        len(cfg.models),
+        [cfg.output_dir],
+    )
+    typer.echo(format_completeness(report))
+    if not report.complete:
+        raise typer.Exit(1)
 
 
 @app.command()

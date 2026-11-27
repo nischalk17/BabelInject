@@ -98,6 +98,11 @@ def _parse_message(raw: dict[str, Any], step: int) -> Message:
         fn = tc["function"]
         args = fn.get("arguments") or {}
         if isinstance(args, str):
-            args = json.loads(args)
+            try:
+                args = json.loads(args)
+            except json.JSONDecodeError:
+                args = {"_unparsed_arguments": args}  # surfaces as a logged bad-arguments failure
+        if not isinstance(args, dict):
+            args = {"_unparsed_arguments": args}
         calls.append(ToolCall(id=f"call_{step}_{i}", name=fn["name"], arguments=args))
     return Message(role="assistant", content=raw.get("content") or "", tool_calls=calls)

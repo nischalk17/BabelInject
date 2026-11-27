@@ -160,3 +160,22 @@ def test_run_covers_every_defense_and_labels_the_rows(
     assert rows[4]["defense_version"] == "tool_policy-v1"
     assert "fake/m@1 | tool_policy | en/email: ASR 0/1" in result.output
     assert "[6/6]" in result.output
+
+
+def test_check_reports_an_incomplete_grid_and_passes_a_complete_one(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    cfg = write_config(tmp_path, "  - {provider: ollama, model: m}\n")
+    assert CliRunner().invoke(cli.app, ["check", str(cfg)]).exit_code == 1  # no rows yet
+    model = ScriptedModel(honest() + obedient() + honest(), tag="fake/m@1")
+    patch_models(monkeypatch, {"m": model})
+    assert CliRunner().invoke(cli.app, ["run", str(cfg)]).exit_code == 0
+    done = CliRunner().invoke(cli.app, ["check", str(cfg)])
+    assert done.exit_code == 0 and "complete" in done.output
+    (out,) = (tmp_path / "out").glob("exp-*.jsonl")
+    rows = out.read_text(encoding="utf-8").splitlines()
+    out.write_text("\n".join(rows[:2]) + "\n", encoding="utf-8")  # a crashed run
+    partial = CliRunner().invoke(cli.app, ["check", str(cfg)])
+    assert partial.exit_code == 1 and "INCOMPLETE" in partial.output
+    started = [json.loads(r)["started_at"] for r in rows]
+    assert all(len(s) == 19 for s in started)

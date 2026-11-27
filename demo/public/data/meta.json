@@ -1,5 +1,5 @@
 {
- "git_commit": "cf1c8d2b8a38ad984ffbc15c415ca0d4acc89aa2",
+ "git_commit": "ca55038a20397b6d523d1f982b95af5680edf0f9",
  "models": [
   {
    "first_run": "2026-11-23",
@@ -23,8 +23,8 @@
    "tag": "ollama/qwen2.5:7b@845dbda0ea48"
   }
  ],
- "repo_url": "https://github.com/nischalk17/agent-injection-eval",
- "report_url": "https://github.com/nischalk17/agent-injection-eval/tree/main/report",
+ "repo_url": "https://github.com/nischalk17/BabelInject",
+ "report_url": "https://github.com/nischalk17/BabelInject/tree/main/report",
  "scenarios_by_study": {
   "detector_langs": 230,
   "main": 2297,

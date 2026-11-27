@@ -408,6 +408,15 @@ def answer_mention_rows(outcomes: Sequence[ScenarioOutcome]) -> list[CountRow]:
     return _count_rows(attacked(outcomes), "answer_mentions_injection", mentions)
 
 
+def step_limit_rows(outcomes: Sequence[ScenarioOutcome]) -> list[CountRow]:
+    """How often a run hit the step limit without answering (every run, attacked or benign).
+
+    This is how a defense's utility cost shows up when the agent loops instead of answering, for
+    example when the detector withholds a tool result and the agent keeps re-listing the inbox.
+    """
+    return _count_rows(outcomes, "hit_step_limit", lambda o: o.result.stop_reason == "max_steps")
+
+
 def benign_flagged_rows(outcomes: Sequence[ScenarioOutcome]) -> list[CountRow]:
     """Detector flag rate on harmless text per language (the control for ``flagged_rows``).
 

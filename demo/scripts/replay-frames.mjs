@@ -18,7 +18,7 @@ let n = 0;
 try {
   const page = await browser.newPage({ viewport: { width: 960, height: 720 } });
   for (const id of traces) {
-    await page.goto(`http://localhost:4173/agent-injection-eval/#/replay/${id}`);
+    await page.goto(`http://localhost:4173/BabelInject/#/replay/${id}`);
     await page.waitForSelector(".player");
     await page.evaluate(() => window.scrollTo(0, document.querySelector(".controls")?.getBoundingClientRect().top + scrollY - 24));
     const total = await page.locator(".timeline > .step").count();

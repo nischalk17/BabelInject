@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import re
+
 from aie.defenses.base import Defense
 
 ADDENDUM = (
@@ -11,11 +13,15 @@ ADDENDUM = (
 )
 
 
+_CLOSE = re.compile(r"</\s*untrusted_data\s*>", re.IGNORECASE)
+_OPEN = re.compile(r"<\s*untrusted_data", re.IGNORECASE)
+
+
 class Spotlight(Defense):
     """Wrap each tool result in tags, and escape tags inside it so it cannot close the wrapper."""
 
     name = "spotlight"
-    version = "spotlight-v1"
+    version = "spotlight-v2"
 
     def system_prompt(self, base: str) -> str:
         """Add the instruction explaining the tags."""
@@ -23,7 +29,6 @@ class Spotlight(Defense):
 
     def wrap_tool_output(self, tool_name: str, output: str) -> str:
         """Wrap the output; an attacker-supplied closing tag is neutralized first."""
-        safe = output.replace("</untrusted_data>", "[/untrusted_data]").replace(
-            "<untrusted_data", "[untrusted_data"
-        )
+        safe = _CLOSE.sub("[/untrusted_data]", output)
+        safe = _OPEN.sub("[untrusted_data", safe)
         return f'<untrusted_data tool="{tool_name}">\n{safe}\n</untrusted_data>'

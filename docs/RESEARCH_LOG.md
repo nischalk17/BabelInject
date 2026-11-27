@@ -1060,3 +1060,22 @@ pass. **Rename:** the display name is now BabelInject (README, CITATION, report 
 header). The GitHub repository slug and the Python package (`aie`) are unchanged on purpose: the Pages base
 path, badge and links depend on the slug, so rename the repository on GitHub first and then update the slug
 in `configs/demo_studies.yaml`, `demo/vite.config.ts` and `demo/scripts/*.mjs` together.
+
+## 2026-11-27 (evening): audit fixes A3, A5, A6; repository renamed BabelInject
+
+**No result changed.** Tables 1 to 11 and the figures regenerate identically; the only new file is
+`table12_step_limit.csv` (runs that ended at the 8-step limit, every run). Main study: detector 24/150 runs on
+the 7B (the same 24 as the tool-output cell logged above, n=40 there); every other model and defense 0.
+**A3** table12 added. **A5** `aie check CONFIG` (`make check`) compares the rows on disk with the grid a config
+expands to. Run on the real data: full 630/630, defenses 750/750 (5 x 150), full_3b 630/630, detector_langs
+200/200, defenses_3b_hi 400/400 (5 x 80) are complete; hosted is 87/230 (143 missing, as already logged).
+**A6** (a) `started_at` is now written when a run starts, not when it ends (rows already on disk keep the old
+meaning: end time); (b) the local Ollama adapter keeps malformed tool arguments as a logged failed call, as the
+Groq adapter does, instead of crashing the run; (c) spotlighting escapes its tags case-insensitively and with
+inner spaces, so its version is now `spotlight-v2` (all stored rows are `spotlight-v1`; none of their tool
+results contains such a variant, so the v1 behaviour on them equals v2); (d) each row records
+`result.truncated_steps`, the replies cut off by the token limit (Ollama `done_reason`, Groq `finish_reason`;
+old rows lack it and read as 0, so past truncation is unknown). **Repository slug** is now `BabelInject` in the
+Pages base path, demo config, scripts, README and git remote; the GitHub repository itself must be renamed in
+Settings (GitHub redirects the old URL). **Caveat:** the 60/100 detector-probe figure comes from
+`results/summary_detector_langs/`, a separate study that table12 does not pool.

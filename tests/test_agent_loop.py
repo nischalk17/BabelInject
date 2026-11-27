@@ -103,3 +103,11 @@ def test_served_by_notes_a_mid_run_change_and_is_empty_for_local_models(
     assert len(run_agent(changed, sandbox, "list").served_by) == 2
     local = ScriptedModel([final("hi")], raws=[{"message": {"content": "hi"}}])
     assert run_agent(local, sandbox, "x").served_by == []
+
+
+def test_truncated_steps_count_replies_cut_off_by_the_token_limit(sandbox: Sandbox) -> None:
+    model = ScriptedModel(
+        [calling("c0", "list_emails"), final("half an ans")],
+        raws=[{"done_reason": "stop"}, {"finish_reason": "length"}],
+    )
+    assert run_agent(model, sandbox, "list").truncated_steps == 1

@@ -4,7 +4,7 @@ import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
 
 const dist = resolve(process.argv[2] ?? "dist");
-const base = "/agent-injection-eval/";
+const base = "/BabelInject/";
 const problems = [];
 const read = (rel) => readFileSync(join(dist, rel), "utf-8");
 const json = (rel) => {

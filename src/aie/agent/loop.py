@@ -26,6 +26,9 @@ class AgentResult(BaseModel):
     # Distinct (returned_model, system_fingerprint) pairs the provider reported, so hosted-model
     # drift can be checked from the result rows alone. Empty for local models and older rows.
     served_by: list[dict[str, str | None]] = Field(default_factory=list)
+    # Replies cut off by the token limit (finish/done reason "length"); such a step may be a
+    # half-written tool call or answer, so a nonzero count is worth a look.
+    truncated_steps: int = 0
 
 
 def identity(tool_name: str, output: str) -> str:
@@ -42,6 +45,11 @@ def _served_by(raw: dict[str, Any]) -> dict[str, str | None]:
         "returned_model": None if returned is None else str(returned),
         "system_fingerprint": None if fingerprint is None else str(fingerprint),
     }
+
+
+def _was_truncated(raw: dict[str, Any]) -> bool:
+    """True if the provider says the reply stopped at the token limit."""
+    return "length" in (raw.get("finish_reason"), raw.get("done_reason"))
 
 
 def run_agent(
@@ -81,9 +89,11 @@ def run_agent(
     reason: Literal["final", "max_steps"] = "max_steps"
     steps = 0
     served_by: list[dict[str, str | None]] = []
+    truncated = 0
     for steps in range(1, max_steps + 1):  # noqa: B007 - steps is read after the loop
         resp = model.chat(messages, specs, cfg)
         tag = resp.model_tag
+        truncated += _was_truncated(resp.raw)
         served = _served_by(resp.raw)
         if served and served not in served_by:
             served_by.append(served)
@@ -115,4 +125,5 @@ def run_agent(
         model_tag=tag,
         prompt_version=PROMPT_VERSION,
         served_by=served_by,
+        truncated_steps=truncated,
     )

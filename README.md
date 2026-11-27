@@ -1,12 +1,20 @@
 ﻿# BabelInject
 
-*Prompt injection that crosses the language barrier: a benchmark of attacks and defenses for tool-using LLM agents.* The name is a nod to the Tower of Babel: defenses built around one language can stop working when the attack speaks another. (The repository and Python package keep their original names, `agent-injection-eval` and `aie`, so existing links and imports still work.)
+*Prompt injection that crosses the language barrier: a benchmark of attacks and defenses for tool-using LLM agents.* (The repository was formerly called `agent-injection-eval`; the Python package is still `aie`.)
 
-[![Results Explorer](https://img.shields.io/badge/Results%20Explorer-live%20demo-f2b84b?style=flat-square&labelColor=0b0d10)](https://nischalk17.github.io/agent-injection-eval/)
+[![Results Explorer](https://img.shields.io/badge/Results%20Explorer-live%20demo-f2b84b?style=flat-square&labelColor=0b0d10)](https://nischalk17.github.io/BabelInject/)
 
-**Live demo:** <https://nischalk17.github.io/agent-injection-eval/>. A static, read-only explorer of the results (heatmap, defense effects, step-through traces). Every number in it comes from `results/` through the same analysis functions as the tables; no model is called. It is published by GitHub Actions after the first deploy (see [Results Explorer](#results-explorer-demo)).
+**Live demo:** <https://nischalk17.github.io/BabelInject/>. A static, read-only explorer of the results (heatmap, defense effects, step-through traces). Every number in it comes from `results/` through the same analysis functions as the tables; no model is called. It is published by GitHub Actions after the first deploy (see [Results Explorer](#results-explorer-demo)).
 
-**Do prompt-injection defenses for LLM agents hold up across languages and injection channels?**
+> **Fun fact: why "BabelInject"?** The Tower of Babel is a biblical origin story (Genesis 11:1-9) that
+> explains why people speak different languages and live scattered across the earth. In it, people who
+> share one language settle in the land of Shinar and build a city and a tower reaching toward the
+> heavens; God confuses their speech and scatters them. The name borrows the idea: most prompt-injection
+> defenses are designed and tested in one language, English, and this project asks what happens when the
+> attack speaks another (Nepali, romanized Nepali, Hindi or a mix). The name is the question, not a
+> finding; the results below say how far the metaphor holds.
+
+**BabelInject: Do prompt-injection defenses for LLM agents hold up across languages and injection channels?**
 
 A research benchmark that measures how often attacks succeed against small, locally run language
 models that use tools, and how well lightweight defenses stop them, when the attack is written in

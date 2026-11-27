@@ -117,6 +117,7 @@ class GroqAdapter(ModelAdapter):
                 raw={
                     "returned_model": data.get("model"),
                     "system_fingerprint": data.get("system_fingerprint"),
+                    "finish_reason": data["choices"][0].get("finish_reason"),
                     "usage": data.get("usage"),
                 },
             )

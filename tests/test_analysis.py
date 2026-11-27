@@ -17,6 +17,7 @@ from aie.analysis.tables import (
     flagged_rows,
     newcombe_diff,
     opened_rows,
+    step_limit_rows,
     utility_rows,
     write_csv,
 )
@@ -295,3 +296,11 @@ def test_load_flags_a_rerun_made_with_a_different_version(tmp_path: Path) -> Non
     assert report.duplicates_dropped == 2
     assert len(report.version_changes) == 1 and "s1" in report.version_changes[0]
     assert "WARNING" in describe(report)
+
+
+def test_step_limit_rows_count_runs_that_never_answered() -> None:
+    looped = mk("s1", defense="detector")
+    looped.result.stop_reason = "max_steps"
+    rows = step_limit_rows([looped, mk("s2", defense="detector"), mk("s3", **BENIGN)])
+    by = {(r.defense, r.language): (r.k, r.n) for r in rows}
+    assert by[("detector", "en")] == (1, 2)

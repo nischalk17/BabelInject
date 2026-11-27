@@ -3,8 +3,8 @@
 # the "ALL" cells of the main tables (same reason `make tables-quiet` is separate). The main study adds
 # the 3B Hindi/English defense runs (their `none` rows duplicate full_3b and are de-duplicated on load)
 # and the capability controls (channel "user", so they never share a cell with injected runs).
-repo_url: https://github.com/nischalk17/agent-injection-eval
-report_url: https://github.com/nischalk17/agent-injection-eval/tree/main/report
+repo_url: https://github.com/nischalk17/BabelInject
+report_url: https://github.com/nischalk17/BabelInject/tree/main/report
 studies:
   - id: main
     title: Main grid, defenses, hosted pilot, 3B grid, capability controls

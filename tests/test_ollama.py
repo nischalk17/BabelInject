@@ -76,3 +76,22 @@ def test_unpulled_model_raises() -> None:
     )
     with pytest.raises(OllamaError, match="not pulled"):
         _ = OllamaAdapter("qwen2.5:3b", client=client).model_tag
+
+
+def test_malformed_string_arguments_are_kept_not_raised() -> None:
+    reply = {
+        "message": {
+            "role": "assistant",
+            "content": "",
+            "tool_calls": [
+                {"function": {"name": "read_email", "arguments": "{not json"}},
+                {"function": {"name": "list_emails", "arguments": "[1, 2]"}},
+            ],
+        }
+    }
+    adapter = make(reply, [])
+    resp = adapter.chat([Message(role="user", content="hi")], [], GenConfig())
+    assert [c.arguments for c in resp.message.tool_calls] == [
+        {"_unparsed_arguments": "{not json"},
+        {"_unparsed_arguments": [1, 2]},
+    ]

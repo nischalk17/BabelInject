@@ -19,7 +19,7 @@ const routes = [
 ];
 
 const server = await preview({ preview: { port: 4173, strictPort: true } });
-const base = "http://localhost:4173/agent-injection-eval/";
+const base = "http://localhost:4173/BabelInject/";
 const browser = await chromium.launch({ channel: "chrome" });
 let overflow = 0;
 try {
