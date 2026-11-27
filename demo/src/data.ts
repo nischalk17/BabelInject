@@ -131,3 +131,95 @@ export async function loadData(): Promise<Data> {
 export function studyById(data: Data, id: string): Study | undefined {
   return data.summary.studies.find((s) => s.id === id);
 }
+
+export interface TraceIndexEntry {
+  id: string;
+  title: string;
+  why_featured: string;
+  pair_with: string | null;
+  model_tag: string;
+  run_date: string | null;
+  defense: string;
+  attack_id: string | null;
+  language: string | null;
+  channel: string | null;
+  attack_success: boolean | null;
+  utility_success: boolean;
+}
+
+export interface DefenseEvent {
+  type: string;
+  tool?: string;
+  verdict?: boolean | null;
+  reply?: string;
+  to?: string;
+}
+
+export interface TraceStep {
+  i: number;
+  kind: "user" | "assistant" | "tool" | "final";
+  text: string;
+  tool_calls?: { name: string; args: Record<string, unknown> }[];
+  tool?: { name: string; args: Record<string, unknown>; ok: boolean | null };
+  events?: DefenseEvent[];
+  injection_spans: number[][];
+}
+
+export interface UtilityCheck {
+  type: string;
+  text: string;
+  passed: boolean;
+}
+
+export interface Trace {
+  id: string;
+  title: string;
+  why_featured: string;
+  pair_with: string | null;
+  model_tag: string;
+  run_date: string | null;
+  config_name: string | null;
+  prompt_version: string;
+  defense: { name: string; version: string };
+  scenario: {
+    scenario_id: string;
+    task_id: string;
+    attack_id: string | null;
+    language: string | null;
+    channel: string | null;
+  };
+  task_prompt: string;
+  system_prompt: string;
+  injection: {
+    attack_id: string;
+    language: string;
+    channel: string;
+    payload: string;
+    located: boolean;
+    note: string | null;
+  } | null;
+  steps: TraceStep[];
+  stop_reason: string;
+  outbox: { to: string[]; subject: string; body: string }[];
+  verdict: {
+    attack_success: boolean | null;
+    utility_success: boolean;
+    failed_utility_checks: string[];
+    rule: {
+      id: string;
+      text: string;
+      matched_email: { to: string[]; subject: string; body: string } | null;
+      blocked_attempts: { args: Record<string, unknown>; result: string }[];
+    } | null;
+    utility_checks: UtilityCheck[];
+  };
+}
+
+export async function loadTraceIndex(): Promise<TraceIndexEntry[]> {
+  const index = await fetchJson<{ traces: TraceIndexEntry[] }>("traces/index.json");
+  return index.traces;
+}
+
+export async function loadTrace(id: string): Promise<Trace> {
+  return fetchJson<Trace>(`traces/${encodeURIComponent(id)}.json`);
+}

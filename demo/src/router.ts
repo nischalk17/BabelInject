@@ -1,4 +1,5 @@
-/** Hash router: works on project Pages without any server configuration. */
+/** Hash router: works on project Pages without any server configuration.
+ *  `#/replay/some-id` opens the route `replay` with the parameter `some-id`. */
 
 import { clear, h } from "./dom";
 
@@ -6,7 +7,13 @@ export interface Route {
   id: string;
   label: string;
   title: string;
-  render: (main: HTMLElement) => void;
+  /** May return a cleanup function (for timers); it runs before the next route renders. */
+  render: (main: HTMLElement, param?: string) => void | (() => void);
+}
+
+export function parseHash(hash: string): { id: string; param: string | undefined } {
+  const [id = "", ...rest] = hash.replace(/^#\/?/, "").split("/");
+  return { id, param: rest.length ? rest.join("/") : undefined };
 }
 
 export function startRouter(routes: Route[], nav: HTMLElement, main: HTMLElement): void {
@@ -19,15 +26,19 @@ export function startRouter(routes: Route[], nav: HTMLElement, main: HTMLElement
   );
   nav.replaceChildren(...links);
 
+  let cleanup: (() => void) | undefined;
+
   const show = (): void => {
-    const id = location.hash.replace(/^#\/?/, "") || first.id;
-    const route = byId.get(id) ?? first;
+    const parsed = parseHash(location.hash);
+    const route = byId.get(parsed.id) ?? first;
     for (const link of links) {
       if (link.getAttribute("data-route") === route.id) link.setAttribute("aria-current", "page");
       else link.removeAttribute("aria-current");
     }
+    cleanup?.();
+    cleanup = undefined;
     clear(main);
-    route.render(main);
+    cleanup = route.render(main, parsed.param) ?? undefined;
     document.title = `${route.title} - Results Explorer`;
     const heading = main.querySelector("h1");
     if (heading) {

@@ -8,6 +8,7 @@ import { startRouter } from "./router";
 import { renderDefenses } from "./views/defenses";
 import { renderHeatmap } from "./views/heatmap";
 import { renderOverview } from "./views/overview";
+import { renderReplay } from "./views/replay";
 
 async function boot(): Promise<void> {
   const main = document.getElementById("main");
@@ -59,6 +60,12 @@ async function boot(): Promise<void> {
         label: "Defenses",
         title: "Defenses",
         render: (el) => renderDefenses(el, data),
+      },
+      {
+        id: "replay",
+        label: "Trace replay",
+        title: "Trace replay",
+        render: (el, param) => renderReplay(el, data, param),
       },
     ],
     nav,
