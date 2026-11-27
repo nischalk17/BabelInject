@@ -192,7 +192,7 @@ make run-3b                         # full no-defense grid on qwen2.5:3b (630 ru
 make run-detector-langs              # detector on all 5 languages, 7B recognition probe (200 runs)
 make run-detector-benign            # non-English benign control for the detector (30 runs)
 make run-defenses-3b-hi             # defenses on 3B, Hindi + English (400 runs)
-make demo-data                       # export demo/public/data/*.json for the Results Explorer (from results/)
+make demo-data                       # export summary, meta and 12 featured traces for the Results Explorer (from results/)
 make run-quiet                      # address-only follow-up attack on 7B (105 runs)
 make run-hosted-quiet               # same on hosted 27B (about one day of free quota)
 make run-hosted                     # hosted Qwen 27B (Groq key in .env): control + 230 runs, one day of free-tier quota

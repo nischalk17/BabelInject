@@ -11,9 +11,10 @@ from aie.analysis.demo_export import export, load_demo_config
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", type=Path, default=Path("configs/demo_studies.yaml"))
+    parser.add_argument("--traces", type=Path, default=Path("configs/demo_traces.yaml"))
     parser.add_argument("--out", type=Path, default=Path("demo/public/data"))
     args = parser.parse_args()
-    for path in export(load_demo_config(args.config), Path.cwd(), args.out):
+    for path in export(load_demo_config(args.config), Path.cwd(), args.out, None, args.traces):
         print("wrote", path)
 
 

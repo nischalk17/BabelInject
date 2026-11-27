@@ -16,6 +16,7 @@ from typing import Any
 import yaml
 from pydantic import BaseModel, ConfigDict
 
+from aie.analysis.demo_traces import build_traces, load_traces_config, trace_index
 from aie.analysis.load import LoadReport, load_outcomes
 from aie.analysis.tables import (
     CountRow,
@@ -267,10 +268,37 @@ def write_json(path: Path, obj: Any) -> None:
     path.write_bytes(dumps(obj).encode("utf-8"))
 
 
-def export(cfg: DemoConfig, root: Path, out_dir: Path, commit: str | None = None) -> list[Path]:
-    """Write ``summary.json`` and ``meta.json`` into ``out_dir``; return the written paths."""
+def export_traces(cfg: DemoConfig, traces_config: Path, root: Path, out_dir: Path) -> list[Path]:
+    """Write ``traces/<id>.json`` and ``traces/index.json``; drop trace files no longer featured."""
+    inputs = [p for s in cfg.studies for p in s.inputs]
+    traces = _clean(build_traces(load_traces_config(traces_config), inputs, root))
+    folder = out_dir / "traces"
+    folder.mkdir(parents=True, exist_ok=True)
+    wanted = {f"{t['id']}.json" for t in traces} | {"index.json"}
+    for old in folder.glob("*.json"):
+        if old.name not in wanted:
+            old.unlink()
+    paths = []
+    for t in traces:
+        paths.append(folder / f"{t['id']}.json")
+        write_json(paths[-1], t)
+    paths.append(folder / "index.json")
+    write_json(paths[-1], {"schema_version": SCHEMA_VERSION, "traces": trace_index(traces)})
+    return paths
+
+
+def export(
+    cfg: DemoConfig,
+    root: Path,
+    out_dir: Path,
+    commit: str | None = None,
+    traces_config: Path | None = None,
+) -> list[Path]:
+    """Write ``summary.json``, ``meta.json`` (and the traces if configured); return the paths."""
     summary, meta = build_summary_and_meta(cfg, root, commit)
     paths = [out_dir / "summary.json", out_dir / "meta.json"]
     write_json(paths[0], summary)
     write_json(paths[1], meta)
+    if traces_config is not None:
+        paths += export_traces(cfg, traces_config, root, out_dir)
     return paths
