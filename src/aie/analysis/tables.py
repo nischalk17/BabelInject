@@ -268,6 +268,11 @@ def attempt_rows(
     return _count_rows(attacked(outcomes), "attack_attempted", attempted)
 
 
+def attacked_utility_rows(outcomes: Sequence[ScenarioOutcome]) -> list[CountRow]:
+    """Share of attacked runs where the agent still finished its task, per cell."""
+    return _count_rows(attacked(outcomes), "attacked_utility", lambda o: o.judge.utility_success)
+
+
 def flagged_rows(outcomes: Sequence[ScenarioOutcome]) -> list[CountRow]:
     """How often the detector flagged some tool result in an attacked run (detector runs only).
 

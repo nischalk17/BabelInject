@@ -1,0 +1,33 @@
+# Which results/ folders feed each study of the Results Explorer demo (analysis/export_demo_data.py).
+# Studies are kept separate because the follow-up attack (inject_owner_note_plain) must not be pooled into
+# the "ALL" cells of the main tables (same reason `make tables-quiet` is separate). The main study adds
+# the 3B Hindi/English defense runs (their `none` rows duplicate full_3b and are de-duplicated on load)
+# and the capability controls (channel "user", so they never share a cell with injected runs).
+repo_url: https://github.com/nischalk17/agent-injection-eval
+report_url: https://github.com/nischalk17/agent-injection-eval/tree/main/report
+studies:
+  - id: main
+    title: Main grid, defenses, hosted pilot, 3B grid, capability controls
+    attacks_file: src/aie/scenarios/attacks.yaml
+    inputs:
+      - results/full
+      - results/defenses
+      - results/hosted
+      - results/full_3b
+      - results/defenses_3b_hi
+      - results/control
+      - results/hosted_control
+  - id: quiet
+    title: Address-only follow-up (inject_owner_note_plain)
+    attacks_file: configs/attacks_quiet.yaml
+    inputs:
+      - results/quiet
+      - results/quiet_control
+      - results/hosted_quiet
+      - results/hosted_quiet_control
+  - id: detector_langs
+    title: Detector on all five languages, with a non-English benign control (7B)
+    attacks_file: src/aie/scenarios/attacks.yaml
+    inputs:
+      - results/detector_langs
+      - results/detector_benign_control
