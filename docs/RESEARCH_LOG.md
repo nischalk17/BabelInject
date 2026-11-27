@@ -1021,3 +1021,25 @@ followed in both the original and the clone, with identical per-scenario verdict
 sequences in all 15 runs. **Caveats:** one table, the smallest run, same machine and Ollama install; the raw
 rows are not committed, so the other tables cannot be rebuilt from a clone without re-running models;
 temperature-0 output wording is not bit-for-bit deterministic (Nov 22 check), though actions matched here.
+
+
+## 2026-11-27: Results Explorer analysis additions (no result changed) and a step-limit observation
+
+**What changed (code, not data):** three new summary tables, written by the same `build_tables` as the others:
+`table9_attacked_utility.csv` (task still completed in attacked runs, per model x defense x language x channel),
+`table10_asr_pooled.csv` (ASR pooled over attacks and channels, per language and for all languages, with
+injected channels and the user-request control kept apart) and `table11_defense_paired.csv` (each defense
+against no defense on the same attacked scenarios, which works without benign runs; Newcombe interval as in
+table 2). No model was run. **Check:** tables 1 to 8 and the five figures are byte-identical to the last commit
+before these changes (`d37a7de`); `src/aie/eval`, `agent`, `env`, `defenses`, `models` and `scenarios` are
+unchanged; all 2,967 analysed rows use prompt `v3` and one version per defense. Table 11 reproduces the
+numbers logged by hand for the 3B pilot (for example Hindi spotlight 15.0 pp, 0.1 to 30.2).
+
+**Observation (from existing rows; not in any table before today):** some runs end at the 8-step limit instead
+of with an answer. No-defense grids (7B, 3B, hosted, quiet): 0 runs. With the detector in the tool-output
+channel: 24/40 runs on the 7B defense grid and 60/100 in the all-language detector probe. When the detector
+withholds the `list_emails` result the agent keeps listing the inbox (for example `list_emails`, `read_email`,
+`list_emails`, `list_emails`, ...) until the limit. 3B pilot: sandwich in the web-page channel 4/20, spotlight in
+email 1/20, tool policy in web page 1/20. **Reading:** this is part of the detector's utility cost already
+logged (attacked utility 0/120 and 0/200), seen from another angle: the task fails by looping, not by a wrong
+answer. It does not change any attack-success number. **Caveat:** step limit 8, one run per scenario.

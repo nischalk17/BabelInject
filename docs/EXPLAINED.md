@@ -187,7 +187,7 @@ subtlety.
 
 ---
 
-## 5. Our defenses (built and tested; not yet measured)
+## 5. Our defenses (built, tested and measured)
 
 Analogy for all four: protecting the helper from sticky notes.
 
@@ -282,11 +282,10 @@ reruns free and results reproducible.
 | `src/aie/config.py`, `cli.py` | Reads the experiment file; the `aie run` command |
 | `configs/` | The experiment files and fake inbox |
 | `tests/` | Automatic checks that the code behaves |
-| `docs/PROJECT_PLAN.md`, `RESEARCH_LOG.md` | The plan; the dated lab notebook of what we saw |
+| `docs/RESEARCH_LOG.md` | The dated lab notebook of what we saw (findings with n, appended, never edited) |
+| `src/aie/analysis/demo_export.py`, `demo_traces.py`, `demo/` | The Results Explorer website and the export that feeds it |
 
-**Not built yet:** the report text (an outline is in `report/OUTLINE.md`). **Done:** the full no-defense grid on the 7B and 3B models, the capability control,
-the defense grid (English and code-mixed only, because the other languages have a ~0% baseline) and a partial
-hosted-model pilot. **Still to run:** the address-only follow-up attack (`make run-quiet`, `make run-hosted-quiet`).
+**State (Nov 27):** every planned experiment and follow-up has run and is logged. The report is drafted in `report/` (method, results, discussion, related work); the introduction, abstract and conclusion are still to be written by the author. A read-only website of the results is in `demo/`.
 
 ---
 
@@ -354,19 +353,32 @@ Each line says how many times it was seen. None of this goes in the README as a 
    the user than when they are hidden in data. Why (training mostly on English injections? weaker
    instruction-following on foreign text inside tool results?) is untested. Still do not say "Nepali
    attacks are safer" without the larger model and more tasks.
-13. **Model size (3B vs 7B, n=120 per language each):** the bigger model is not simply safer or less safe.
-   English attacks worked more on the 7B (29% vs 21%), but Hindi attacks worked on the 3B (8%) and not at all
-   on the 7B (0%). The 3B is also much worse at the benign task (20/30 vs 29/30) and often never opens
-   the item, so it is exposed to the injection less. Cause of the Hindi difference is unknown.
-12. **Hosted 27B model, pilot (partial, 76 attacked runs):** 0 successes. The control showed the model also
-   refuses the same request when the user asks directly (while replying in the user's language), so this
-   is refusal of an obviously malicious address, not a language effect. Romanized Nepali was the one
-   exception (1 of 3 direct requests). Partial and not random, so treat it as a pilot.
 11. **Defenses on the 7B model (English and code-mixed, n=60 per cell):** attack success fell from 53% to
    27% (spotlighting), 10% (sandwich), 0% (tool policy) and 0% (detector) in English. The tool policy is 0%
    by construction, and the detector reached 0% by blocking the tool result, so the task also fails under
    attack and 4 of 30 benign runs were wrongly blocked. Spotlighting did not help in code-mixed (interval
    includes zero). These are single-model, small-n results.
+12. **Hosted 27B model, pilot (partial, 76 attacked runs):** 0 successes. The control showed the model also
+   refuses the same request when the user asks directly (while replying in the user's language), so this
+   is refusal, not a language effect. Romanized Nepali was the one exception (1 of 3 direct requests). We
+   first suspected the obviously malicious address; item 14 shows the address is not the reason. Partial
+   and not random, so treat it as a pilot.
+13. **Model size (3B vs 7B, n=120 per language each):** the bigger model is not simply safer or less safe.
+   English attacks worked more on the 7B (29% vs 21%), but Hindi attacks worked on the 3B (8%) and not at all
+   on the 7B (0%). The 3B is also much worse at the benign task (20/30 vs 29/30) and often never opens
+   the item, so it is exposed to the injection less. Cause of the Hindi difference is unknown.
+14. **Follow-ups (Nov 23 to 24, all small n; details in `docs/RESEARCH_LOG.md`):** (a) changing the attacker
+    address to a normal-looking one did not make the hosted 27B obey (1/100 injected runs), so the address is
+    not why it refuses; in 77/100 runs it told the user about the hidden instruction instead. (b) The 7B model
+    recognised the injected text as instructions in all five languages (the detector flagged 20/20 in each) and
+    did not flag harmless Nepali, Hindi or romanized Nepali sentences (0/6 each), so its near-zero non-English
+    attack rate looks like "recognises but does not act", not "cannot read it" (a yes/no question is easier
+    than acting, so this is suggestive). (c) On the 3B model the detector caught English attacks (0/40 got
+    through) but missed some Hindi ones (5/40 got through): the only language gap in a defense we measured.
+15. **Step limit (Nov 27, from existing rows):** with the detector, the agent often never answers in the
+    tool-output channel: the detector withholds the inbox listing, so the agent keeps listing the inbox
+    until the 8-step limit (24 of 40 runs on the 7B defense grid, 60 of 100 in the all-language probe).
+    No run without a defense hit the limit. It is part of the detector's cost, not a new attack result.
 
 ---
 
@@ -377,13 +389,17 @@ Each line says how many times it was seen. None of this goes in the README as a 
 - **Quantized small models** on one CPU. Results may not carry to big models.
 - **Translations** were drafted with AI help and reviewed and corrected line by line by the author
   (who reads Nepali and Hindi). Translation quality could still change results.
-- **Capability confound:** a low attack rate in a language can mean the model does not understand it.
+- **Capability confound:** a low attack rate in a language can mean the model does not understand it. The
+  capability control and the detector probe argue against that on the 7B, but both are small and the probe
+  asks a yes/no question, which is easier than acting.
 - **Statistics:** runs share tasks and attack texts, so confidence intervals are somewhat optimistic.
 - **A hosted model can change** without notice.
 - **Blatant vs subtle attacks:** ASR depends heavily on how the attack is written; we use a few
   templates, not all possible ones.
 - **Deterministic judge is narrow:** it only counts the specific attacker goals we define.
-- **Defenses are lightweight versions**, not the best possible implementations.
+- **Defenses are lightweight versions**, not the best possible implementations, and were run on English and
+  code-mixed text (7B) and on English and Hindi (3B pilot) only; the detector alone was run in all languages.
+- **Hosted model:** the 27B grid is partial (87 of 230 runs, not a random slice); its follow-up is complete.
 
 ---
 
@@ -456,10 +472,13 @@ They focus on English and mostly larger models. We add language and code-mixing,
 target small local models. (Read their papers so you can add specifics.)
 
 **19. What did you find?**
-Be honest: no final results yet. Calibration on English showed two attacks with a useful success rate
-and strong channel differences; early partial data suggest non-English attacks barely work on the 7B
-model, which may be a capability limit rather than robustness, so we add a control before concluding.
-Final numbers come from the full grid.
+On the 7B model, hidden instructions worked in English (35/120) and code-mixed text (12/120) but almost never
+in Nepali (1/120), Hindi or romanized Nepali (0/120 each), and the channel mattered (files 15/30, email 3/30 in
+English). The model follows the same text when the user asks directly (14/15) and recognises it as
+instructions in every language (detector 20/20 per cell, 0/6 false alarms on harmless Nepali or Hindi), so the
+gap looks like "recognises but does not act", not "cannot read". Defenses differ in cost: the sandwich
+reminder cut English success from 32/60 to 6/60 with no utility loss; the detector reached 0% only by
+withholding results. Size is not monotone: the 3B was hit in Hindi (10/120). All small-n, one model family.
 
 **20. Why did you redesign your first task?**
 The answer was in the email subject, so an agent that never opened the email passed, and never saw an
@@ -553,15 +572,6 @@ exactly.
 **Response cache key:** the fingerprint of a full request (model, messages, tools, settings); the same
 fingerprint always gets the same saved answer.
 
-
-14. **Follow-ups (Nov 23 to 24, all small n; details in `docs/RESEARCH_LOG.md`):** (a) changing the attacker
-    address to a normal-looking one did not make the hosted 27B obey (1/100 injected runs), so the address is
-    not why it refuses; in 77/100 runs it told the user about the hidden instruction instead. (b) The 7B model
-    recognised the injected text as instructions in all five languages (the detector flagged 20/20 in each) and
-    did not flag harmless Nepali, Hindi or romanized Nepali sentences (0/6 each), so its near-zero non-English
-    attack rate looks like "recognises but does not act", not "cannot read it" (a yes/no question is easier
-    than acting, so this is suggestive). (c) On the 3B model the detector caught English attacks (0/40 got
-    through) but missed some Hindi ones (5/40 got through): the only language gap in a defense we measured.
 
 
 ## The Results Explorer demo (optional, after v1.0)

@@ -11,9 +11,10 @@ models that use tools, and how well lightweight defenses stop them, when the att
 different languages and hidden in different places. Everything runs in a mocked sandbox: no real
 email, web or file system is ever touched.
 
-> **Status (Nov 24, 2026): the benchmark, defenses and analysis code are built and tested; the full
+> **Status (Nov 27, 2026): the benchmark, defenses and analysis code are built and tested; the full
 > no-defense grid, the 7B defense grid, the 3B grid and the follow-up experiments are done (results below);
-> the hosted 27B grid is a partial pilot, its address-only follow-up is complete.** Numbers appear in this README only when they come from `results/` through
+> the hosted 27B grid is a partial pilot, its address-only follow-up is complete. The report is drafted
+> (introduction, abstract and conclusion still to write), and a read-only Results Explorer is in `demo/`.** Numbers appear in this README only when they come from `results/` through
 > `analysis/`. Calibration runs and interim observations,
 > with exact settings and caveats, are in [docs/RESEARCH_LOG.md](docs/RESEARCH_LOG.md); a plain-language
 > guide is in [docs/EXPLAINED.md](docs/EXPLAINED.md).
@@ -166,13 +167,16 @@ Design rules that keep the study rigorous:
 | Hosted-model adapter (Groq) | `src/aie/models/groq.py` | done, mocked tests; one live check passed |
 | Translations (Nepali, romanized Nepali, Hindi, code-mixed): AI-drafted, reviewed and corrected line by line by the author | `docs/TRANSLATIONS.md`, `attacks.yaml` | done |
 | Four defenses (spotlighting, sandwich reminder, tool-permission policy, prompted detector) and a defense-grid config | `src/aie/defenses/`, `configs/defenses.yaml` | done, tested with scripted models; 7B grid (English + code-mixed) measured |
-| Analysis: tables with 95% intervals (CSV), heatmap, defense-effect and trade-off figures | `src/aie/analysis/`, `analysis/` | done, tested; run on the 7B full grid |
-| Report | `report/OUTLINE.md`, `method.md`, `results.md`, `discussion.md`, `related.md` | outline written; method, results, discussion and related work drafted (owner review; skim the 3 papers); intro, abstract, conclusion not started |
+| Analysis: tables with 95% intervals (CSV), heatmap, defense-effect and trade-off figures | `src/aie/analysis/`, `analysis/` | done, tested; run on every grid (7B, 3B, hosted, defenses, follow-ups) |
+| Results Explorer: static site built only from `results/` (overview, heatmap, defenses, trace replay, method), Pages workflow | `demo/`, `analysis/export_demo_data.py`, `.github/workflows/pages.yml` | done, tested (Python and TypeScript); deploys once Pages is enabled |
+| Report | `report/OUTLINE.md`, `method.md`, `results.md`, `discussion.md`, `related.md` | outline written; method, results, discussion and related work drafted (owner review; skim the 3 papers); introduction, abstract and conclusion still to write |
 
-Known open issues (details in the research log): the 3B model does not open the email on the benign
-task; one attack (`inject_cc_request`) is at the floor and is kept as a control; and an early partial
-look suggested non-English attacks fail on the 7B model for lack of comprehension; the capability
-control (14/15 direct requests followed, all languages) argues against that, but n is tiny.
+Known open issues (details in the research log): the 3B model often never opens the item that holds
+the injection, so its rates partly measure exposure; one attack (`inject_cc_request`) is at the floor and
+is kept as a control; the near-zero non-English rates on the 7B model are not a comprehension limit
+(capability control 14/15; the detector recognises the injected text in every language), but both checks
+are small; with the detector the agent often loops to the step limit in the tool-output channel; the
+hosted 27B grid is partial.
 
 ## Results Explorer (demo)
 

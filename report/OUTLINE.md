@@ -1,7 +1,7 @@
 # Report outline (4 pages), working document
 
-Status: outline only. Every number below is already in `results/summary/` and `docs/RESEARCH_LOG.md`; numbers marked
-**PENDING** do not exist yet. Nothing goes into the report that is not in `results/` (CLAUDE.md rule). The
+Status: outline only. Every number below is already in `results/summary/` and `docs/RESEARCH_LOG.md`; no number is pending
+any more. Nothing goes into the report that is not in `results/` (CLAUDE.md rule). The
 owner rewrites the prose in their own words; the structure, the claim list and the caveats are the part to keep.
 
 **Working title:** Do prompt-injection defenses for tool-using LLM agents hold across languages and injection
@@ -55,7 +55,7 @@ from memory. Say how this differs: languages, small local models, deterministic 
 | 4.2 Capability control | 7B follows direct requests 14/15 in every language; hosted 27B follows 1/15 (it refuses, replying in the user's language) | `results/control`, `results/hosted_control` | Table A |
 | 4.3 Model size | 3B vs 7B per language; Hindi 10/120 vs 0/120; 3B benign 20/30 vs 29/30 | `table1`, `table3` | Fig 1 (both heatmaps) or Table B |
 | 4.4 Defenses (7B, en and mix) | English ASR: none 32/60, spotlight 16, sandwich 6, tool policy 0, detector 0; the detector blocks the task (attacked utility 0/120, benign false positives 4/30) | `table2`, `table2b`, `table3` | Fig 2 and Fig 3 |
-| 4.5 Address-only follow-up | 7B done: English file 6/10 vs 9/10 with the original address, tool_output 10/10 both, other languages 0/10 per cell; **27B PENDING** (`make run-hosted-quiet`) | `results/summary_quiet/` | one sentence or small table |
+| 4.5 Address-only follow-up | 7B: English file 6/10 vs 9/10 with the original address, tool_output 10/10 both, other languages 0/10 per cell; 27B: 1/100 injected runs succeeded, 1/5 direct requests followed; answers mention the injection in 77/100 | `results/summary_quiet/` | one sentence or small table |
 | 4.6 Hosted pilot | 0/76 injected on the partial grid; quota stop; not a random slice | `results/hosted` | one sentence |
 
 ## 5. Discussion and limitations (0.45 page)
