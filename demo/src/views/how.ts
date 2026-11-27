@@ -207,6 +207,11 @@ export function renderHow(main: HTMLElement, data: Data): void {
             "Follow-up experiments are never pooled into the main cells. Model size, attack wording and the hosted model's partial grid limit what any one cell shows; read each cell with its n.",
           ),
         ),
+        h(
+          "p",
+          { class: "note" },
+          "Why \"BabelInject\"? In the Tower of Babel story (Genesis 11:1-9) people who share one language build a tower and have their speech confused. The question here is whether defenses built for English survive an attack in another language.",
+        ),
         h("h2", {}, "Where the data comes from"),
         h(
           "p",
