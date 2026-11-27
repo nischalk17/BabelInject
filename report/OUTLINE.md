@@ -4,6 +4,8 @@ Status: outline only. Every number below is already in `results/summary/` and `d
 any more. Nothing goes into the report that is not in `results/` (CLAUDE.md rule). The
 owner rewrites the prose in their own words; the structure, the claim list and the caveats are the part to keep.
 
+**Project name:** BabelInject.
+
 **Working title:** Do prompt-injection defenses for tool-using LLM agents hold across languages and injection
 channels? A small-model study in English, Nepali, Hindi and code-mixed text.
 

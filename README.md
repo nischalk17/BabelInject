@@ -1,4 +1,6 @@
-﻿# agent-injection-eval
+﻿# BabelInject
+
+*Prompt injection that crosses the language barrier: a benchmark of attacks and defenses for tool-using LLM agents.* The name is a nod to the Tower of Babel: defenses built around one language can stop working when the attack speaks another. (The repository and Python package keep their original names, `agent-injection-eval` and `aie`, so existing links and imports still work.)
 
 [![Results Explorer](https://img.shields.io/badge/Results%20Explorer-live%20demo-f2b84b?style=flat-square&labelColor=0b0d10)](https://nischalk17.github.io/agent-injection-eval/)
 

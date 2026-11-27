@@ -1,4 +1,4 @@
-# The whole project, explained like you are five
+# BabelInject: the whole project, explained like you are five
 
 This guide explains what we are building, why, and how, in plain words. It has pictures-in-words
 (analogies), a dictionary of every strange term, a tour of the code, and 30 questions an interviewer

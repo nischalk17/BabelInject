@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use this benchmark, please cite it as below."
-title: "agent-injection-eval: prompt-injection defenses across languages and channels"
+title: "BabelInject: prompt-injection defenses across languages and channels"
 authors:
   - family-names: Kunwar
     given-names: Nischal Dhoj

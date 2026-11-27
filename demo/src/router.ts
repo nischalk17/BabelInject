@@ -39,7 +39,7 @@ export function startRouter(routes: Route[], nav: HTMLElement, main: HTMLElement
     cleanup = undefined;
     clear(main);
     cleanup = route.render(main, parsed.param) ?? undefined;
-    document.title = `${route.title} - Results Explorer`;
+    document.title = `${route.title} - BabelInject Results Explorer`;
     const heading = main.querySelector("h1");
     if (heading) {
       heading.setAttribute("tabindex", "-1");

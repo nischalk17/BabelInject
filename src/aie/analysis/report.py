@@ -83,7 +83,13 @@ def build_figures(inputs: Sequence[Path], out_dir: Path) -> tuple[list[Path], Lo
 
 def describe(report: LoadReport) -> str:
     """One line saying what was read."""
-    return (
+    line = (
         f"read {report.rows_read} rows from {len(report.files)} file(s); "
         f"dropped {report.duplicates_dropped} duplicate(s); kept {report.rows_kept}"
     )
+    if report.version_changes:
+        line += (
+            f"\nWARNING: {len(report.version_changes)} re-run row(s) replaced a row made with a "
+            f"different prompt/defense version, e.g. {report.version_changes[0]}"
+        )
+    return line

@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Sequence
-from typing import Literal
+from typing import Any, Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from aie.agent.prompts import PROMPT_VERSION, SYSTEM_PROMPT
 from aie.env.sandbox import Action, Sandbox
@@ -23,11 +23,25 @@ class AgentResult(BaseModel):
     actions: list[Action]
     model_tag: str
     prompt_version: str
+    # Distinct (returned_model, system_fingerprint) pairs the provider reported, so hosted-model
+    # drift can be checked from the result rows alone. Empty for local models and older rows.
+    served_by: list[dict[str, str | None]] = Field(default_factory=list)
 
 
 def identity(tool_name: str, output: str) -> str:
     """Default tool-output wrapper: leave the output unchanged."""
     return output
+
+
+def _served_by(raw: dict[str, Any]) -> dict[str, str | None]:
+    """The provider-reported model id and fingerprint from a response, or {} if it gave none."""
+    returned, fingerprint = raw.get("returned_model"), raw.get("system_fingerprint")
+    if returned is None and fingerprint is None:
+        return {}
+    return {
+        "returned_model": None if returned is None else str(returned),
+        "system_fingerprint": None if fingerprint is None else str(fingerprint),
+    }
 
 
 def run_agent(
@@ -66,9 +80,13 @@ def run_agent(
     final: str | None = None
     reason: Literal["final", "max_steps"] = "max_steps"
     steps = 0
+    served_by: list[dict[str, str | None]] = []
     for steps in range(1, max_steps + 1):  # noqa: B007 - steps is read after the loop
         resp = model.chat(messages, specs, cfg)
         tag = resp.model_tag
+        served = _served_by(resp.raw)
+        if served and served not in served_by:
+            served_by.append(served)
         messages.append(resp.message)
         if not resp.message.tool_calls:
             final, reason = resp.message.content, "final"
@@ -96,4 +114,5 @@ def run_agent(
         actions=list(sandbox.log),
         model_tag=tag,
         prompt_version=PROMPT_VERSION,
+        served_by=served_by,
     )

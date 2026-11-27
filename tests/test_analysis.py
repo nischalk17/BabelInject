@@ -7,6 +7,7 @@ import pytest
 from aie.agent.loop import AgentResult
 from aie.analysis.figures import fig_asr_heatmap, fig_defense_effect, fig_tradeoff
 from aie.analysis.load import load_outcomes
+from aie.analysis.report import describe
 from aie.analysis.tables import (
     answer_mention_rows,
     asr_rows,
@@ -279,3 +280,18 @@ def test_paired_rows_skip_defended_runs_with_no_baseline() -> None:
     from aie.analysis.tables import paired_asr_rows
 
     assert paired_asr_rows([mk("only-defended", defense="sandwich")]) == []
+
+
+def test_load_flags_a_rerun_made_with_a_different_version(tmp_path: Path) -> None:
+    old = mk("s1")
+    new = mk("s1")
+    new.result.prompt_version = "v4"
+    same = mk("s2")
+    for name, rows in (("a-1.jsonl", [old, same]), ("b-2.jsonl", [new, same])):
+        (tmp_path / name).write_text(
+            "".join(r.model_dump_json() + "\n" for r in rows), encoding="utf-8"
+        )
+    _, report = load_outcomes([tmp_path])
+    assert report.duplicates_dropped == 2
+    assert len(report.version_changes) == 1 and "s1" in report.version_changes[0]
+    assert "WARNING" in describe(report)

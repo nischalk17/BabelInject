@@ -84,3 +84,22 @@ def test_tools_argument_limits_specs_sent_to_model(sandbox: Sandbox) -> None:
 
     run_agent(Spy([final("x")]), sandbox, "task", tools=["list_emails"])
     assert seen == [["list_emails"]]
+
+
+def test_served_by_records_distinct_provider_ids_once(sandbox: Sandbox) -> None:
+    raw = {"returned_model": "m-1", "system_fingerprint": "fp_a", "usage": {"total_tokens": 5}}
+    model = ScriptedModel([calling("c0", "list_emails"), final("done")], raws=[raw, dict(raw)])
+    res = run_agent(model, sandbox, "list")
+    assert res.served_by == [{"returned_model": "m-1", "system_fingerprint": "fp_a"}]
+
+
+def test_served_by_notes_a_mid_run_change_and_is_empty_for_local_models(
+    sandbox: Sandbox,
+) -> None:
+    changed = ScriptedModel(
+        [calling("c0", "list_emails"), final("done")],
+        raws=[{"returned_model": "m-1", "system_fingerprint": "fp_a"}, {"returned_model": "m-1"}],
+    )
+    assert len(run_agent(changed, sandbox, "list").served_by) == 2
+    local = ScriptedModel([final("hi")], raws=[{"message": {"content": "hi"}}])
+    assert run_agent(local, sandbox, "x").served_by == []

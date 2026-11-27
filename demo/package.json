@@ -2,7 +2,7 @@
   "name": "aie-results-explorer",
   "private": true,
   "version": "0.0.0",
-  "description": "Static, read-only explorer for the agent-injection-eval results (data from results/ via analysis/export_demo_data.py)",
+  "description": "Static, read-only explorer for the BabelInject results (data from results/ via analysis/export_demo_data.py)",
   "type": "module",
   "scripts": {
     "dev": "vite",
