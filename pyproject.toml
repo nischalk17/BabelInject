@@ -1,6 +1,6 @@
 [project]
 name = "aie"
-version = "0.1.0"
+version = "1.0.0"
 description = "BabelInject: benchmark of prompt-injection attacks and defenses on tool-using LLM agents across languages and channels."
 readme = "README.md"
 requires-python = ">=3.11"

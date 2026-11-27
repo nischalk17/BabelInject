@@ -4,5 +4,15 @@ title: "BabelInject: prompt-injection defenses across languages and channels"
 authors:
   - family-names: Kunwar
     given-names: Nischal Dhoj
-version: 0.1.0
+version: 1.0.0
+date-released: 2026-11-27
 license: MIT
+repository-code: "https://github.com/nischalk17/BabelInject"
+url: "https://nischalk17.github.io/BabelInject/"
+keywords:
+  - prompt injection
+  - LLM agents
+  - multilingual
+  - Nepali
+  - Hindi
+  - benchmark
