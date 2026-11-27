@@ -1,0 +1,112 @@
+/** Types of the exported JSON (see src/aie/analysis/demo_export.py) and the loader. */
+
+export interface Stat {
+  k: number;
+  n: number;
+  rate: number;
+  lo: number;
+  hi: number;
+}
+
+export interface Cell {
+  model_tag: string;
+  defense: string;
+  attack: string;
+  language: string;
+  channel: string;
+  asr: Stat;
+  attacked_utility?: Stat | null;
+  item_opened?: Stat | null;
+  attack_attempted?: Stat | null;
+}
+
+export interface CountRow extends Stat {
+  model_tag: string;
+  defense: string;
+  language: string;
+  channel: string;
+  metric: string;
+}
+
+export interface Effect {
+  model_tag: string;
+  defense: string;
+  language: string;
+  channels: string;
+  asr_k: number;
+  asr_n: number;
+  base_asr_k: number;
+  base_asr_n: number;
+  reduction_pp: number;
+  reduction_lo_pp: number;
+  reduction_hi_pp: number;
+  utility_k: number;
+  utility_n: number;
+  base_utility_k: number;
+  base_utility_n: number;
+  utility_change_pp: number;
+  utility_change_lo_pp: number;
+  utility_change_hi_pp: number;
+}
+
+export interface BenignRow {
+  model_tag: string;
+  defense: string;
+  utility: Stat;
+}
+
+export interface Study {
+  id: string;
+  title: string;
+  status: "ok" | "not_run";
+  cells: Cell[];
+  benign: BenignRow[];
+  effects: Effect[];
+  pooled: CountRow[];
+  metrics: Record<string, CountRow[]>;
+}
+
+export interface Summary {
+  schema_version: number;
+  studies: Study[];
+}
+
+export interface ModelInfo {
+  tag: string;
+  provider: string;
+  rows_read: number;
+  first_run: string | null;
+  last_run: string | null;
+}
+
+export interface Meta {
+  schema_version: number;
+  git_commit: string;
+  repo_url: string;
+  report_url: string;
+  models: ModelInfo[];
+  scenarios_by_study: Record<string, number>;
+}
+
+export interface Data {
+  summary: Summary;
+  meta: Meta;
+}
+
+async function fetchJson<T>(name: string): Promise<T> {
+  const response = await fetch(`${import.meta.env.BASE_URL}data/${name}`);
+  if (!response.ok) throw new Error(`${name}: HTTP ${response.status}`);
+  return (await response.json()) as T;
+}
+
+export async function loadData(): Promise<Data> {
+  const [summary, meta] = await Promise.all([
+    fetchJson<Summary>("summary.json"),
+    fetchJson<Meta>("meta.json"),
+  ]);
+  return { summary, meta };
+}
+
+export function studyById(data: Data, id: string): Study | undefined {
+  return data.summary.studies.find((s) => s.id === id);
+}

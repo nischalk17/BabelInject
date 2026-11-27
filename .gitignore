@@ -23,3 +23,5 @@ results/*
 !results/summary/
 results/summary/*
 !results/summary/*.csv
+
+node_modules/

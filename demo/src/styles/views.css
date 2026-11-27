@@ -1,0 +1,57 @@
+.hero {
+  margin-bottom: var(--gap);
+}
+.hero .lead {
+  font-size: var(--step-1);
+  color: var(--text);
+}
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  padding: 0;
+  margin: 0 0 var(--gap);
+  list-style: none;
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+}
+
+.finding {
+  border-top: 1px solid var(--border);
+  padding-block: var(--gap);
+}
+.finding h2 {
+  font-size: var(--step-1);
+}
+.finding .measure {
+  color: var(--muted);
+}
+.finding ul.plain {
+  margin: 0 0 1rem;
+  padding-left: 1.1rem;
+  max-width: var(--measure);
+}
+.finding ul.plain li {
+  margin-bottom: 0.35rem;
+}
+.provenance {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin: 0 0 0.5rem;
+  max-width: none;
+  overflow-wrap: anywhere;
+}
+.not-run {
+  color: var(--muted);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  max-width: var(--measure);
+}
+.error {
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 1rem;
+  max-width: var(--measure);
+}

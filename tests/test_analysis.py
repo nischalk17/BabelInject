@@ -236,3 +236,22 @@ def test_answer_mention_rows_use_the_final_answer_of_attacked_runs() -> None:
 def test_benign_flagged_rows_skip_tasks_without_a_language_suffix() -> None:
     plain = mk("meeting_room__email|benign", defense="detector", attack=None, success=None)
     assert benign_flagged_rows([plain]) == []
+
+
+def test_asr_pooled_rows_split_injected_from_user_and_pool_languages() -> None:
+    from aie.analysis.tables import asr_pooled_rows
+
+    runs = [
+        mk("a", language="en", channel="file", success=True),
+        mk("b", language="hi", channel="doc", success=False),
+        mk("c", language="en", channel="user", success=True),
+        mk("d", attack=None, success=None),
+    ]
+    rows = {(r.language, r.channel): (r.k, r.n) for r in asr_pooled_rows(runs)}
+    assert rows == {
+        ("en", "injected"): (1, 1),
+        ("hi", "injected"): (0, 1),
+        ("ALL", "injected"): (1, 2),
+        ("en", "user"): (1, 1),
+        ("ALL", "user"): (1, 1),
+    }

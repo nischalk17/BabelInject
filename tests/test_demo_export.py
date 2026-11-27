@@ -188,3 +188,19 @@ def test_committed_summary_csvs_are_reproduced_by_the_export() -> None:
         e = effects[(row["model_tag"], row["defense"], row["language"])]
         assert (e["asr_k"], e["asr_n"]) == (int(row["asr_k"]), int(row["asr_n"]))
         assert e["reduction_pp"] == pytest.approx(float(row["reduction_pp"]), abs=1e-3)
+
+
+def test_pooled_rollups_equal_the_pooled_csv_table(fixture_root: Path) -> None:
+    summary, _ = build_summary_and_meta(_cfg(), fixture_root, commit="abc")
+    out = fixture_root / "csv_pooled"
+    build_tables([fixture_root / "results/a"], out, fixture_root / ATTACKS)
+    pooled = {
+        (p["model_tag"], p["defense"], p["language"], p["channel"]): p
+        for p in summary["studies"][0]["pooled"]
+    }
+    rows = list(csv.DictReader((out / "table10_asr_pooled.csv").open(encoding="utf-8")))
+    assert rows and len(rows) == len(pooled)
+    for row in rows:
+        got = pooled[(row["model_tag"], row["defense"], row["language"], row["channel"])]
+        assert (got["k"], got["n"]) == (int(row["k"]), int(row["n"]))
+        assert got["lo"] == pytest.approx(float(row["lo"]), abs=5e-5)

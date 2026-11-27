@@ -1,5 +1,5 @@
 # Every recipe is a plain `uv run ...` call so it behaves the same under cmd.exe, Git Bash and Linux.
-.PHONY: setup test lint format run-mvp run-all run-control run-hosted run-3b run-quiet run-hosted-quiet tables-quiet run-defenses figures run-detector-langs tables-detector-langs run-detector-benign run-defenses-3b-hi tables-defenses-3b-hi demo-data
+.PHONY: setup test lint format run-mvp run-all run-control run-hosted run-3b run-quiet run-hosted-quiet tables-quiet run-defenses figures run-detector-langs tables-detector-langs run-detector-benign run-defenses-3b-hi tables-defenses-3b-hi demo-data demo
 
 setup:
 	uv sync
@@ -68,3 +68,7 @@ tables-defenses-3b-hi:
 
 demo-data:
 	uv run python analysis/export_demo_data.py
+
+demo: demo-data
+	npm --prefix demo ci
+	npm --prefix demo run build

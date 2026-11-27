@@ -9,6 +9,7 @@ from aie.analysis.figures import fig_asr_heatmap, fig_defense_effect, fig_tradeo
 from aie.analysis.load import LoadReport, load_outcomes
 from aie.analysis.tables import (
     answer_mention_rows,
+    asr_pooled_rows,
     asr_rows,
     attacked_utility_rows,
     attempt_rows,
@@ -56,6 +57,7 @@ def build_tables(
     put("table5_attack_attempted.csv", attempt_rows(outcomes, _attackers(attacks_file)))
     put("table8_answer_mentions_injection.csv", answer_mention_rows(outcomes))
     put("table9_attacked_utility.csv", attacked_utility_rows(outcomes))
+    put("table10_asr_pooled.csv", asr_pooled_rows(outcomes))
     if "detector" in defenses:
         put("table6_detector_flagged.csv", flagged_rows(outcomes))
         if benign_rows := benign_flagged_rows(outcomes):

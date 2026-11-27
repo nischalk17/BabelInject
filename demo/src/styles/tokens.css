@@ -1,0 +1,38 @@
+:root {
+  color-scheme: dark;
+
+  /* surfaces and ink */
+  --bg: #0b0d10;
+  --surface: #12161b;
+  --surface-2: #181d24;
+  --border: #29313b;
+  --text: #e6e9ee;
+  --muted: #9aa4b2;
+
+  /* one accent: used for the injected text, the attack verdict, focus and the heat ramp */
+  --accent: #f2b84b;
+  --accent-ink: #1a1305;
+
+  /* type */
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "Cascadia Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+  --step--1: 0.875rem;
+  --step-0: 1rem;
+  --step-1: 1.25rem;
+  --step-2: 1.625rem;
+  --step-3: clamp(1.75rem, 1.2rem + 2.2vw, 2.5rem);
+
+  /* space and shape */
+  --gutter: 1rem;
+  --gap: 1.5rem;
+  --radius: 6px;
+  --measure: 70ch;
+  --page: 72rem;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --gutter: 1.5rem;
+    --gap: 2rem;
+  }
+}

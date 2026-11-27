@@ -21,6 +21,7 @@ from aie.analysis.load import LoadReport, load_outcomes
 from aie.analysis.tables import (
     CountRow,
     answer_mention_rows,
+    asr_pooled_rows,
     asr_rows,
     attacked_utility_rows,
     attempt_rows,
@@ -157,6 +158,7 @@ def build_study(
             if r.condition == "benign"
         ],
         "effects": [r.model_dump() for r in effect_rows(outcomes)],
+        "pooled": [_count_dict(r) for r in asr_pooled_rows(outcomes)],
         "metrics": {},
     }
     metrics: dict[str, list[CountRow]] = {
@@ -182,6 +184,7 @@ def _empty_study(study: StudyConfig) -> dict[str, Any]:
         "cells": [],
         "benign": [],
         "effects": [],
+        "pooled": [],
         "metrics": {},
     }
 

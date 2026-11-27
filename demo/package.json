@@ -1,0 +1,21 @@
+{
+  "name": "aie-results-explorer",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Static, read-only explorer for the agent-injection-eval results (data from results/ via analysis/export_demo_data.py)",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@types/node": "22.12.0",
+    "jsdom": "25.0.1",
+    "typescript": "5.6.3",
+    "vite": "7.3.8",
+    "vitest": "3.2.7"
+  }
+}
