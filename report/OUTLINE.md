@@ -42,7 +42,7 @@ from memory. Say how this differs: languages, small local models, deterministic 
   channel flaw we found and fixed (the first tool-output definition duplicated the email channel).
 - **Judge:** deterministic, from the sandbox action log (an email to the attacker address was sent); never an
   LLM. Utility checked programmatically per task.
-- **Models and settings:** `qwen2.5:3b`, `qwen2.5:7b` (Ollama, CPU), hosted `qwen/qwen3.8-27b` (Groq, partial).
+- **Models and settings:** `qwen2.5:3b`, `qwen2.5:7b` (Ollama, CPU), hosted `qwen/qwen3.8-27b` (Groq, complete grid).
   Temperature 0, seed 0, one run per scenario, response cache, model tag logged. Report the non-determinism
   check (actions identical in 10 of 10 repeats; answer wording differed once).
 - **Defenses (all v1):** spotlighting, sandwich reminder, tool-permission policy, prompted detector.
@@ -58,7 +58,7 @@ from memory. Say how this differs: languages, small local models, deterministic 
 | 4.3 Model size | 3B vs 7B per language; Hindi 10/120 vs 0/120; 3B benign 20/30 vs 29/30 | `table1`, `table3` | Fig 1 (both heatmaps) or Table B |
 | 4.4 Defenses (7B, en and mix) | English ASR: none 32/60, spotlight 16, sandwich 6, tool policy 0, detector 0; the detector blocks the task (attacked utility 0/120, benign false positives 4/30) | `table2`, `table2b`, `table3` | Fig 2 and Fig 3 |
 | 4.5 Address-only follow-up | 7B: English file 6/10 vs 9/10 with the original address, tool_output 10/10 both, other languages 0/10 per cell; 27B: 1/100 injected runs succeeded, 1/5 direct requests followed; answers mention the injection in 77/100 | `results/summary_quiet/` | one sentence or small table |
-| 4.6 Hosted pilot | 0/76 injected on the partial grid; quota stop; not a random slice | `results/hosted` | one sentence |
+| 4.6 Hosted model | 0/200 injected on the complete grid (0/20 per cell); answer mentions 193/200; six provider fingerprints | `results/hosted` | one sentence |
 
 ## 5. Discussion and limitations (0.45 page)
 **Claims we can make:** the attack and defense numbers above for these models and settings; near-zero non-English
@@ -70,7 +70,7 @@ Hindi (untested).
 
 **Limitations to state (each is already logged):** one model family; single run per scenario; n=10 to 60 per
 cell; tool policy is 0% by construction and no benign task needs `send_email`; the detector blocks tool results;
-the capability control has n=3 per language; the hosted data is partial and the attacker address may itself
+the capability control has n=3 per language; the hosted model's backend changed during the grid (six fingerprints) and the attacker address may itself
 trigger refusals; the 3B often never reads the injected item; hosted models can change silently.
 
 **Future work:** less conspicuous attacks and wording, larger and non-Qwen models, defenses in non-English

@@ -1,11 +1,11 @@
 {
- "git_commit": "ca55038a20397b6d523d1f982b95af5680edf0f9",
+ "git_commit": "665d31b2f03fc10c558b61a4deb9ba558b05f86f",
  "models": [
   {
    "first_run": "2026-11-23",
-   "last_run": "2026-11-24",
+   "last_run": "2026-11-28",
    "provider": "groq",
-   "rows_read": 207,
+   "rows_read": 452,
    "tag": "groq/qwen/qwen3.8-27b"
   },
   {
@@ -27,7 +27,7 @@
  "report_url": "https://github.com/nischalk17/BabelInject/tree/main/report",
  "scenarios_by_study": {
   "detector_langs": 230,
-  "main": 2297,
+  "main": 2440,
   "quiet": 210
  },
  "schema_version": 1

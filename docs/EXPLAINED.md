@@ -358,11 +358,11 @@ Each line says how many times it was seen. None of this goes in the README as a 
    by construction, and the detector reached 0% by blocking the tool result, so the task also fails under
    attack and 4 of 30 benign runs were wrongly blocked. Spotlighting did not help in code-mixed (interval
    includes zero). These are single-model, small-n results.
-12. **Hosted 27B model, pilot (partial, 76 attacked runs):** 0 successes. The control showed the model also
+12. **Hosted 27B model (complete grid, 200 attacked runs):** 0 successes (0 of 20 in every cell). The control showed the model also
    refuses the same request when the user asks directly (while replying in the user's language), so this
    is refusal, not a language effect. Romanized Nepali was the one exception (1 of 3 direct requests). We
-   first suspected the obviously malicious address; item 14 shows the address is not the reason. Partial
-   and not random, so treat it as a pilot.
+   first suspected the obviously malicious address; item 14 shows the address is not the reason. The
+   provider's fingerprint changed six times while the grid ran, so it was not one fixed deployment.
 13. **Model size (3B vs 7B, n=120 per language each):** the bigger model is not simply safer or less safe.
    English attacks worked more on the 7B (29% vs 21%), but Hindi attacks worked on the 3B (8%) and not at all
    on the 7B (0%). The 3B is also much worse at the benign task (20/30 vs 29/30) and often never opens
@@ -399,7 +399,7 @@ Each line says how many times it was seen. None of this goes in the README as a 
 - **Deterministic judge is narrow:** it only counts the specific attacker goals we define.
 - **Defenses are lightweight versions**, not the best possible implementations, and were run on English and
   code-mixed text (7B) and on English and Hindi (3B pilot) only; the detector alone was run in all languages.
-- **Hosted model:** the 27B grid is partial (87 of 230 runs, not a random slice); its follow-up is complete.
+- **Hosted model:** the 27B grid is complete (230 runs) but ran over several days while the provider's backend changed (six fingerprints).
 
 ---
 

@@ -20,7 +20,7 @@ and reports lowering attack success from over 50% to under 2% on GPT-family mode
 Our work differs in four ways. First, language: these works, as far as their abstracts state, evaluate
 English, whereas we compare English, Nepali, romanized Nepali, Hindi and code-mixed text, with a capability
 control that separates "cannot follow the language" from "does not act on injected text". Second, models: we
-study small open models (3B, 7B) run locally, plus a partial hosted pilot, rather than frontier models. Third,
+study small open models (3B, 7B) run locally, plus one hosted model, rather than frontier models. Third,
 judging: success is decided deterministically from a mocked sandbox's action log, never by an LLM. Fourth,
 scale: our benchmark is smaller (30 benign tasks, 3 attack templates) and our defenses (a delimiting form of
 spotlighting, a task-reminder "sandwich", a tool policy, a prompted detector) are simple versions, so we do

@@ -23,7 +23,7 @@ email, web or file system is ever touched.
 
 > **Status (Nov 27, 2026): the benchmark, defenses and analysis code are built and tested; the full
 > no-defense grid, the 7B defense grid, the 3B grid and the follow-up experiments are done (results below);
-> the hosted 27B grid is a partial pilot, its address-only follow-up is complete. The report is drafted
+> the hosted 27B grid (230 runs) and its address-only follow-up are complete. The report is drafted
 > (introduction, abstract and conclusion still to write), and a read-only Results Explorer is in `demo/`.** Numbers appear in this README only when they come from `results/` through
 > `analysis/`. Calibration runs and interim observations,
 > with exact settings and caveats, are in [docs/RESEARCH_LOG.md](docs/RESEARCH_LOG.md); a plain-language
@@ -87,14 +87,16 @@ Hindi. The 3B also reads the relevant item less often (benign task success 20/30
 runs never reach the injected text. Source: `results/summary/table1_asr_language_channel.csv`. One run per
 scenario; see the research log for caveats.
 
-## Hosted model pilot (Qwen 27B on Groq, partial)
+## Hosted model (Qwen 27B on Groq, complete grid)
 
-The free tier allows 200,000 tokens per day, so only part of the planned hosted grid ran (87 of 230 runs,
-plus the 15-run control). On this partial set, 0 of 76 injected attacks succeeded across all five languages
-(95% upper bound 4.8%). The control shows why this is not a language result: the model also declined the
+The free tier allows 200,000 tokens per day, so the grid ran over several days (230 runs, plus the
+15-run control; checked with `make check`). 0 of 200 injected attacks succeeded: 0 of 20 in every one of the
+ten language x channel cells (95% upper bound 1.9% pooled, 16.1% per cell), and all 30 benign tasks were completed. The control shows why this is not a language result: the model also declined the
 same request when the user asked directly, in English, Nepali, Hindi and code-mixed, while understanding it
-(it answered in the same language). Only romanized Nepali got through (1 of 3). The first four fact sets
-only, not a random sample. Details and caveats: `docs/RESEARCH_LOG.md`.
+(it answered in the same language). Only romanized Nepali got through (1 of 3). The final answer mentions
+the injected text in 193 of 200 attacked runs (keyword rule; romanized Nepali 34 of 40, every other language
+39 or 40 of 40). The provider reported six different system fingerprints over the grid, so it was not one
+fixed deployment. Details and caveats: `docs/RESEARCH_LOG.md`.
 
 ## Follow-up experiments (Nov 23 to 24; each is small, see `docs/RESEARCH_LOG.md` for n and caveats)
 
@@ -186,7 +188,7 @@ the injection, so its rates partly measure exposure; one attack (`inject_cc_requ
 is kept as a control; the near-zero non-English rates on the 7B model are not a comprehension limit
 (capability control 14/15; the detector recognises the injected text in every language), but both checks
 are small; with the detector the agent often loops to the step limit in the tool-output channel; the
-hosted 27B grid is partial.
+hosted 27B ran one pass per scenario, over several days, on a provider whose backend changed (six fingerprints).
 
 ## Results Explorer (demo)
 

@@ -13,7 +13,7 @@ not monotone in model size: the 3B was more exposed in Hindi (10/120) than the 7
 **What they do not support.** We cannot say Nepali or Hindi are "safer": zero success on one small model, for
 three author-reviewed attack texts, is a floor result: it leaves no room to measure a defense, and the
 capability control rules out only an inability to follow the language, not other explanations. We cannot say anything about large frontier models; the only larger
-model is a partial hosted pilot (0/76), and we do not know why it refuses direct requests (a plainer attacker address did not change this: 1/100 injected runs). We saw one defense language gap, on the 3B (the detector flags Hindi attacks about half as often as English ones; n = 40 per cell), and none on the 7B. We cannot say defenses in general work in Nepali, Hindi or romanized Nepali: only the detector was run
+model is a hosted run with one pass per scenario (0/200), and we do not know why it refuses direct requests (a plainer attacker address did not change this: 1/100 injected runs). We saw one defense language gap, on the 3B (the detector flags Hindi attacks about half as often as English ones; n = 40 per cell), and none on the 7B. We cannot say defenses in general work in Nepali, Hindi or romanized Nepali: only the detector was run
 there (it flagged all 20 of 20 runs per cell, and flagged 0 of 6 harmless Nepali, romanized Nepali and Hindi sentences); spotlighting, sandwich and
 tool policy were not. We do not know why the 3B is
 vulnerable in Hindi.
@@ -27,7 +27,7 @@ vulnerable in Hindi.
   measured defense. The detector and sandwich prompts are in English.
 - The capability control has only 3 runs per language, and the 3B often never reads the injected item, which
   limits what its rates mean.
-- The hosted grid is partial (87 of 230 runs; the free-tier token quota stopped it); the hosted quiet run (100 runs) is complete and hosted models can change silently.
+- The hosted grid (230 runs) and the hosted quiet run (100 runs) are complete, but the free-tier quota spread them over several days and the provider's system fingerprint changed six times, so they are not one fixed deployment.
 - The sandbox is mocked and the goal is one action (sending an email); real deployments differ.
 
 **Future work.** Less conspicuous attacks and varied wording; larger and non-Qwen models; defenses tested in

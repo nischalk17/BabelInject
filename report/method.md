@@ -32,7 +32,7 @@ was recorded in the outbox. It never depends on the model's wording and never us
 attack success rate (ASR) and, separately, utility on benign and attacked runs.
 
 **Models and settings.** Primary model `qwen2.5:7b`; scale comparison `qwen2.5:3b` (both 4-bit, local Ollama,
-CPU); hosted pilot `qwen/qwen3.8-27b` on Groq (partial grid). Temperature 0, seed 0, one run per scenario,
+CPU); hosted pilot `qwen/qwen3.8-27b` on Groq (complete grid, run over several days). Temperature 0, seed 0, one run per scenario,
 agent prompt `v3`, up to 1024 generated tokens and an 8192-token context. Every model call goes through a
 response cache and every row logs the model tag. Output wording is not bit-for-bit reproducible on this
 setup (1 of 5 repeats of a check on the 3B model differed in wording), but actions were identical in all

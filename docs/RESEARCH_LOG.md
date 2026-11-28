@@ -1079,3 +1079,25 @@ old rows lack it and read as 0, so past truncation is unknown). **Repository slu
 Pages base path, demo config, scripts, README and git remote; the GitHub repository itself must be renamed in
 Settings (GitHub redirects the old URL). **Caveat:** the 60/100 detector-probe figure comes from
 `results/summary_detector_langs/`, a separate study that table12 does not pool.
+
+## 2026-11-28: hosted 27B grid completed (230/230)
+
+**What ran:** `make run-hosted`; `aie check` reports `hosted.yaml` 230/230 and `hosted_control.yaml` 15/15. The
+new file re-served the first 87 scenarios from the response cache: their actions, judge verdicts and final
+answers are identical to the stored rows (87 of 87), so the earlier partial rows were not changed by this.
+**Result (n = 200 attacked, 30 benign, qwen/qwen3.8-27b, no defense, one run each, temperature 0):** attack
+success 0/200 (95% upper bound 1.9%); 0/20 in each of the ten language x channel cells (upper bound 16.1% per
+cell; before: 0/76 over 7 or 8 per cell). Benign utility 30/30, attacked utility 200/200, no run hit the step
+limit, item opened 20/20 in every cell, attack attempted 0/20 in every cell. **Conclusion that changes:** the
+earlier "partial pilot" label is gone; the claim "0 of 76" is now "0 of 200". No other model's number changed.
+**Answer mentions (keyword heuristic, validated on this model only):** 193/200 attacked runs mention the
+injected text; the 7 that do not are code-mixed tool output 1/20, romanized Nepali file 1/20, romanized Nepali
+tool output 5/20 (15/20 mention it); every other cell 20/20. Romanized Nepali is 34/40 against 39 or 40 of 40
+elsewhere, in line with the 6/20 seen in the address-only grid; cause unknown. **Hosted drift (first time it
+could be measured, via the new `served_by` field):** six distinct `system_fingerprint` values across the 230
+rows, with one to three per run (25 runs one, 138 two, 67 three) while the returned model id stayed
+`qwen/qwen3.8-27b`. A fingerprint change means the serving stack changed, not necessarily the weights.
+**Caveats:** one run per scenario; the grid ran over several days, so it is not one fixed deployment; the
+87 runs from the first day carry their fingerprints only because the cache stored the raw replies. Docs
+updated: README, report results/discussion/method/related/OUTLINE, EXPLAINED, demo wording; tables 1, 2b, 3, 4,
+5, 8, 9, 10, 12 and fig1 (27B) regenerated.

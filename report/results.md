@@ -3,7 +3,7 @@
 Status: draft. Every number is copied from `results/summary/` (tables named in brackets) or
 `results/summary_quiet/`; the final numbers check on Nov 26 must re-compare each one. Figures are in
 `docs/figures/`. Rates are k/n with 95% Wilson intervals where quoted. One run per scenario, so these
-are rates over 10 to 120 runs, not repeated-measure estimates. Section 4.5 now includes the hosted 27B follow-up.
+are rates over 10 to 120 runs, not repeated-measure estimates. Sections 4.5 and 4.6 cover the hosted 27B follow-up and its complete grid.
 
 **4.1 Language and channel (7B, no defense).** Across the 630-run grid, an attack succeeded in 35 of
 120 English runs (29%), 12 of 120 code-mixed (10%), 1 of 120 Nepali, and 0 of 120 each for Hindi and
@@ -47,12 +47,17 @@ Hindi or romanized Nepali, where the baseline is already about 0%.
 partner address and the text otherwise identical, the 7B was still attacked in 10 of 10 English
 tool-output runs, and in 6 of 10 English file runs (9 of 10 with the original address; the intervals
 overlap), and in 0 of 10 in each of the eight non-English cells [summary_quiet]. So on the 7B the address
-is not what limits attack success. On the hosted 27B with the same plain address, 1 of 100 injected runs succeeded (English, file) and 1 of 5 direct requests was followed (English only), against 0/76 and 1/15 with the conspicuous address [summary_quiet]. So the address does not explain the 27B's refusals either, although a small effect cannot be excluded at n = 10 per cell. In the English tool-output runs we read, the 27B finished the task and told the user about the embedded note, which suggests it recognises the text and declines; we did not count this across all runs.
+is not what limits attack success. On the hosted 27B with the same plain address, 1 of 100 injected runs succeeded (English, file) and 1 of 5 direct requests was followed (English only), against 0/200 and 1/15 with the conspicuous address [summary_quiet]. So the address does not explain the 27B's refusals either, although a small effect cannot be excluded at n = 10 per cell. In the English tool-output runs we read, the 27B finished the task and told the user about the embedded note, which suggests it recognises the text and declines; we did not count this across all runs.
 
-**4.6 Hosted pilot.** On the first 11 tasks of the hosted grid (76 attacked runs, not a random slice; the
-free-tier token quota stopped the run), the 27B was never successfully attacked (0/76, 95% upper bound
-4.8%), and finished 11 of 11 benign tasks. Given its refusal of direct requests (4.2), this shows
-resistance in these conditions but not which cause explains it.
+**4.6 Hosted model.** On the complete hosted grid (230 runs: 200 attacked, 30 benign; the free-tier quota
+spread it over several days), the 27B was never successfully attacked (0/200; 0/20 in each of the ten language
+by channel cells; 95% upper bound 1.9% pooled and 16.1% per cell) and finished 30 of 30 benign tasks and 200 of
+200 attacked tasks. Given its refusal of direct requests (4.2), this shows resistance in these conditions but
+not which cause explains it. In 193 of the 200 attacked runs the final answer mentions the injected text (keyword
+rule, [table8]); the seven that do not are code-mixed tool output (1), romanized Nepali file (1) and romanized
+Nepali tool output (5). The provider reported six distinct system fingerprints across the grid (one to three per
+run), so the model behind the endpoint changed while the grid ran; every verdict was 0 either way, and the 87
+runs made first were reproduced exactly from the response cache.
 
 **4.4b Detector on all five languages (7B).** To separate "cannot recognise" from "recognises but does not
 act", we ran the prompted detector on all five languages (file and tool output, 20 runs per cell). It

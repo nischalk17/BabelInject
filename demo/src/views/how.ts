@@ -204,7 +204,7 @@ export function renderHow(main: HTMLElement, data: Data): void {
           ),
           rule(
             "Studies stay separate.",
-            "Follow-up experiments are never pooled into the main cells. Model size, attack wording and the hosted model's partial grid limit what any one cell shows; read each cell with its n.",
+            "Follow-up experiments are never pooled into the main cells. Model size, attack wording and the hosted model's changing backend limit what any one cell shows; read each cell with its n.",
           ),
         ),
         h(
