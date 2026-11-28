@@ -1,6 +1,6 @@
 # Report outline (4 pages), working document
 
-Status: outline only. Every number below is already in `results/summary/` and `docs/RESEARCH_LOG.md`; no number is pending
+Status: superseded by the finished report (`report/report.md`, built from the section files by `make report`); kept as the planning record. Original status: outline only. Every number below is already in `results/summary/` and `docs/RESEARCH_LOG.md`; no number is pending
 any more. Nothing goes into the report that is not in `results/` (CLAUDE.md rule). The
 owner rewrites the prose in their own words; the structure, the claim list and the caveats are the part to keep.
 

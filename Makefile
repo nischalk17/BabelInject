@@ -1,9 +1,18 @@
 # Every recipe is a plain `uv run ...` call so it behaves the same under cmd.exe, Git Bash and Linux.
-.PHONY: setup test lint format run-mvp run-all run-control run-hosted run-3b run-quiet run-hosted-quiet tables-quiet run-defenses figures run-detector-langs tables-detector-langs run-detector-benign run-defenses-3b-hi tables-defenses-3b-hi demo-data demo check
+.PHONY: setup test lint format run-mvp run-all run-control run-hosted run-3b run-quiet run-hosted-quiet tables-quiet run-defenses figures run-detector-langs tables-detector-langs run-detector-benign run-defenses-3b-hi tables-defenses-3b-hi demo-data demo check tables-control report check-report
 
 # usage: make check CONFIG=configs/mvp.yaml  (exit 1 if the rows on disk do not cover the grid)
 check:
 	uv run aie check $(CONFIG)
+
+tables-control:
+	uv run python analysis/tables.py --inputs results/control results/hosted_control --out results/summary_control
+
+report:
+	uv run python analysis/build_report.py
+
+check-report:
+	uv run python analysis/check_report_numbers.py
 
 setup:
 	uv sync

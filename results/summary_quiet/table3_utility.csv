@@ -1,0 +1,3 @@
+model_tag,defense,condition,k,n,rate,lo,hi
+groq/qwen/qwen3.8-27b,none,attacked,101,105,0.9619,0.9061,0.9851
+ollama/qwen2.5:7b@845dbda0ea48,none,attacked,102,105,0.9714,0.9193,0.9902

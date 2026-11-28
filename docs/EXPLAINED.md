@@ -285,7 +285,7 @@ reruns free and results reproducible.
 | `docs/RESEARCH_LOG.md` | The dated lab notebook of what we saw (findings with n, appended, never edited) |
 | `src/aie/analysis/demo_export.py`, `demo_traces.py`, `demo/` | The Results Explorer website and the export that feeds it |
 
-**State (Nov 27):** every planned experiment and follow-up has run and is logged. The report is drafted in `report/` (method, results, discussion, related work); the introduction, abstract and conclusion are still to be written by the author. A read-only website of the results is in `demo/`.
+**State (Nov 27):** every planned experiment and follow-up has run and is logged. The full report is written in `report/` (`report.md` and `report.pdf`, built from the section files; related work checked against the papers' full text in `related_verification.md`); the author's review is the remaining step. A read-only website of the results is in `demo/`.
 
 ---
 

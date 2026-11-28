@@ -365,6 +365,47 @@ def asr_pooled_rows(outcomes: Sequence[ScenarioOutcome]) -> list[CountRow]:
     return rows
 
 
+def matched_asr_rows(outcomes: Sequence[ScenarioOutcome]) -> list[CountRow]:
+    """ASR per (model, language) on the (attack, channel) cells that every model was run on.
+
+    Grids differ between models (the hosted grid skips email and doc and one attack), so a fair
+    comparison across models uses only the cells they share. No-defense injected runs only (the
+    capability control is excluded). ``channel`` is "matched"; ``language`` "ALL" pools. Empty if
+    fewer than two models, or no shared cell.
+    """
+    runs = [o for o in attacked(outcomes) if o.defense == "none" and o.channel != "user"]
+    cells_by_model: dict[str, set[tuple[str | None, str | None]]] = defaultdict(set)
+    for o in runs:
+        cells_by_model[o.result.model_tag].add((o.attack_id, o.channel))
+    if len(cells_by_model) < 2:
+        return []
+    common = set.intersection(*cells_by_model.values())
+    grouped: dict[tuple[str, str], list[bool]] = defaultdict(list)
+    for o in runs:
+        if (o.attack_id, o.channel) in common:
+            for language in (o.language or "", "ALL"):
+                grouped[(o.result.model_tag, language)].append(bool(o.judge.attack_success))
+    rows: list[CountRow] = []
+    for (tag, language), results in sorted(grouped.items()):
+        k, n = sum(results), len(results)
+        point, lo, hi = _rate(k, n)
+        rows.append(
+            CountRow(
+                model_tag=tag,
+                defense="none",
+                language=language,
+                channel="matched",
+                metric="asr_matched",
+                k=k,
+                n=n,
+                rate=point,
+                lo=lo,
+                hi=hi,
+            )
+        )
+    return rows
+
+
 def attacked_utility_rows(outcomes: Sequence[ScenarioOutcome]) -> list[CountRow]:
     """Share of attacked runs where the agent still finished its task, per cell."""
     return _count_rows(attacked(outcomes), "attacked_utility", lambda o: o.judge.utility_success)

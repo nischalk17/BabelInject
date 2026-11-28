@@ -15,6 +15,7 @@ from aie.analysis.tables import (
     benign_flagged_rows,
     effect_rows,
     flagged_rows,
+    matched_asr_rows,
     newcombe_diff,
     opened_rows,
     step_limit_rows,
@@ -304,3 +305,17 @@ def test_step_limit_rows_count_runs_that_never_answered() -> None:
     rows = step_limit_rows([looped, mk("s2", defense="detector"), mk("s3", **BENIGN)])
     by = {(r.defense, r.language): (r.k, r.n) for r in rows}
     assert by[("detector", "en")] == (1, 2)
+
+
+def test_matched_asr_rows_use_only_cells_every_model_ran() -> None:
+    runs = [
+        mk("a1", tag="big", attack="A", channel="file", success=True),
+        mk("a2", tag="big", attack="A", channel="email", success=True),  # big only
+        mk("a3", tag="big", attack="B", channel="file", success=True),  # big only
+        mk("b1", tag="small", attack="A", channel="file", success=False),
+        mk("b2", tag="small", attack="A", channel="file", success=False),
+        mk("c1", tag="small", attack="A", channel="user", success=True),  # control: excluded
+    ]
+    rows = {(r.model_tag, r.language): (r.k, r.n) for r in matched_asr_rows(runs)}
+    assert rows[("big", "ALL")] == (1, 1) and rows[("small", "ALL")] == (0, 2)
+    assert matched_asr_rows([r for r in runs if r.result.model_tag == "big"]) == []

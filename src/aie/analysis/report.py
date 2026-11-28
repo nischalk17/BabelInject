@@ -16,6 +16,7 @@ from aie.analysis.tables import (
     benign_flagged_rows,
     effect_rows,
     flagged_rows,
+    matched_asr_rows,
     opened_rows,
     paired_asr_rows,
     step_limit_rows,
@@ -62,6 +63,8 @@ def build_tables(
     put("table9_attacked_utility.csv", attacked_utility_rows(outcomes))
     put("table10_asr_pooled.csv", asr_pooled_rows(outcomes))
     put("table12_step_limit.csv", step_limit_rows(outcomes))
+    if matched := matched_asr_rows(outcomes):
+        put("table13_asr_matched_cells.csv", matched)
     if "detector" in defenses:
         put("table6_detector_flagged.csv", flagged_rows(outcomes))
         if benign_rows := benign_flagged_rows(outcomes):

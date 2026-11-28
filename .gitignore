@@ -23,6 +23,10 @@ results/*
 !results/summary/
 results/summary/*
 !results/summary/*.csv
+# follow-up studies (summary_quiet, summary_control, ...): CSV tables only, like results/summary
+!results/summary_*/
+results/summary_*/*
+!results/summary_*/*.csv
 
 node_modules/
 
@@ -30,3 +34,6 @@ node_modules/
 docs/PROJECT_PLAN.md
 docs/READING_GUIDE.md
 docs/SCHEDULE.md
+
+# generated report HTML (the PDF and Markdown are committed)
+report/report.html

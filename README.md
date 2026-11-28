@@ -23,8 +23,8 @@ email, web or file system is ever touched.
 
 > **Status (Nov 27, 2026): the benchmark, defenses and analysis code are built and tested; the full
 > no-defense grid, the 7B defense grid, the 3B grid and the follow-up experiments are done (results below);
-> the hosted 27B grid (230 runs) and its address-only follow-up are complete. The report is drafted
-> (introduction, abstract and conclusion still to write), and a read-only Results Explorer is in `demo/`.** Numbers appear in this README only when they come from `results/` through
+> the hosted 27B grid (230 runs) and its address-only follow-up are complete. The full report is
+> written ([report/report.pdf](report/report.pdf), source in `report/`; the author's review is the remaining step), and a read-only Results Explorer is in `demo/`.** Numbers appear in this README only when they come from `results/` through
 > `analysis/`. Calibration runs and interim observations,
 > with exact settings and caveats, are in [docs/RESEARCH_LOG.md](docs/RESEARCH_LOG.md); a plain-language
 > guide is in [docs/EXPLAINED.md](docs/EXPLAINED.md).
@@ -140,7 +140,7 @@ things that are less studied:
   detector, a tool-permission policy) work as well on non-English injections?
 - **RQ3.** What does each defense cost in benign task success (utility)?
 
-The design, models and tables are described in this README, the [report](report/) and
+The design, models and tables are described in this README, the [report](report/report.pdf) ([Markdown](report/report.md)) and
 [docs/RESEARCH_LOG.md](docs/RESEARCH_LOG.md).
 
 ## How it works
@@ -181,7 +181,7 @@ Design rules that keep the study rigorous:
 | Four defenses (spotlighting, sandwich reminder, tool-permission policy, prompted detector) and a defense-grid config | `src/aie/defenses/`, `configs/defenses.yaml` | done, tested with scripted models; 7B grid (English + code-mixed) measured |
 | Analysis: tables with 95% intervals (CSV), heatmap, defense-effect and trade-off figures | `src/aie/analysis/`, `analysis/` | done, tested; run on every grid (7B, 3B, hosted, defenses, follow-ups) |
 | Results Explorer: static site built only from `results/` (overview, heatmap, defenses, trace replay, method), Pages workflow | `demo/`, `analysis/export_demo_data.py`, `.github/workflows/pages.yml` | done, tested (Python and TypeScript); deploys once Pages is enabled |
-| Report | `report/OUTLINE.md`, `method.md`, `results.md`, `discussion.md`, `related.md` | outline written; method, results, discussion and related work drafted (owner review; skim the 3 papers); introduction, abstract and conclusion still to write |
+| Report | `report/report.md` and `report.pdf` (built from `abstract`, `introduction`, `related`, `method`, `results`, `discussion`, `conclusion`, `reproducibility`, `references`, `appendix`); `related_verification.md` | complete; related work checked against the papers' full text; author review pending |
 
 Known open issues (details in the research log): the 3B model often never opens the item that holds
 the injection, so its rates partly measure exposure; one attack (`inject_cc_request`) is at the floor and
@@ -268,6 +268,8 @@ figures to `docs/figures/`; every figure has a CSV twin):
 
 ```
 make figures
+make report                      # assemble report/report.md from the sections
+make check-report                # every k/n in the text must match a summary table
 ```
 
 Opt-in live test against a real model (skipped by default; override the model with

@@ -1114,3 +1114,26 @@ rows and agrees. Also: no table line outside the 27B rows changed in the hosted 
 lines are not 27B), the demo's `summary.json` shows the same 27B cells as the tables (15 cells, 0/20 and 0/3),
 and no "partial", "0/76" or "4.8%" remains in the docs. **No discrepancy found.** Caveat: the check covers
 fractions; hand-written percentages and bounds were spot-checked (0/200 upper bound 1.9%, per cell 16.1%).
+
+## 2026-11-28 (report): full report written; related work verified against full text
+
+**Report.** `report/report.md` (and `report.pdf`) is assembled by `make report` from `abstract`, `introduction`,
+`related`, `method`, `results`, `discussion`, `conclusion`, `reproducibility`, `references` and `appendix`.
+`make check-report` compares every "k/n" and "k of n" in README and those sections (214) with the summary
+tables or pooled sums of them; 0 mismatches. It does not check percentages or prose. **Related work:** the six
+cited papers were read in full text (arXiv HTML) and venues confirmed on the NeurIPS, ACL Anthology and ACM
+pages; `report/related_verification.md` lists each claim, its status and what could not be read. Corrections made:
+the AgentDojo "under 25%" figure removed (not reconcilable with its own later tables); the detector claim
+reworded (8% at a large utility cost); InjecAgent "62 attacker tools" is 62 attacker cases; "English-only" claim
+replaced by "no cross-language comparison found" (no paper states a language scope); deterministic judging is
+not novel (AgentDojo and InjecAgent also judge from actions and state; only BIPIA uses an LLM judge in part).
+**New analysis (derived from existing rows, no new runs):** `table13_asr_matched_cells.csv` compares models on
+the cells they share (two attacks, file and tool output, 40 runs per language). 7B English 26/40 (65%, 49.5 to
+77.9), 3B 13/40, 27B 0/40 (0 to 8.8); Hindi 3B 3/40, 7B 0/40, 27B 0/40. So the 27B's zero is not specific to
+non-English text, unlike the 7B's. **Also from existing rows:** the attack matters as much as the channel (7B
+English: owner note file 9/10 and tool output 10/10, blunt override tool output 1/10; code-mixed override tool
+output 9/10; casual request 0/200), n = 10 per cell. Added `results/summary_control/` (capability control,
+Table A; `make tables-control`) and un-ignored the CSVs of `results/summary_*/` so every number the report
+cites is in the public repo (before, the follow-up tables were gitignored). **Check:** 230 spotlight rows
+contain no tag-like string in a raw tool result, so spotlight v1 and v2 behave identically on every stored run.
+**Caveats:** the author has not yet reviewed the new sections; Table E and the interaction numbers are n = 10 to 40.

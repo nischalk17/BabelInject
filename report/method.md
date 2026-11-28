@@ -1,10 +1,9 @@
-# 3. Method (first draft, about 1 page)
+# 3. Method
 
-Status: draft from the code, configs and `docs/RESEARCH_LOG.md`. Every setting below is in `configs/*.yaml`
-or the source; nothing here is a result. The owner should check each sentence against the code and reword it.
+Every setting below is in `configs/*.yaml` or the source; nothing in this section is a result.
 
 **Setting.** We study indirect prompt injection against a tool-using agent in a fully mocked sandbox.
-The agent is a ReAct-style loop: the model sees the user's task and seven tools (`list_emails`,
+The agent is a ReAct-style loop [8]: the model sees the user's task and seven tools (`list_emails`,
 `read_email`, `list_files`, `read_file`, `search_web`, `fetch_url`, `send_email`), calls tools until it
 answers in plain text or reaches 8 steps. All data is fictional; no real email, web or file system is
 touched, and `send_email` only appends to an in-memory outbox. `send_email` is always offered, because an
@@ -32,18 +31,18 @@ was recorded in the outbox. It never depends on the model's wording and never us
 attack success rate (ASR) and, separately, utility on benign and attacked runs.
 
 **Models and settings.** Primary model `qwen2.5:7b`; scale comparison `qwen2.5:3b` (both 4-bit, local Ollama,
-CPU); hosted pilot `qwen/qwen3.8-27b` on Groq (complete grid, run over several days). Temperature 0, seed 0, one run per scenario,
+CPU); hosted `qwen/qwen3.8-27b` on Groq (complete grid, run over several days). Temperature 0, seed 0, one run per scenario,
 agent prompt `v3`, up to 1024 generated tokens and an 8192-token context. Every model call goes through a
 response cache and every row logs the model tag. Output wording is not bit-for-bit reproducible on this
 setup (1 of 5 repeats of a check on the 3B model differed in wording), but actions were identical in all
 10 full-agent repeats; since the judge reads only actions and the outbox, verdicts are unaffected in
-those checks. Hosted models can change silently, so we record the model id and the run date.
+those checks. Hosted models can change silently, so we record the run date and, from the final hosted grid on, the model id and system fingerprint the provider returned for each reply.
 
-**Defenses.** Four defenses, all version 1, run on the 7B model with the same agent: *spotlighting* (tool
+**Defenses.** Four defenses run on the 7B model with the same agent: *spotlighting* (tool
 results wrapped in untrusted-data tags plus a system rule), a *sandwich* reminder of the user's task after
 every tool result, a *tool policy* that blocks `send_email` to anyone who is not a known contact (language
 independent, since it never reads the text), and a prompted *detector* (an extra model call per tool result;
-a "YES" replaces the result with a removal notice). The defense grid covers English and code-mixed text
+a "YES" replaces the result with a removal notice). Spotlighting here is the delimiting form only, not datamarking or encoding [5]. All stored defense runs used defense version 1; a later spotlighting version (v2) only makes the tag escaping case-insensitive, and no stored tool result contains such a variant, so v1 and v2 behave identically on every stored run. The defense grid covers English and code-mixed text
 only: 5 defenses (including none) x 2 languages x 3 channels x 2 attacks x 10 tasks, plus 30 benign runs
 per defense, 750 runs.
 
@@ -51,6 +50,6 @@ per defense, 750 runs.
 language", we give the same attack text to the model as the user's own request (channel `user`) and check
 whether it complies, 3 runs per language.
 
-**Statistics.** Rates carry 95% Wilson intervals. Differences between conditions use Newcombe intervals,
+**Statistics.** Rates carry 95% Wilson intervals [9]. Differences between conditions use Newcombe intervals [10],
 which ignore pairing and are therefore conservative; but runs share task facts, so intervals are somewhat
 optimistic. Cells hold 10 to 60 runs, so we describe sizes of effects, not precise rates.

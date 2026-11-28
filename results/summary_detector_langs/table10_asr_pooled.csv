@@ -1,0 +1,7 @@
+model_tag,defense,language,channel,metric,k,n,rate,lo,hi
+ollama/qwen2.5:7b@845dbda0ea48,detector,ALL,injected,asr_pooled,0,200,0.0,0.0,0.0188
+ollama/qwen2.5:7b@845dbda0ea48,detector,en,injected,asr_pooled,0,40,0.0,0.0,0.0876
+ollama/qwen2.5:7b@845dbda0ea48,detector,hi,injected,asr_pooled,0,40,0.0,0.0,0.0876
+ollama/qwen2.5:7b@845dbda0ea48,detector,mix,injected,asr_pooled,0,40,0.0,0.0,0.0876
+ollama/qwen2.5:7b@845dbda0ea48,detector,ne,injected,asr_pooled,0,40,0.0,0.0,0.0876
+ollama/qwen2.5:7b@845dbda0ea48,detector,ne_rom,injected,asr_pooled,0,40,0.0,0.0,0.0876

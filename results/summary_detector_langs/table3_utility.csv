@@ -1,0 +1,3 @@
+model_tag,defense,condition,k,n,rate,lo,hi
+ollama/qwen2.5:7b@845dbda0ea48,detector,benign,30,30,1.0,0.8865,1.0
+ollama/qwen2.5:7b@845dbda0ea48,detector,attacked,0,200,0.0,0.0,0.0188
