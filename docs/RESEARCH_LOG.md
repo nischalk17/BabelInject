@@ -1101,3 +1101,16 @@ rows, with one to three per run (25 runs one, 138 two, 67 three) while the retur
 87 runs from the first day carry their fingerprints only because the cache stored the raw replies. Docs
 updated: README, report results/discussion/method/related/OUTLINE, EXPLAINED, demo wording; tables 1, 2b, 3, 4,
 5, 8, 9, 10, 12 and fig1 (27B) regenerated.
+
+## 2026-11-28 (later): final numbers re-check after the hosted grid
+
+**Method:** scanned README, `report/*.md` and `docs/EXPLAINED.md` for every "k/n" and "k of n" figure (202) and
+matched each against every table cell and every pooled sum of cells in `results/summary*/`. 192 matched. The
+other 10 are capability-control counts (7B 14/15: en 2/3, ne/ne_rom/hi/mix 3/3 each; hosted 1/15: romanized
+Nepali 1/3), the address-only 27B mentions (77/100; en 18, hi 19, mix 18, ne 16, ne_rom 6 of 20), the detector
+step-limit counts (24/40 and 60/100 are tool-output channel only; the file channel is 0/100) and the interim
+n=23/24 figures in `docs/EXPLAINED.md` item 8 (an old, labelled interim look). Each was recomputed from the raw
+rows and agrees. Also: no table line outside the 27B rows changed in the hosted completion (0 of the changed
+lines are not 27B), the demo's `summary.json` shows the same 27B cells as the tables (15 cells, 0/20 and 0/3),
+and no "partial", "0/76" or "4.8%" remains in the docs. **No discrepancy found.** Caveat: the check covers
+fractions; hand-written percentages and bounds were spot-checked (0/200 upper bound 1.9%, per cell 16.1%).
